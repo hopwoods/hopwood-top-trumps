@@ -1,79 +1,112 @@
-import { createMachine, assign } from 'xstate'
-// import type { User } from 'firebase/auth'; // Placeholder for Firebase User type
+import { createMachine, assign, fromPromise } from 'xstate' // Removed unused sendTo
+import {
+  type User, // Import User type
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+} from 'firebase/auth'
+import { auth } from '../Firebase/FirebaseConfig' // Import auth instance
 
 // Define the context for the machine
 interface AppContext {
-  user: any | null // Replace 'any' with 'User' from Firebase
+  user: User | null // Use User type
   error: string | null
 }
 
 // Define the events the machine can receive
-type AppEvent =
-  | { type: 'AUTH_STATUS_CHECK_COMPLETE'; user: any | null } // user can be User type
+export type AppEvent = // Exporting AppEvent to be used in machine type
+  | { type: 'AUTH_STATUS_CHECK_COMPLETE'; user: User | null } // Use User type
   | { type: 'LOGIN_WITH_EMAIL'; email: string; password: string }
   | { type: 'LOGIN_WITH_GOOGLE' }
-  | { type: 'LOGIN_SUCCESS'; user: any } // user can be User type
+  | { type: 'LOGIN_SUCCESS'; user: User } // Use User type
   | { type: 'LOGIN_FAILURE'; error: string }
   | { type: 'LOGOUT' }
   | { type: 'GO_TO_HOME' } // Example navigation event
   | { type: 'GO_TO_LOGIN' } // Example navigation event
 
-export const appMachine = createMachine(
+export const appMachine = createMachine<AppContext, AppEvent>( // Explicitly type the machine
   {
-    id: 'app',
+    id: 'app', // Removed duplicate id
     initial: 'initializing',
-    // Provide context and event types directly for inference
     context: {
       user: null,
       error: null,
-    } as AppContext, // Using 'as AppContext' for initial context typing
+    } satisfies AppContext,
 
     states: {
       initializing: {
-        // This state would typically invoke a service to check authentication status
-        // For now, we simulate this with a direct event for demonstration
-        // In a real app, you'd use: invoke: { src: 'checkAuthService', ... }
-        on: {
-          AUTH_STATUS_CHECK_COMPLETE: [
+        invoke: {
+          src: 'checkAuthStatusActor',
+          onDone: [
             {
               target: 'authenticated.home',
-              guard: ({ event }) => event.user !== null,
-              actions: assign({ user: ({ event }) => event.user, error: null }),
+              guard: ({ event }) => event.output !== null,
+              actions: assign({ user: ({ event }) => event.output as User | null, error: null }),
             },
             {
               target: 'authenticating',
               actions: assign({ user: null, error: null }),
             },
           ],
+          onError: {
+            target: 'authenticating',
+            actions: assign({
+              user: null,
+              error: ({ event }: { event: any }) => (event.data as Error)?.message || 'Failed to check authentication status.',
+            }),
+          },
         },
-        // entry: 'triggerAuthCheck', // Action to initiate the auth check
       },
 
       authenticating: {
         initial: 'loginForm',
         states: {
           loginForm: {
-            // This state represents the UI for login/registration
             on: {
-              LOGIN_WITH_EMAIL: 'submitting', // Transition to submitting state
-              LOGIN_WITH_GOOGLE: 'submitting', // Transition to submitting state
+              LOGIN_WITH_EMAIL: 'submittingEmail',
+              LOGIN_WITH_GOOGLE: 'submittingGoogle',
             },
           },
-          submitting: {
-            // This state would invoke a service for the actual login attempt
-            // e.g., invoke: { src: 'loginUserService', ... }
-            on: {
-              LOGIN_SUCCESS: {
-                target: '#app.authenticated.home', // Go to home page on success
+          submittingEmail: {
+            invoke: {
+              src: 'loginWithEmailActor',
+              input: ({ event }: { event: AppEvent }) => { // Explicitly type event here
+                if (event.type === 'LOGIN_WITH_EMAIL') {
+                  return { email: event.email, password: event.password }
+                }
+                return { email: '', password: '' }
+              },
+              onDone: {
+                target: '#app.authenticated.home',
                 actions: assign({
-                  user: ({ event }) => event.user,
+                  user: ({ event }) => event.output as User,
                   error: null,
                 }),
               },
-              LOGIN_FAILURE: {
-                target: 'loginForm', // Go back to login form on failure
+              onError: {
+                target: 'loginForm',
                 actions: assign({
-                  error: ({ event }) => event.error,
+                  error: ({ event }: { event: any }) => (event.data as Error)?.message || 'Email login failed',
+                }),
+              },
+            },
+          },
+          submittingGoogle: {
+            invoke: {
+              src: 'loginWithGoogleActor',
+              onDone: {
+                target: '#app.authenticated.home',
+                actions: assign({
+                  user: ({ event }) => event.output as User,
+                  error: null,
+                }),
+              },
+              onError: {
+                target: 'loginForm',
+                actions: assign({
+                  error: ({ event }: { event: any }) => (event.data as Error)?.message || 'Google login failed',
                 }),
               },
             },
@@ -85,37 +118,65 @@ export const appMachine = createMachine(
         initial: 'home',
         states: {
           home: {
-            // This is the Home Page state after successful login
             on: {
-              LOGOUT: {
-                target: '#app.authenticating', // Go back to authenticating state
-                // actions: 'performLogoutServiceInvocation', // Action to trigger logout service
-              },
-              // Add other navigation events from home here, e.g.:
-              // GO_TO_DECK_BUILDER: 'deckBuilder',
-              // GO_TO_PROFILE: 'profile',
+              LOGOUT: '#app.loggingOut',
             },
           },
-          // deckBuilder: {
-          //   on: { GO_TO_HOME: 'home' }
-          // },
-          // profile: {
-          //   on: { GO_TO_HOME: 'home' }
-          // },
+        },
+      },
+      loggingOut: {
+        invoke: {
+          src: 'logoutActor',
+          onDone: {
+            target: 'authenticating',
+            actions: assign({ user: null, error: null }),
+          },
+          onError: {
+            target: 'authenticated.home',
+            actions: assign({
+              error: ({ event }: { event: any }) => (event.data as Error)?.message || 'Logout failed',
+            }),
+          },
         },
       },
     },
   },
-  // Setup API for actions, actors (services), guards (optional but recommended for complex logic)
-  // {
-  //   actions: {
-  //     triggerAuthCheck: () => { console.log('Checking auth status...') },
-  //     // performLogoutServiceInvocation: () => { console.log('Logging out...') }
-  //   },
-  //   actors: {
-  //     // checkAuthService: fromPromise(async () => { /* Firebase onAuthStateChanged logic */ }),
-  //     // loginUserService: fromPromise(async ({ event }) => { /* Firebase login logic */ }),
-  //   },
-  //   guards: {},
-  // }
+  {
+    actors: {
+      checkAuthStatusActor: fromPromise<User | null, void>(() =>
+        new Promise<User | null>((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(
+              auth,
+              (user) => {
+                unsubscribe()
+                resolve(user)
+              },
+              (error) => {
+                unsubscribe()
+                reject(error)
+              },
+            )
+          }),
+      ),
+      loginWithEmailActor: fromPromise<User, { email: string; password: string }>(
+        async ({ input }) => {
+          const { email, password } = input
+          if (!email || !password) {
+            throw new Error('Email and password are required.')
+          }
+          const userCredential = await signInWithEmailAndPassword(auth, email, password)
+          return userCredential.user
+        },
+      ),
+      loginWithGoogleActor: fromPromise<User, void>(async () => {
+        const provider = new GoogleAuthProvider()
+        const userCredential = await signInWithPopup(auth, provider)
+        return userCredential.user
+      }),
+      logoutActor: fromPromise<void, void>(async () => {
+        await signOut(auth)
+      }),
+    },
+    guards: {},
+  },
 )
