@@ -1,9 +1,9 @@
-# Project Brief: Top Trumps Digital Card Game (Mobile-First)
+# Project Brief: FableForge (Mobile-First Digital Card Game)
 
-This document outlines the project brief for a digital Top Trumps style collectible card game.
+This document outlines the project brief for FableForge, a digital Top Trumps style collectible card game.
 
 ## 1. Project Vision
-To create an engaging, mobile-first Top Trumps card game where users can create custom cards with AI-generated artwork, build decks, and compete against other players in real-time.
+To create an engaging, mobile-first card game, FableForge, where users can create custom cards with AI-generated artwork, build decks, and compete against other players in real-time.
 
 ## 2. Core Game Concept
 *   **Game Type:** Digital collectible card game, Top Trumps style.
@@ -56,7 +56,14 @@ To create an engaging, mobile-first Top Trumps card game where users can create 
 *   **AI Artwork:** Gemini API.
 *   **Image Storage:** Firebase Storage.
 *   **Testing:** Vitest (unit/integration), Playwright (E2E).
-*   **UI/UX:** Mobile-first, clean modern UI with a fantasy theme, dark color palette, purple & gold accents. Typography: Macondo (headings), Nunito Sans (body).
+*   **Iconography:** Font Awesome.
+*   **UI/UX:** Mobile-first "Cleaner Dark Theme". Key characteristics:
+    *   **Color Palette:** Clean dark greys for backgrounds (e.g., `#202124` body, `#2D2E30` panels) with modern purple/violet (e.g., `#7F5AF0`) as primary brand color and teal/cyan (e.g., `#00BFA5`) as secondary accent. Text is primarily off-white (e.g., `#E8EAED`). (Managed via `src/Theme/Tokens.ts`).
+    *   **Typography:** Inter font family for both headings and body text, using different weights for distinction. (Managed via `src/Theme/Tokens.ts` and `@fontsource`).
+    *   **Textures:** Removed from global body background (solid color). Textures to be used subtly and only for specific elements like card backgrounds in the game view.
+    *   **Gradients & Shadows:** Minimized use; gradients very subtle if used, drop shadows light and for functional lift only.
+    *   **Sizing:** Scalable base font size on `:root` with `rem` and `em` units for relative sizing.
+    *   Overall: Modern, clean, and accessible dark UI.
 
 ## 6. Goals
 *   Deliver a functional and engaging MVP (Minimum Viable Product) encompassing the core loop.

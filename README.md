@@ -1,6 +1,7 @@
-# React + TypeScript + Vite
+# FableForge (React + TypeScript + Vite)
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a Top Trumps style digital collectible card game.
 
 Currently, two official plugins are available:
 

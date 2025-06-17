@@ -35,4 +35,27 @@ export default tseslint.config(
       ...reactDom.configs.recommended.rules,
     },
   },
+  // Configuration for the 'functions' directory
+  {
+    files: ['functions/**/*.{ts,tsx}'], // Target files in the functions folder
+    extends: [js.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
+    languageOptions: {
+      ecmaVersion: 2020, // Or appropriate for your Firebase Functions environment
+      globals: {
+        ...globals.node, // Firebase Functions run in a Node.js environment
+      },
+      parserOptions: {
+        project: ['./functions/tsconfig.json'], // Use the tsconfig specific to functions
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    plugins: {
+      // Add any specific plugins for Firebase Functions if needed, otherwise can be minimal
+      // For now, keeping it simple
+    },
+    rules: {
+      // Add or override rules specific to Firebase Functions if necessary
+      // For example, you might have different module system rules or global variable expectations
+    },
+  }
 )

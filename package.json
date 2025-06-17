@@ -1,5 +1,5 @@
 {
-  "name": "myapp",
+  "name": "fableforge",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,6 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/alegreya": "^5.2.6",
+    "@fontsource/inter": "^5.2.6",
+    "@fontsource/metamorphous": "^5.2.6",
+    "@fontsource/nunito-sans": "^5.2.6",
+    "@fontsource/playfair-display": "^5.2.6",
+    "@fortawesome/free-brands-svg-icons": "^6.7.2",
+    "@griffel/react": "^1.5.30",
+    "@headlessui/react": "^2.2.4",
     "@xstate/react": "^5.0.5",
     "firebase": "^11.9.1",
     "react": "^19.1.0",
@@ -19,6 +27,8 @@
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@playwright/test": "^1.53.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
@@ -29,6 +39,7 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "eslint-plugin-react-x": "^1.52.2",
     "globals": "^16.0.0",
+    "jsdom": "^26.1.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
     "vite": "^6.3.5",

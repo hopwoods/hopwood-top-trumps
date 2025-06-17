@@ -34,7 +34,18 @@
 ## 5. ReactJS Specific Best Practices
 *   **Functional Components:** Exclusively use React functional components.
 *   **Custom Hooks for Logic:** Encapsulate component logic, state management (not handled by XState), and side effects into custom React Hooks to keep component files clean, focused on rendering, and to promote reusability of logic.
-*   **`const` for Components:** Prefer `const` for component definitions (e.g., `const MyComponent: React.FC<Props> = (props) => { ... };`).
+*   **Component Typing:** Define component props explicitly using interfaces or types. Avoid `React.FC`.
+    *   Example:
+        ```typescript
+        interface MyComponentProps {
+          title: string;
+          isActive?: boolean;
+        }
+
+        const MyComponent = ({ title, isActive = false }: MyComponentProps) => {
+          // ... component logic
+        };
+        ```
 *   **Playwright Tests:** Generate Playwright tests for UI elements and user flows.
 *   **Co-location:** Follow component co-location guidelines (tests, types, styles with components) as specified in `.clinerules/01-coding-standards.md`.
 

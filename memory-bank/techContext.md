@@ -64,21 +64,31 @@
 *   XState
 *   Firebase (Authentication, Functions, Firestore, Storage)
 *   Gemini API
+*   Font Awesome (for general UI iconography)
 *   Vitest, Playwright
 *   ESLint
 
-## 12. UI/UX Guidelines (As of 2025-06-17)
+## 12. UI/UX Guidelines (As of 2025-06-17 - Cleaner Dark Theme Update)
 
 *   **Overall Approach:** Mobile-first design.
-*   **Visual Style:** Clean modern UI with a strong fantasy theme.
-*   **Color Palette:**
-    *   **Base:** Dark theme (e.g., deep, desaturated blues or charcoals).
-    *   **Primary Accent:** Purple (for primary actions, highlights).
-    *   **Secondary Accent:** Classic Gold (e.g., `#FFD700`, for emphasis, important info, special text/icons).
-    *   **Text & Neutrals:** Off-whites and light grays for readability against the dark base.
-*   **Typography:**
-    *   **Headings/Titles (sparingly):** Macondo (Google Font).
-    *   **Body Text & General UI:** Nunito Sans (Google Font).
+*   **Visual Style:** "Cleaner Dark Theme" - modern, refined, and accessible dark UI.
+*   **Color Palette (Managed in `src/Theme/Tokens.ts` and applied via CSS Variables):**
+    *   **Backgrounds:** Clean dark greys (e.g., `backgroundBody: '#202124'`, `panelColor: '#2D2E30'`).
+    *   **Primary Brand Color:** Modern purple/violet (e.g., `brandPrimary: '#7F5AF0'`) for key actions.
+    *   **Secondary Accent:** Teal/cyan (e.g., `brandSecondary: '#00BFA5'`) for links and secondary highlights.
+    *   **Text:** Primarily off-white (e.g., `textPrimary: '#E8EAED'`) for high contrast and readability.
+*   **Typography (Managed in `src/Theme/Tokens.ts` and imported via `@fontsource`):**
+    *   **Font Family:** "Inter" for both headings and body text, using different weights and sizes for hierarchy.
+    *   **Sizing:** Scalable base `font-size` on `:root` (using `clamp()`). All other typographic elements, paddings, and margins to use `rem` or `em` units for responsiveness and accessibility.
+*   **Textures:**
+    *   **Global Background:** Solid color (no body texture).
+    *   **Card Elements:** Textures to be used subtly and only for specific elements like card backgrounds in the game view (e.g., `worn-dots.png`).
+*   **Gradients & Shadows:**
+    *   **Gradients:** Minimized; used very subtly if at all (e.g., slight button depth).
+    *   **Drop Shadows:** Minimized; light and used for functional lift of interactive elements only.
+*   **Buttons:** Simplified styling. Primary buttons with solid brand color background. Secondary/other buttons with less emphasis (e.g., panel color background with border).
+*   **Tertiary Actions:** Styled as text links, not buttons.
+*   **Iconography:** Font Awesome for general UI icons.
 *   **Key Principles:**
     *   High contrast for readability on mobile.
     *   Intuitive touch targets and navigation.

@@ -130,3 +130,55 @@ We've made significant progress in defining the project's technical foundation a
 *   Develop UI components for Login, Registration, and Home Page.
 *   Connect these components to `appMachine`.
 *   Write unit tests for `appMachine` and component/E2E tests.
+
+---
+## Progress Update: 2025-06-18 (Early AM)
+
+**VI. Theme Refactor to "Cleaner Dark Theme" & App Renaming:**
+
+1.  **App Renaming:**
+    *   Project officially named "FableForge".
+    *   Updated in `package.json` (name field).
+    *   Updated in `public/index.html` and root `index.html` (`<title>` tag).
+    *   Updated in `README.md` and `src/Components/HomePage/HomePage.tsx`.
+    *   CSS variable prefix changed from `--hopwood-` to `--fableforge-` in `src/Theme/GlobalStyles.ts` and all component `.styles.ts` files.
+2.  **New Font Implementation:**
+    *   Installed `@fontsource/inter`.
+    *   Updated `src/index.css` to import "Inter" weights (300, 400, 500, 700).
+    *   Removed previous font imports (Playfair Display, Alegreya, Metamorphous, Nunito Sans).
+3.  **Theme Token Overhaul (`src/Theme/Tokens.ts`):**
+    *   **Colors:** Defined a new "Cleaner Dark Theme" palette (dark greys for backgrounds, modern purple/violet primary, teal/cyan secondary accent, off-white text).
+    *   **Typography:** Set "Inter" as `fontFamilyHeading` and `fontFamilyBody`. Updated font weight tokens.
+    *   **Shadows & Radii:** Simplified `shadowTokens` (minimized use) and standardized `borderRadiiTokens` for a cleaner look.
+4.  **Global Style Refactor (`src/Theme/GlobalStyles.ts`):**
+    *   Updated to use new `--fableforge-` CSS variable prefix.
+    *   Body background changed to solid color (texture removed).
+    *   Default styles for headings, paragraphs, links, buttons, and inputs updated to reflect the cleaner aesthetic (Inter font, new colors, simplified buttons, minimized shadows).
+    *   Replaced deprecated Griffel shorthands (e.g., `shorthands.padding`) with direct CSS properties or valid non-deprecated shorthands (e.g., `shorthands.borderColor` where appropriate).
+5.  **Component Style Refactor (`*.styles.ts` files):**
+    *   All component style files (`LoadingIndicator`, `AppLayout`, `AuthPage`, `LoginPage`, `HomePage`) updated to:
+        *   Use the new `--fableforge-` CSS variable prefix.
+        *   Align with the "Cleaner Dark Theme" (new colors, Inter font, simpler button styles, minimized shadows/gradients).
+        *   Replace deprecated Griffel shorthands with direct CSS properties or valid non-deprecated shorthands.
+    *   `AuthPage.tsx` updated to style tertiary actions (toggle between login/register) as text links (`styles.toggleLink`) instead of buttons.
+6.  **Documentation Updates:**
+    *   `memory-bank/projectbrief.md` and `memory-bank/techContext.md` updated to reflect the "FableForge" name and the new "Cleaner Dark Theme" details.
+    *   `.clinerules/08-styling-griffel.md` updated to clarify usage of Griffel shorthands (prefer longhands or non-deprecated specific shorthands).
+7.  **Linting & Build Stability:**
+    *   Resolved various ESLint and TypeScript errors that arose during refactoring.
+    *   Addressed persistent ESLint "unsafe" warnings in `LoginPage.test.tsx` by refining mock typings and adhering to the documented strategy of using file-level ESLint disable comments when tests and build pass but static analysis remains overly cautious for complex mocks. (Ultimately, the disable comments were found to be unnecessary after mock refinement).
+    *   Ensured `pnpm lint` runs clean (or with only acceptable, documented warnings like unused disable directives if they become necessary again).
+    *   Ensured `pnpm test` (Vitest unit tests) pass.
+    *   Ensured `pnpm build` completes successfully.
+
+**Current Status:**
+*   The application has been rebranded to "FableForge".
+*   A new "Cleaner Dark Theme" using the "Inter" font and a refined color palette is implemented.
+*   Styling has been simplified, with minimized textures, gradients, and shadows.
+*   Button styles are cleaner, and tertiary actions are styled as links.
+*   Codebase is linted, tests pass, and the project builds successfully.
+
+**Next Steps Planned:**
+*   Proceed with UI development for the Registration Page.
+*   Continue connecting UI components to `appMachine`.
+*   Expand unit and E2E test coverage.

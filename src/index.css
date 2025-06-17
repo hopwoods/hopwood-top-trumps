@@ -1,68 +1,25 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* Import Fontsource fonts for the cleaner dark theme */
+@import '@fontsource/inter/300.css'; /* Light */
+@import '@fontsource/inter/400.css'; /* Regular */
+@import '@fontsource/inter/500.css'; /* Medium */
+@import '@fontsource/inter/700.css'; /* Bold */
+/* Removed Playfair Display and Alegreya imports */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+/*
+  Global styles are now primarily managed by src/Theme/GlobalStyles.ts using Griffel.
+  This file (index.css) should ideally only contain @fontsource imports
+  or very minimal, global resets that cannot be (or are inconveniently) handled by Griffel's makeStaticStyles.
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  The :root variables and body styles previously here are now defined in GlobalStyles.ts
+  using CSS variables derived from src/Theme/Tokens.ts.
+*/
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* Minimal reset that can remain here if not covered by Griffel's static styles */
+html {
+  line-height: 1.15; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+  margin: 0; /* Moved to GlobalStyles.ts, but good to have a base here too */
 }
