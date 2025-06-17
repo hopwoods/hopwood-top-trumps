@@ -26,20 +26,45 @@ XState v5 offers significantly improved built-in TypeScript support, allowing fo
     *   XState v5 is designed to infer types for events within `on` clauses, and for the `event` objects passed to actions, guards, and services.
     *   If more specific event typing is needed within implementations (actions, guards, etc.), you can type the `event` parameter explicitly.
 
-4.  **Using the Setup API (Optional but Recommended for Complex Logic):**
-    *   For defining actions, actors (services), and guards, consider using the second argument of `createMachine` (the `setup` API). This often provides the best type inference and organization for implementations.
-    *   Example:
+4.  **Using the `setup` API (Recommended for All Machines):**
+    *   XState v5 introduces a `setup` function that is the recommended way to define all machine implementations (actors, actions, guards) and to provide strong typing for the machine's context, events, and other aspects.
+    *   This API significantly improves type inference and helps avoid common TypeScript issues.
+    *   The pattern is `setup({ types, actors, actions, guards }).createMachine({ ...machine configuration... })`.
+    *   **`types` Property:** Use the `types` property within `setup` to provide TypeScript with hints about your machine's context, events, input, etc. This is crucial for good type safety.
         ```typescript
-        createMachine({ /* machine config */ }, {
+        import { setup } from 'xstate';
+        import type { MyContext, MyEvent } from './MyMachine.types';
+
+        const machine = setup({
+          types: {} as {
+            context: MyContext,
+            events: MyEvent,
+            // input: MyInputType, // If the machine accepts input
+            // guards: { type: 'myGuardType', params: MyGuardParams }, // For typed guards
+            // actions: { type: 'myActionType', params: MyActionParams }, // For typed actions
+          },
+          actors: {
+            myActor: fromPromise(async () => { /* ... */ }),
+          },
           actions: {
             myAction: ({ context, event }) => { /* ... */ },
           },
-          actors: { /* ... */ },
-          guards: { /* ... */ },
+          guards: {
+            myGuard: ({ context, event }) => { return true; },
+          }
+        }).createMachine({
+          // ... machine configuration (id, initial, context, states)
+          // Initial context values are provided here
+          context: { /* initial context data */ } satisfies MyContext,
         });
         ```
+    *   **Benefits of `setup`:**
+        *   Superior type inference for all machine parts.
+        *   Clear separation of machine configuration and implementation logic.
+        *   Helps resolve complex TypeScript errors that can occur with the older two-argument `createMachine` pattern.
+        *   Encourages co-location of implementations or clear import strategies if implementations are in separate files.
 
-## Benefits:
+## General Benefits of Strong Typing in XState:
 *   Streamlined machine definitions with less boilerplate.
 *   Robust autocompletion and type checking.
 *   Errors caught at compile-time.

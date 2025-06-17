@@ -93,3 +93,40 @@ We've made significant progress in defining the project's technical foundation a
 *   Begin creating UI components based on the defined UI/UX guidelines.
 
 ---
+
+## Progress Update: 2025-06-17 (Evening)
+
+**V. AppMachine Refactoring & ESLint Enhancements:**
+
+1.  **Firebase Authentication Implementation:**
+    *   Integrated Firebase SDK and initialized Firebase in `src/Firebase/FirebaseConfig.ts`.
+    *   Updated `AppMachine.ts` to use the `User` type from `firebase/auth` (via `AppMachine.types.ts`).
+    *   Implemented actors (services) for `checkAuthStatus`, `loginWithEmail`, `loginWithGoogle`, and `logout` using Firebase authentication functions.
+    *   The machine now correctly invokes these actors for authentication flows.
+2.  **ESLint Configuration Enhanced (as per README.md):**
+    *   Enabled type-aware linting rules (`recommendedTypeChecked`) in `eslint.config.js`.
+    *   Installed and configured `eslint-plugin-react-x` and `eslint-plugin-react-dom`.
+3.  **New `.clinerules` Added:**
+    *   `05-type-definitions.md`: Guideline for co-locating TypeScript type definitions.
+    *   `06-xstate-structure.md`: Guidelines for XState machine architecture, including co-locating actors/guards and rationale for multiple machines.
+    *   `07-task-completion-guidelines.md`: Rule to ensure project builds successfully before task completion.
+4.  **`AppMachine.ts` Refactoring for Structure and Type Safety:**
+    *   Moved `AppContext` and `AppEvent` to `src/Machines/AppMachine.types.ts`.
+    *   Refactored `AppMachine.ts` to use the XState v5 `setup()` API, which significantly improved TypeScript inference and resolved a persistent `createMachine` generic type error.
+    *   Moved actor definitions (e.g., `checkAuthStatusActor`, `loginWithEmailActor`) into separate files within `src/Machines/AppMachine/Services/` as per `06-xstate-structure.md`.
+    *   Addressed ESLint errors arising from stricter type checking, particularly for `event.data` in `onError` handlers.
+5.  **Key Learnings & Clarifications (Continued):**
+    *   **XState `setup()` API:** Confirmed its effectiveness in improving type safety and resolving complex TypeScript errors with `createMachine`.
+    *   **Co-location Benefits:** Practical application of co-locating types and actor logic, leading to a more modular `AppMachine`.
+    *   **Strict ESLint Rules:** Navigated challenges with `typescript-eslint`'s `recommendedTypeChecked` rules, especially around `AnyEventObject` and `event.data` access, finding pragmatic solutions to satisfy the linter.
+    *   **File Path Management:** Reinforced the importance of accurate relative import paths during refactoring.
+
+**Current Status:**
+*   The `AppMachine` is now refactored for better structure and type safety, with Firebase authentication logic integrated.
+*   Project coding standards and guidelines in `.clinerules` have been expanded.
+*   The project currently builds successfully.
+
+**Next Steps Planned:**
+*   Develop UI components for Login, Registration, and Home Page.
+*   Connect these components to `appMachine`.
+*   Write unit tests for `appMachine` and component/E2E tests.

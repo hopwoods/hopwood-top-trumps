@@ -1,13 +1,17 @@
 import { setup, assign, type AnyEventObject } from 'xstate'
-// User type is now primarily used within actor files or AppMachine.types.ts
-// import { type User } from 'firebase/auth' // Removed as User is in AppContext
-import type { AppContext, AppEvent } from './AppMachine.types'
+// 'User' type is imported in AppMachine.types.ts, no longer needed here directly
+// import {
+//   type User,
+// } from 'firebase/auth'
+// auth instance is used in actors
+// import { auth } from '../../Firebase/FirebaseConfig'
+import type { AppContext, AppEvent } from '../AppMachine.types' // Corrected path
 
-// Import actors from their new locations
-import { checkAuthStatusActor } from './AppMachine/Services/CheckAuthStatus.actor'
-import { loginWithEmailActor } from './AppMachine/Services/LoginWithEmail.actor'
-import { loginWithGoogleActor } from './AppMachine/Services/LoginWithGoogle.actor'
-import { logoutActor } from './AppMachine/Services/Logout.actor'
+// Import actors
+import { checkAuthStatusActor } from './Services/CheckAuthStatus.actor'
+import { loginWithEmailActor } from './Services/LoginWithEmail.actor'
+import { loginWithGoogleActor } from './Services/LoginWithGoogle.actor'
+import { logoutActor } from './Services/Logout.actor'
 
 export const appMachine = setup({
   types: {} as {
@@ -28,7 +32,7 @@ export const appMachine = setup({
   context: {
     user: null,
     error: null,
-  } satisfies AppContext, // Ensure initial context satisfies the type
+  },
   states: {
     initializing: {
       invoke: {
@@ -71,7 +75,7 @@ export const appMachine = setup({
         submittingEmail: {
           invoke: {
             src: 'loginWithEmailActor',
-            input: ({ event }: { event: AppEvent }) => { // Explicitly type event here
+            input: ({ event }) => {
               const loginEvent = event as Extract<AppEvent, { type: 'LOGIN_WITH_EMAIL' }>
               return { email: loginEvent.email, password: loginEvent.password }
             },
