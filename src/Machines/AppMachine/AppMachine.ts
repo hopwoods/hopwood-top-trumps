@@ -77,6 +77,7 @@ export const appMachine = setup({
           },
         },
         submittingRegistration: { // Added state
+          entry: () => console.log('[AppMachine] Entered submittingRegistration state'),
           invoke: {
             src: 'registerWithEmailActor',
             input: ({ event }) => {
@@ -87,7 +88,10 @@ export const appMachine = setup({
             onDone: {
               target: '#app.authenticated.home',
               actions: assign({
-                user: ({ event }) => event.output, // event.output is User from Firebase
+                user: ({ event }) => {
+                  console.log('[AppMachine] Registration successful, user:', event.output)
+                  return event.output
+                },
                 error: null,
               }),
             },
@@ -95,10 +99,17 @@ export const appMachine = setup({
               target: 'loginForm', // Or a specific registration form state if different
               actions: assign({
                 error: ({ event }: { event: AnyEventObject }) => {
+                  console.error('[AppMachine] Registration failed, raw event.data:', event.data)
+                  if (event.data instanceof Error) {
+                    console.log('[AppMachine] event.data is an Error instance, message:', event.data.message)
+                    return event.data.message;
+                  }
                   if (event.data && typeof (event.data as { message?: unknown }).message === 'string') {
+                    console.log('[AppMachine] event.data has a message property:', (event.data as { message: string }).message)
                     return (event.data as { message: string }).message
                   }
-                  return 'Registration failed.'
+                  console.log('[AppMachine] event.data is not an Error or has no message, defaulting error.')
+                  return 'Firebase registration failed with an unknown error type.' // Default to our specific message
                 },
               }),
             },

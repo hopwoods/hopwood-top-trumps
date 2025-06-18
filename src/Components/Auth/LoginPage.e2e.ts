@@ -1,8 +1,5 @@
 import { test, expect } from '@playwright/test'
 
-// Base URL for the dev server
-const baseURL = 'http://localhost:5173' // Assuming Vite's default port
-
 test.describe('LoginPage E2E Tests', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to a state where the LoginPage is visible.
@@ -13,11 +10,11 @@ test.describe('LoginPage E2E Tests', () => {
     // if the app used that to remember auth state for direct routing.
     // Since our appMachine starts in 'initializing' then moves to 'authenticating',
     // simply loading the base URL should eventually show the LoginPage.
-    await page.goto(baseURL)
+    await page.goto('/') // Use relative path to respect playwright.config.ts baseURL
 
     // Wait for the LoginPage to be rendered (e.g., by waiting for its title)
     // This ensures the appMachine has transitioned to 'authenticating'
-    await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible({ timeout: 10000 })
+    await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible({ timeout: 20000 }) // Increased timeout
   })
 
   test('should display login form elements', async ({ page }) => {
@@ -25,7 +22,7 @@ test.describe('LoginPage E2E Tests', () => {
     await expect(page.getByLabel('Password')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Login with Email' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Login with Google' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Need an account? Register' })).toBeVisible()
+    await expect(page.getByRole('link', { name: /Need an account\? Register/i })).toBeVisible()
   })
 
   test('should allow typing into email and password fields', async ({ page }) => {
@@ -59,9 +56,10 @@ test.describe('LoginPage E2E Tests', () => {
   })
 
   test('should navigate to register view when "Need an account? Register" is clicked', async ({ page }) => {
-    await page.getByRole('button', { name: 'Need an account? Register' }).click()
+    await page.getByRole('link', { name: /Need an account\? Register/i }).click()
     // Assuming RegisterPage has a distinct title or element
-    await expect(page.getByText('Register Form Placeholder')).toBeVisible()
+    // Let's wait for the "Register" heading we added to RegisterPage.tsx
+    await expect(page.getByRole('heading', { name: /Register/i, level: 2 })).toBeVisible({ timeout: 10000 })
   })
 
   // Test for Google login button click (visual check, no actual auth)

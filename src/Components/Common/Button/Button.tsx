@@ -27,7 +27,7 @@ export const Button = ({
 
   return (
     <button className={buttonClasses} disabled={disabled || isLoading} type={type} {...rest}>
-      {isLoading && <FontAwesomeIcon icon={faSpinner} spin className={styles.spinner} />}
+      {isLoading && <FontAwesomeIcon icon={faSpinner} spin className={styles.spinner} data-testid="button-spinner" />}
       <span className={mergeClasses(styles.buttonContent, isLoading ? styles.contentHidden : '')}>
         {iconLeft && !isLoading && <span className={styles.iconStyles}><FontAwesomeIcon icon={iconLeft}  /></span>}
         {children}

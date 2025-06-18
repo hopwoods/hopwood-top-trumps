@@ -1,6 +1,13 @@
 import { makeStyles } from '@griffel/react'
 
 export const useRegisterPageStyles = makeStyles({
+  title: {
+    fontFamily: 'var(--fableforge-typography-font-family-heading)',
+    fontSize: 'var(--fableforge-typography-font-size3xl)',
+    color: 'var(--fableforge-color-text-primary)',
+    textAlign: 'center',
+    marginBottom: 'var(--fableforge-spacing-l)',
+  },
   form: {
     display: 'flex',
     flexDirection: 'column',

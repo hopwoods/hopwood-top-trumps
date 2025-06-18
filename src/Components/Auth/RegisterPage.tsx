@@ -23,7 +23,13 @@ const RegisterPage = () => {
 
   return (
     <>
-      <form onSubmit={handleRegister} className={styles.form}>
+      <form
+        data-testid="register-form"
+        onSubmit={handleRegister}
+        className={styles.form}
+        data-submitting={isLoading ? 'true' : 'false'} // Add data attribute for E2E
+      >
+        <h2 className={styles.title}>Register</h2>
         <img src="/assets/images/fable-forge-logo-2.PNG" alt="Fable Forge Logo" className={styles.logo} />
         <Input
           type="email"
@@ -62,10 +68,10 @@ const RegisterPage = () => {
           autoComplete="new-password"
         />
 
-        {passwordMismatch && <p className={styles.errorMessage}>Passwords do not match.</p>}
-        {error && !passwordMismatch && <p className={styles.errorMessage}>{error}</p>}
+        {passwordMismatch && <p data-testid="password-mismatch-error" className={styles.errorMessage}>Passwords do not match.</p>}
+        {error && !passwordMismatch && <p data-testid="generic-error-message" className={styles.errorMessage}>{error}</p>}
 
-        <Button type="submit" variant="primary" disabled={isLoading}>
+        <Button type="submit" variant="primary" disabled={isLoading} data-testid="register-submit-button">
           {isLoading ? <FontAwesomeIcon icon={faSpinner} spin /> : <FontAwesomeIcon icon={faUserPlus} />}
           Register
         </Button>

@@ -1,0 +1,10 @@
+# Ignore Playwright config file
+playwright.config.ts
+
+# Ignore build output
+dist/
+node_modules/
+coverage/
+.turbo/
+*.log
+*.lock
