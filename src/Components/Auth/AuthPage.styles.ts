@@ -8,16 +8,36 @@ export const useAuthPageStyles = makeStyles({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '80vh', // Ensure it takes up good space
-    padding: 'var(--fableforge-spacing-l)',
+    padding: 0,
+    backgroundColor: 'var(--fableforge-color-panel-color)', // Use panelColor from theme
+    border: '1px solid var(--fableforge-color-brand-secondary)', // Gold border
+    borderRadius: 'var(--fableforge-border-l)',
+    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)', // More pronounced shadow
+    position: 'relative',
+    overflow: 'clip',
+
+    '::before': {
+      content: '""',
+      position: 'absolute',
+      top: '28em',
+      left: '18em',
+      width: '15em',
+      height: '30em',
+      background: 'linear-gradient(to top,rgb(78, 74, 74),rgb(37, 38, 41))',
+      opacity: '0.6',
+      zIndex: '1',
+      rotate: '230deg',
+    },
   },
   formContainer: {
-    backgroundColor: 'var(--fableforge-color-panel-color)',
+    backgroundColor: 'var(--fableforge-color-transparent)',
     padding: 'var(--fableforge-spacing-xl)',
     borderRadius: 'var(--fableforge-border-l)',
     boxShadow: 'var(--fableforge-shadow-s)',
     width: '100%',
-    maxWidth: '400px',
+    maxWidth: '40vw',
+    border: '12px solid var(--fableforge-color-black)', // Gold border
+    zIndex: 2
   },
   // Tertiary actions like toggle links should be styled as links, not buttons
   toggleLink: {

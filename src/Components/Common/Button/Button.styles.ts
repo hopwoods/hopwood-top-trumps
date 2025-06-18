@@ -27,6 +27,13 @@ export const useButtonStyles = makeStyles({
       outlineStyle: 'solid',
     },
   },
+  buttonContent: {
+    display: 'grid',
+    gridTemplateColumns: '1.5em 1fr',
+    gridTemplateRows: 'min-content',
+    justifyContent: 'center',
+    lineHeight: 1
+  },
   primary: {
     backgroundColor: 'var(--fableforge-color-brand-primary)',
     color: 'var(--fableforge-color-text-primary)',
@@ -92,8 +99,12 @@ export const useButtonStyles = makeStyles({
     transform: 'translate(-50%, -50%)',
     color: 'currentColor', // Inherit color from button text
   },
-  icon: {
+  iconStyles: {
+    display: 'flex',
     // Basic icon styling if needed, e.g., display: 'flex'
+    marginRight: 'var(--fableforge-spacing-xs)',
+    position: 'relative',
+    top: '0.5em'
   },
 })
 

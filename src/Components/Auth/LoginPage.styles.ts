@@ -3,11 +3,6 @@ import { makeStyles /* shorthands removed if not used elsewhere */ } from '@grif
 // import { colorTokens, spacingTokens, typographyTokens, borderRadiiTokens } from '../../Theme/Tokens';
 
 export const useLoginPageStyles = makeStyles({
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 'var(--fableforge-spacing-m)',
-  },
   title: {
     fontFamily: 'var(--fableforge-typography-font-family-heading)',
     fontSize: 'var(--fableforge-typography-font-size3xl)',
@@ -23,6 +18,19 @@ export const useLoginPageStyles = makeStyles({
     marginTop: 'var(--fableforge-spacing-xs)',
   },
   icon: {
-    // marginRight: 'var(--fableforge-spacing-xs)',
+    marginRight: '10px !important',
+  },
+  logo: {
+    width: '100%', // Adjust as needed
+    height: 'auto',
+    marginBottom: 'var(--fableforge-spacing-l)',
+    display: 'block',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--fableforge-spacing-m)',
   },
 })

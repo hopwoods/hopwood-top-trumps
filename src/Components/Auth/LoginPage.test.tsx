@@ -50,7 +50,7 @@ describe('LoginPage Component', () => {
 
   it('renders the login form with email and password fields', () => {
     render(<LoginPage />)
-    expect(screen.getByRole('heading', { name: /login/i })).toBeInTheDocument()
+    expect(screen.getByAltText(/Fable Forge Logo/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /login with email/i })).toBeInTheDocument()

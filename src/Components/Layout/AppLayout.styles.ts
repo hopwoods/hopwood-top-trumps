@@ -5,7 +5,6 @@ export const useAppLayoutStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '100vh',
     // backgroundColor is inherited from body (var(--fableforge-color-background-body))
   },
   header: {

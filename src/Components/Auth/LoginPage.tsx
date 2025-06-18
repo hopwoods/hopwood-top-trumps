@@ -39,8 +39,8 @@ const LoginPage = (/* props: LoginPageProps */) => {
   }
 
   return (
-    <>
-      <h2 className={styles.title}>Login</h2>
+    <div id="login-form-container">
+      <img src="public/assets/images/fable-forge-logo-2.png" alt="Fable Forge Logo" className={styles.logo} />
       <form onSubmit={handleEmailLogin} className={styles.form}>
         <Input
           type="email"
@@ -67,15 +67,7 @@ const LoginPage = (/* props: LoginPageProps */) => {
 
         {error !== null && <p className={styles.errorMessage}>{error}</p>}
 
-        <Button type="submit" variant="primary" disabled={isLoading}>
-          {isLoadingEmail ? (
-            <FontAwesomeIcon icon={faSpinner} spin />
-          ) : (
-            <FontAwesomeIcon icon={faEnvelope} />
-          )}
-          Login with Email
-        </Button>
-        <Button type="button" variant="secondary" onClick={handleGoogleLogin} disabled={isLoading}>
+        <Button type="submit" variant="primary" onClick={handleGoogleLogin} disabled={isLoading}>
           {isLoadingGoogle ? (
             <FontAwesomeIcon icon={faSpinner} spin />
           ) : (
@@ -83,8 +75,16 @@ const LoginPage = (/* props: LoginPageProps */) => {
           )}
           Login with Google
         </Button>
+        <Button type="submit" variant="secondary" disabled={isLoading}>
+          {isLoadingEmail ? (
+            <FontAwesomeIcon icon={faSpinner} spin />
+          ) : (
+            <FontAwesomeIcon icon={faEnvelope} />
+          )}
+          Login with Email
+        </Button>
       </form>
-    </>
+    </div>
   )
 }
 

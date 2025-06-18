@@ -24,17 +24,13 @@ const AuthPage = () => {
   const [showLogin, setShowLogin] = useState(true)
 
   return (
-    <div className={styles.root}>
+    <div id="auth-page-root" className={styles.root}>
       {showLogin ? (
         <div className={styles.formContainer}>
           <LoginPage />
-          <button
-            type="button"
-            onClick={() => setShowLogin(false)}
-            className={styles.toggleLink}
-          >
+          <a href='' onClick={() => setShowLogin(false)} className={styles.toggleLink}>
             Need an account? Register
-          </button>
+          </a>
         </div>
       ) : (
         // When RegisterPage is implemented, it will replace TempRegisterPage

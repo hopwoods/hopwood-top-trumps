@@ -3,20 +3,22 @@
 export const colorTokens = {
   // Cleaner Dark Theme Palette
   backgroundBody: '#202124', // Dark grey
-  panelColor: '#2D2E30',    // Slightly lighter for surfaces/panels
+  panelColor: '#262D35',    // Slightly lighter for surfaces/panels
   backgroundSubtle: '#3C4043', // For subtle backgrounds or hover states on dark elements
 
   textPrimary: '#E8EAED',   // Off-white for primary text
   textSecondary: '#BDC1C6', // Lighter grey for secondary text
   textDisabled: '#9AA0A6',  // Grey for disabled states
 
-  brandPrimary: '#7F5AF0',      // Modern Purple/Violet
-  brandPrimaryHover: '#9272F2', // Lighter purple for hover
-  brandPrimaryActive: '#6B48D7', // Darker purple for active/pressed
+  brandPrimary: '#8B0000',      // Blood Red
+  brandPrimaryHover: '#A52A2A', // Lighter Blood Red
+  brandPrimaryActive: '#660000', // Darker Blood Red
 
-  brandSecondary: '#00BFA5',     // Teal/Cyan accent
-  brandSecondaryHover: '#00DBC2',
-  brandSecondaryActive: '#00A890',
+  brandSecondary: '#B8860B',     // Muted Gold
+  brandSecondaryHover: '#CDAD00',
+  brandSecondaryActive: '#806517',
+
+  black: '#000000',
 
   // Semantic Colors (can be adjusted for better harmony with the new palette)
   error: '#EA4335', // Google's Red
