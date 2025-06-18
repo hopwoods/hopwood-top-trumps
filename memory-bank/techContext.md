@@ -94,3 +94,13 @@
     *   Intuitive touch targets and navigation.
     *   Card design optimized for mobile legibility and interaction.
     *   Subtle animations and transitions to enhance the modern feel.
+
+## 13. Layout Learnings (As of 2025-06-18)
+*   **Full-Viewport Child Components within Layouts:**
+    *   When a child component (e.g., `AuthPage`) is intended to manage its own full viewport width (e.g., `width: 100vw`), its direct parent container within a shared layout (e.g., `AppLayout`'s `main` element) must be styled to permit this.
+    *   **Problem Encountered:** `AuthPage` (with `root` styled to `100vw`) appeared cut off when `AppLayout`'s `main` element had its padding removed. This was because `AppLayout`'s `main` might not have been correctly handling or allowing a `100vw` child without causing overflow, especially if `AppLayout` itself or its `main` element had implicit or explicit width constraints or lacked `box-sizing: border-box` with padding.
+    *   **Solution/Guideline:** The parent layout's content area (e.g., `AppLayout`'s `main`) should either:
+        1.  Have no horizontal padding or width restrictions that would conflict with a `100vw` child.
+        2.  Or, if the parent layout *does* apply site-wide padding/max-width to its content area, then child "pages" like `AuthPage` should use `width: 100%` (of the padded parent) rather than `100vw` for their main container.
+    *   This is now also reflected in `.clinerules/08-styling-griffel.md` under "Parent Layout Accommodation."
+    *   Ensure `box-sizing: border-box` is consistently applied to layout containers that use padding and explicit widths/heights to avoid unexpected dimension calculations.

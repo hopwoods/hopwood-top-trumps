@@ -59,6 +59,7 @@
     *   Utilize modern CSS layout techniques like Flexbox and Grid for structuring components and pages.
     *   Ensure layouts are fluid and adapt gracefully to different screen sizes and content variations.
     *   For common layout patterns like centered content or card layouts, establish consistent styling approaches (e.g., the `AuthPage` "card" pattern).
+    *   **Parent Layout Accommodation:** When a child component is designed to manage its own full-viewport width (e.g., `width: 100vw` for a specific page background or container like `AuthPage`), its direct parent within a shared layout (e.g., `AppLayout`'s `main` content area) MUST be styled to permit this. This typically means the parent content area should not have restrictive horizontal padding or fixed widths that would conflict with the child's `100vw` intention, unless that child is specifically designed to be constrained by that padding. Ensure `box-sizing: border-box` is used appropriately on layout containers.
 
 ## 5. Accessibility
 *   Ensure sufficient color contrast by defining accessible color combinations in `src/Theme/Tokens.ts` and using them appropriately.

@@ -18,11 +18,6 @@ export const useAppLayoutStyles = makeStyles({
   },
   main: {
     flexGrow: 1,
-    padding: 'var(--fableforge-spacing-l)',
-    // To center content and limit width on larger screens:
-    // width: '100%',
-    // maxWidth: '1200px', // Example max width
-    // margin: '0 auto', // Center the content block
   },
   footer: {
     backgroundColor: 'var(--fableforge-color-panel-color)',
