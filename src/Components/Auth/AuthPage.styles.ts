@@ -70,7 +70,10 @@ export const useAuthPageStyles = makeStyles({
       maxWidth: 'none', // Remove desktop max-width
       minHeight: 'auto', // Let content define height
       padding: '1.5em', // Approx var(--fableforge-spacing-l)
-      borderWidth: '1px', // Thinner border on mobile
+      borderTopWidth: '1px',
+      borderRightWidth: '1px',
+      borderBottomWidth: '1px',
+      borderLeftWidth: '1px',
     },
   },
   // Tertiary actions like toggle links should be styled as links, not buttons

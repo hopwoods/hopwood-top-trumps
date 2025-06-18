@@ -30,7 +30,7 @@ vi.mock('@fortawesome/react-fontawesome', () => ({
 // Define interfaces for mocked component props
 interface MockInputProps {
   id: string
-  label: string
+  label: string // Kept as required for the mock's label rendering
   value: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   type: string
@@ -38,7 +38,13 @@ interface MockInputProps {
   required?: boolean
   disabled?: boolean
   iconLeft?: { iconName: string }
+  iconRight?: { iconName: string } // Added
+  error?: string // Added
   autoComplete?: string
+  // Add any other props that the actual Input component might receive and that the mock needs to handle
+  // For example, if 'className' is passed and needs to be applied or ignored.
+  // For now, focusing on the props causing the TS errors.
+  className?: string // Assuming className might be passed
 }
 
 interface MockButtonProps {
@@ -54,12 +60,20 @@ interface MockButtonProps {
 
 // Mock child components if they have complex internal logic not relevant to this test
 vi.mock('../Common/Input/Input', () => ({
-  Input: (props: MockInputProps) => (
-    <div>
-      <label htmlFor={props.id}>{props.label}</label>
-      <input {...props} data-testid={props.id} />
-    </div>
-  ),
+  Input: (props: MockInputProps) => {
+    // Destructure custom props that should not be spread onto the native input
+    // Removed iconRight as it's not used in this simplified mock
+    const { label, iconLeft, error, ...restInputProps } = props
+    return (
+      <div>
+        {label && <label htmlFor={props.id}>{label}</label>}
+        {/* Optionally render the icon if needed for test assertions, though not strictly necessary for fixing the warning */}
+        {iconLeft && <i className={`fa ${iconLeft.iconName} mock-icon-left`} />}
+        <input {...restInputProps} data-testid={props.id} />
+        {error && <p className="mock-error">{error}</p>}
+      </div>
+    )
+  },
 }))
 
 vi.mock('../Common/Button/Button', () => ({
