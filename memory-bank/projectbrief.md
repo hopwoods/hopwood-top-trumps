@@ -70,3 +70,13 @@ To create an engaging, mobile-first card game, FableForge, where users can creat
 *   Provide a smooth and intuitive user experience, especially on mobile devices.
 *   Successfully integrate AI artwork generation as a key feature.
 *   Implement robust real-time multiplayer functionality.
+
+## 7. Future Enhancements
+*   **Progressive Web App (PWA) Support:**
+    *   Enable the application to be installable on mobile devices.
+    *   Implement push notifications (e.g., using Firebase Cloud Messaging with Firebase Functions) to alert users of game challenges or other relevant events.
+*   **AI Opponent:**
+    *   Develop functionality for single-player games against an AI opponent.
+    *   Create and manage predefined decks for AI opponents.
+*   **Enhanced Home Page:**
+    *   After login, present users with clear navigation options, such as "Manage Decks" and "Play Game" buttons.
