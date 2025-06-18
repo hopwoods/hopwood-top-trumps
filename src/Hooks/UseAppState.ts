@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { createActorContext } from '@xstate/react'
 import type { ActorRefFrom, SnapshotFrom } from 'xstate'
 import { appMachine } from '../Machines/AppMachine/AppMachine'
-import type { AppContext } from '../Machines/AppMachine.types'
+import type { AppContext } from '../Machines/AppMachine/AppMachine.types'
 
 export const GlobalStateContext = createActorContext(appMachine)
 
