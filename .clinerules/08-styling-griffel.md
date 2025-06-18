@@ -35,6 +35,8 @@
         ```
     *   For very simple components, `makeStyles` can be defined directly within the `.tsx` file.
 
+    The `Button` component in `src/Components/Common/Button/` should now be considered the standard way to style buttons, using the principles outlined above.
+
 ## 4. Scalable Units
 *   **Root Font Size:** `src/Theme/GlobalStyles.ts` defines a scalable root `font-size` (e.g., using `clamp()`).
 *   **Relative Units:** All typography-related CSS properties (e.g., `font-size` in components, `padding`, `margin`, `line-height` where contextually appropriate) should primarily use `rem` units (relative to the root font size) or `em` units (relative to the parent element's font size) to ensure proper scaling and accessibility. Fixed `px` values should be used sparingly and only when a non-scalable dimension is explicitly required.

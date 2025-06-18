@@ -45,9 +45,9 @@
         const MyComponent = ({ title, isActive = false }: MyComponentProps) => {
           // ... component logic
         };
-        ```
+```
 *   **Playwright Tests:** Generate Playwright tests for UI elements and user flows.
-*   **Co-location:** Follow component co-location guidelines (tests, types, styles with components) as specified in `.clinerules/01-coding-standards.md`.
+*   **Co-location:** Follow component co-location guidelines (tests, types, styles with components) as specified in `.clinerules/01-coding-standards.md` and prioritize creating reusable components as detailed in `.clinerules/09-component-reusability.md`.
 
 
 ## 6. General Coding Standards (as per existing instructions)

@@ -49,47 +49,6 @@ export const useLoginPageStyles = makeStyles({
       outlineStyle: 'none',
     },
   },
-  button: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 'var(--fableforge-spacing-s)',
-    padding: 'var(--fableforge-spacing-s)',
-    fontSize: 'var(--fableforge-typography-font-size-m)',
-    fontWeight: 'var(--fableforge-typography-font-weight-medium)',
-    borderRadius: 'var(--fableforge-border-m)',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s ease-in-out, border-color 0.2s ease-in-out',
-    textAlign: 'center',
-    border: '1px solid transparent',
-  },
-  submitButton: {
-    backgroundColor: 'var(--fableforge-color-brand-primary)',
-    color: 'var(--fableforge-color-text-primary)',
-    ':hover': {
-      backgroundColor: 'var(--fableforge-color-brand-primary-hover)',
-    },
-    ':focus-visible': {
-      outlineOffset: '2px',
-      outline: '2px solid var(--fableforge-color-brand-secondary)',
-    },
-  },
-  googleButton: {
-    backgroundColor: 'var(--fableforge-color-panel-color)',
-    color: 'var(--fableforge-color-text-primary)',
-    border: '1px solid var(--fableforge-color-border-opaque)',
-    ':hover': {
-      backgroundColor: 'var(--fableforge-color-background-subtle)',
-      borderTopColor: 'var(--fableforge-color-border-subtle)',
-      borderRightColor: 'var(--fableforge-color-border-subtle)',
-      borderBottomColor: 'var(--fableforge-color-border-subtle)',
-      borderLeftColor: 'var(--fableforge-color-border-subtle)',
-    },
-    ':focus-visible': {
-      outlineOffset: '2px',
-      outline: '2px solid var(--fableforge-color-brand-secondary)',
-    },
-  },
   errorMessage: {
     color: 'var(--fableforge-color-error)',
     fontSize: 'var(--fableforge-typography-font-size-s)',

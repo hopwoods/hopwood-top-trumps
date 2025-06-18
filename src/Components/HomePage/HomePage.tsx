@@ -2,6 +2,7 @@ import { useAppState } from '../../Hooks/UseAppState' // React removed
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { useHomePageStyles } from './HomePage.styles'
+import { Button } from '../../Components/Common/Button/Button'
 
 const HomePage = () => {
   const styles = useHomePageStyles()
@@ -16,10 +17,10 @@ const HomePage = () => {
     <div className={styles.root}>
       <h1 className={styles.title}>Welcome to FableForge!</h1>
       {user && <p className={styles.userInfo}>Logged in as: {user.email || 'User'}</p>}
-      <button type="button" onClick={handleLogout} className={styles.logoutButton}>
-        <FontAwesomeIcon icon={faSignOutAlt} className={styles.icon} />
+      <Button type="button" variant="secondary" onClick={handleLogout}>
+        <FontAwesomeIcon icon={faSignOutAlt} />
         Logout
-      </button>
+      </Button>
       {/* More content will go here */}
     </div>
   )

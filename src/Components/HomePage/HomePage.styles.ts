@@ -22,33 +22,6 @@ export const useHomePageStyles = makeStyles({
     color: 'var(--fableforge-color-text-secondary)',
     marginBottom: 'var(--fableforge-spacing-xl)',
   },
-  logoutButton: {
-    fontFamily: 'var(--fableforge-typography-font-family-body)',
-    fontSize: 'var(--fableforge-typography-font-size-m)',
-    fontWeight: 'var(--fableforge-typography-font-weight-medium)',
-    color: 'var(--fableforge-color-text-primary)',
-    backgroundColor: 'var(--fableforge-color-panel-color)',
-    border: '1px solid var(--fableforge-color-border-opaque)',
-    borderRadius: 'var(--fableforge-border-m)',
-    paddingTop: 'var(--fableforge-spacing-s)',
-    paddingBottom: 'var(--fableforge-spacing-s)',
-    paddingLeft: 'var(--fableforge-spacing-m)',
-    paddingRight: 'var(--fableforge-spacing-m)',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 'var(--fableforge-spacing-s)',
-    ':hover': {
-      backgroundColor: 'var(--fableforge-color-background-subtle)',
-      borderTopColor: 'var(--fableforge-color-border-subtle)',
-      borderRightColor: 'var(--fableforge-color-border-subtle)',
-      borderBottomColor: 'var(--fableforge-color-border-subtle)',
-      borderLeftColor: 'var(--fableforge-color-border-subtle)',
-    },
-    ':focus-visible': {
-        outlineOffset: '2px',
-        outline: '2px solid var(--fableforge-color-brand-secondary)',
-    }
-  },
   icon: {
     // marginRight: 'var(--hopwood-spacing-xs)', // If gap on parent isn't enough
   },

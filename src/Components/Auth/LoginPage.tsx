@@ -4,7 +4,7 @@ import { useAppState } from '../../Hooks/UseAppState'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faLock, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { faGoogle } from '@fortawesome/free-brands-svg-icons'
-import { mergeClasses } from '@griffel/react'
+import { Button } from '../../Components/Common/Button/Button'
 
 // The AuthPage will handle switching between Login and Register,
 // so LoginPage doesn't need onSwitchToRegister prop directly anymore.
@@ -74,40 +74,23 @@ const LoginPage = (/* props: LoginPageProps */) => {
 
         {error !== null && <p className={styles.errorMessage}>{error}</p>}
 
-        <button
-          type="submit"
-          className={mergeClasses(styles.button, styles.submitButton)}
-          disabled={isLoading}
-        >
+        <Button type="submit" variant="primary" disabled={isLoading} >
           {isLoadingEmail ? (
-            <FontAwesomeIcon icon={faSpinner} spin className={styles.icon} />
+            <FontAwesomeIcon icon={faSpinner} spin />
           ) : (
-            <FontAwesomeIcon icon={faEnvelope} className={styles.icon} />
+            <FontAwesomeIcon icon={faEnvelope} />
           )}
           Login with Email
-        </button>
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          className={mergeClasses(styles.button, styles.googleButton)}
-          disabled={isLoading}
-        >
+        </Button>
+        <Button type="button" variant="secondary" onClick={handleGoogleLogin} disabled={isLoading}>
           {isLoadingGoogle ? (
-            <FontAwesomeIcon icon={faSpinner} spin className={styles.icon} />
+            <FontAwesomeIcon icon={faSpinner} spin />
           ) : (
-            <FontAwesomeIcon icon={faGoogle} className={styles.icon} />
+            <FontAwesomeIcon icon={faGoogle} />
           )}
           Login with Google
-        </button>
+        </Button>
       </form>
-      {/* The toggle to Register page is handled by AuthPage */}
-      {/* <button
-        onClick={props.onSwitchToRegister}
-        className={styles.toggleButton} // Assuming a toggleButton style exists or is added
-        disabled={isLoading}
-      >
-        Need an account? Register
-      </button> */}
     </>
   )
 }

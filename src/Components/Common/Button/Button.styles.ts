@@ -43,18 +43,26 @@ export const useButtonStyles = makeStyles({
   secondary: {
     backgroundColor: 'var(--fableforge-color-panel-color)',
     color: 'var(--fableforge-color-text-primary)',
-    borderColor: 'var(--fableforge-color-border-opaque)',
-    borderStyle: 'solid', // Ensure border is visible
+    borderTopColor: 'var(--fableforge-color-border-opaque)',
+    borderRightColor: 'var(--fableforge-color-border-opaque)',
+    borderBottomColor: 'var(--fableforge-color-border-opaque)',
+    borderLeftColor: 'var(--fableforge-color-border-opaque)',
     ':hover': {
       backgroundColor: 'var(--fableforge-color-background-subtle)',
-      borderColor: 'var(--fableforge-color-border-subtle)',
+      borderTopColor: 'var(--fableforge-color-border-subtle)',
+      borderRightColor: 'var(--fableforge-color-border-subtle)',
+      borderBottomColor: 'var(--fableforge-color-border-subtle)',
+      borderLeftColor: 'var(--fableforge-color-border-subtle)',
     },
     ':active': {
       backgroundColor: 'var(--fableforge-color-background-body)', // Darker subtle for active
     },
     ':focus-visible': {
       outlineColor: 'var(--fableforge-color-brand-secondary)',
-      borderColor: 'var(--fableforge-color-brand-secondary)', // Highlight border on focus
+      borderTopColor: 'var(--fableforge-color-brand-secondary)', // Highlight border on focus
+      borderRightColor: 'var(--fableforge-color-brand-secondary)', // Highlight border on focus
+      borderBottomColor: 'var(--fableforge-color-brand-secondary)', // Highlight border on focus
+      borderLeftColor: 'var(--fableforge-color-brand-secondary)', // Highlight border on focus
     },
   },
   disabled: {
