@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faLock, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { faGoogle } from '@fortawesome/free-brands-svg-icons'
 import { Button } from '../../Components/Common/Button/Button'
+import { Input } from '../../Components/Common/Input/Input'
 
 // The AuthPage will handle switching between Login and Register,
 // so LoginPage doesn't need onSwitchToRegister prop directly anymore.
@@ -41,40 +42,32 @@ const LoginPage = (/* props: LoginPageProps */) => {
     <>
       <h2 className={styles.title}>Login</h2>
       <form onSubmit={handleEmailLogin} className={styles.form}>
-        <div className={styles.fieldContainer}>
-          <label htmlFor="login-email" className={styles.label}>
-            <FontAwesomeIcon icon={faEnvelope} className={styles.icon} /> Email
-          </label>
-          <input
-            type="email"
-            id="login-email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className={styles.input}
-            disabled={isLoading}
-          />
-        </div>
-        <div className={styles.fieldContainer}>
-          <label htmlFor="login-password" className={styles.label}>
-            <FontAwesomeIcon icon={faLock} className={styles.icon} /> Password
-          </label>
-          <input
-            type="password"
-            id="login-password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className={styles.input}
-            disabled={isLoading}
-          />
-        </div>
+        <Input
+          type="email"
+          id="login-email"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          disabled={isLoading}
+          label="Email"
+          iconLeft={faEnvelope}
+        />
+        <Input
+          type="password"
+          id="login-password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          disabled={isLoading}
+          label="Password"
+          iconLeft={faLock}
+        />
 
         {error !== null && <p className={styles.errorMessage}>{error}</p>}
 
-        <Button type="submit" variant="primary" disabled={isLoading} >
+        <Button type="submit" variant="primary" disabled={isLoading}>
           {isLoadingEmail ? (
             <FontAwesomeIcon icon={faSpinner} spin />
           ) : (
