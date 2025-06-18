@@ -1,47 +1,32 @@
-import React, { useState } from 'react'
 import { useLoginPageStyles } from './LoginPage.styles'
-import { useAppState } from '../../Hooks/UseAppState'
+import { useLoginPage } from './UseLoginPage' // Import the custom hook
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faLock, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { faGoogle } from '@fortawesome/free-brands-svg-icons'
-import { Button } from '../../Components/Common/Button/Button'
-import { Input } from '../../Components/Common/Input/Input'
+import { Button } from '../Common/Button/Button' // Corrected path
+import { Input } from '../Common/Input/Input' // Corrected path
 
-// The AuthPage will handle switching between Login and Register,
-// so LoginPage doesn't need onSwitchToRegister prop directly anymore.
-// interface LoginPageProps {
-//   onSwitchToRegister: () => void;
-// }
-
-const LoginPage = (/* props: LoginPageProps */) => {
+const LoginPage = () => {
   const styles = useLoginPageStyles()
-  const { appState, send, getAppStateValue } = useAppState()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
-  const error = getAppStateValue('error')
-  // Using object notation for matches, which can be more robust with TypeScript for nested states
-  const isLoadingEmail = appState.matches({ authenticating: 'submittingEmail' })
-  const isLoadingGoogle = appState.matches({ authenticating: 'submittingGoogle' })
-  const isLoading = isLoadingEmail || isLoadingGoogle
-
-  const handleEmailLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!isLoading) {
-      send({ type: 'LOGIN_WITH_EMAIL', email, password })
-    }
-  }
-
-  const handleGoogleLogin = () => {
-    if (!isLoading) {
-      send({ type: 'LOGIN_WITH_GOOGLE' })
-    }
-  }
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    error,
+    isLoadingEmail,
+    isLoadingGoogle,
+    isLoading,
+    handleEmailLogin,
+    handleGoogleLogin,
+  } = useLoginPage()
 
   return (
-    <div id="login-form-container">
-      <img src="public/assets/images/fable-forge-logo-2.png" alt="Fable Forge Logo" className={styles.logo} />
+    // Assuming AuthPage.tsx provides the main container with id="login-form-container"
+    // or similar structure. If LoginPage needs its own specific root div, it can be added.
+    <>
       <form onSubmit={handleEmailLogin} className={styles.form}>
+        <img src="/assets/images/fable-forge-logo-2.PNG" alt="Fable Forge Logo" className={styles.logo} />
         <Input
           type="email"
           id="login-email"
@@ -52,6 +37,7 @@ const LoginPage = (/* props: LoginPageProps */) => {
           disabled={isLoading}
           label="Email"
           iconLeft={faEnvelope}
+          autoComplete="email"
         />
         <Input
           type="password"
@@ -63,11 +49,18 @@ const LoginPage = (/* props: LoginPageProps */) => {
           disabled={isLoading}
           label="Password"
           iconLeft={faLock}
+          autoComplete="current-password"
         />
 
-        {error !== null && <p className={styles.errorMessage}>{error}</p>}
+        {error && <p className={styles.errorMessage}>{error}</p>}
 
-        <Button type="submit" variant="primary" onClick={handleGoogleLogin} disabled={isLoading}>
+        {/*
+          The original LoginPage had the Google login button first, then email.
+          Replicating that order.
+          The onClick for the Google button should be handleGoogleLogin.
+          The form's onSubmit is handleEmailLogin, so the email button should be type="submit".
+        */}
+        <Button type="button" variant="primary" onClick={handleGoogleLogin} disabled={isLoading}>
           {isLoadingGoogle ? (
             <FontAwesomeIcon icon={faSpinner} spin />
           ) : (
@@ -84,7 +77,8 @@ const LoginPage = (/* props: LoginPageProps */) => {
           Login with Email
         </Button>
       </form>
-    </div>
+      {/* The toggle link is handled by AuthPage */}
+    </>
   )
 }
 

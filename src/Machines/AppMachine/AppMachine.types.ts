@@ -13,6 +13,9 @@ export type AppEvent =
   | { type: 'LOGIN_WITH_GOOGLE' }
   | { type: 'LOGIN_SUCCESS'; user: User }
   | { type: 'LOGIN_FAILURE'; error: string }
+  | { type: 'SUBMIT_REGISTRATION'; email: string; password: string }
+  | { type: 'REGISTRATION_SUCCESS'; user: User }
+  | { type: 'REGISTRATION_FAILURE'; error: string }
   | { type: 'LOGOUT' }
   | { type: 'GO_TO_HOME' }
   | { type: 'GO_TO_LOGIN' }

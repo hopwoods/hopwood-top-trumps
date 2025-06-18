@@ -1,17 +1,12 @@
-import { useAppState } from '../../Hooks/UseAppState' // React removed
+import { useHomePageStyles } from './HomePage.styles'
+import { useHomePage } from './UseHomePage' // Import the custom hook
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
-import { useHomePageStyles } from './HomePage.styles'
-import { Button } from '../../Components/Common/Button/Button'
+import { Button } from '../Common/Button/Button' // Corrected path
 
 const HomePage = () => {
   const styles = useHomePageStyles()
-  const { send, getAppStateValue } = useAppState()
-  const user = getAppStateValue('user')
-
-  const handleLogout = () => {
-    send({ type: 'LOGOUT' })
-  }
+  const { user, handleLogout } = useHomePage()
 
   return (
     <div className={styles.root}>

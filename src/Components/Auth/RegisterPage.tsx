@@ -1,33 +1,76 @@
-// import { useAppState } from '../../Hooks/UseAppState' // Will be needed later
-// import './RegisterPage.styles.ts' // Or Griffel styles here
-// React removed
+import { useRegisterPageStyles } from './RegisterPage.styles'
+import { useRegisterPage } from './UseRegisterPage' // Import the custom hook
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEnvelope, faLock, faSpinner, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import { Button } from '../Common/Button/Button'
+import { Input } from '../Common/Input/Input'
 
-// TODO: Implement actual form, styling, and connect to appMachine
 const RegisterPage = () => {
-  // const { send, getAppStateValue } = useAppState()
-  // const error = getAppStateValue('error')
+  const styles = useRegisterPageStyles()
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    passwordMismatch,
+    // setPasswordMismatch, // Not directly used by component, handled in hook
+    error,
+    isLoading,
+    handleRegister,
+  } = useRegisterPage()
 
   return (
-    <div>
-      <h2>Register</h2>
-      {/* {error && <p style={{ color: 'red' }}>Error: {error}</p>} */}
-      <form onSubmit={(e) => e.preventDefault() /* Handle actual submission later */}>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input type="password" id="password" name="password" />
-        </div>
-        <div>
-          <label htmlFor="confirmPassword">Confirm Password:</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" />
-        </div>
-        <button type="submit">Register</button>
+    <>
+      <form onSubmit={handleRegister} className={styles.form}>
+        <img src="/assets/images/fable-forge-logo-2.PNG" alt="Fable Forge Logo" className={styles.logo} />
+        <Input
+          type="email"
+          id="register-email"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          disabled={isLoading}
+          label="Email"
+          iconLeft={faEnvelope}
+          autoComplete="email"
+        />
+        <Input
+          type="password"
+          id="register-password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)} // Simplified, mismatch logic in hook
+          required
+          disabled={isLoading}
+          label="Password"
+          iconLeft={faLock}
+          autoComplete="new-password"
+        />
+        <Input
+          type="password"
+          id="register-confirm-password"
+          name="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)} // Simplified
+          required
+          disabled={isLoading}
+          label="Confirm Password"
+          iconLeft={faLock}
+          autoComplete="new-password"
+        />
+
+        {passwordMismatch && <p className={styles.errorMessage}>Passwords do not match.</p>}
+        {error && !passwordMismatch && <p className={styles.errorMessage}>{error}</p>}
+
+        <Button type="submit" variant="primary" disabled={isLoading}>
+          {isLoading ? <FontAwesomeIcon icon={faSpinner} spin /> : <FontAwesomeIcon icon={faUserPlus} />}
+          Register
+        </Button>
       </form>
-      {/* <button onClick={props.onSwitchToLogin}>Already have an account? Login</button> */}
-    </div>
+    </>
   )
 }
 

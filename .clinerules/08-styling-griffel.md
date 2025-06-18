@@ -37,9 +37,28 @@
 
     The `Button` component in `src/Components/Common/Button/` should now be considered the standard way to style buttons, using the principles outlined above.
 
-## 4. Scalable Units
-*   **Root Font Size:** `src/Theme/GlobalStyles.ts` defines a scalable root `font-size` (e.g., using `clamp()`).
-*   **Relative Units:** All typography-related CSS properties (e.g., `font-size` in components, `padding`, `margin`, `line-height` where contextually appropriate) should primarily use `rem` units (relative to the root font size) or `em` units (relative to the parent element's font size) to ensure proper scaling and accessibility. Fixed `px` values should be used sparingly and only when a non-scalable dimension is explicitly required.
+## 4. Scalable Units and Responsive Design
+*   **Root Font Size:** `src/Theme/GlobalStyles.ts` defines a scalable root `font-size` (e.g., using `clamp()`). This is the basis for `rem` units.
+*   **Prioritize Relative Units (`em`, `rem`):**
+    *   For layout dimensions (widths, heights, padding, margins, etc.) that should scale proportionally with text size and respond to user font preferences, `em` units (relative to the current element's font size) or `rem` units (relative to the root font size) MUST be prioritized.
+    *   This ensures that as the base font size changes (e.g., due to viewport width via `clamp()` or user accessibility settings), the layout scales harmoniously.
+*   **Viewport Units (`vw`, `vh`):**
+    *   Use `vw` (viewport width) and `vh` (viewport height) units for dimensions that need to be directly relative to the viewport size (e.g., full-width hero sections, or ensuring a container takes up 95% of the viewport width on mobile as seen in `AuthPage.styles.ts`).
+*   **Fixed Units (`px`):**
+    *   Use `px` units sparingly. They are appropriate for elements that should not scale with font size, such as:
+        *   Borders (e.g., `border: 1px solid ...`).
+        *   Fine-grained adjustments where a precise, non-scalable dimension is critical (e.g., icon sizes if they are not meant to scale with text, specific offsets).
+        *   Maximum or minimum widths/heights that define hard limits not meant to be relative to font size (though `em` can also be used here if the limit *should* be font-relative).
+*   **Breakpoint Tokens:**
+    *   Responsive design MUST utilize predefined breakpoint tokens from `src/Theme/Tokens.ts` (e.g., `breakpointTokens.tablet`).
+    *   These tokens provide consistent media query thresholds across the application.
+*   **Mobile-First Approach:**
+    *   Styles should generally be written for mobile (smallest viewports) first.
+    *   Use `min-width` media queries to add or override styles for larger viewports (tablet, desktop). Alternatively, `max-width` queries can be used to apply styles *up to* a certain breakpoint, as demonstrated in recent `AuthPage` adjustments. Choose the approach that leads to cleaner and more maintainable CSS for the specific component.
+*   **Layout Techniques:**
+    *   Utilize modern CSS layout techniques like Flexbox and Grid for structuring components and pages.
+    *   Ensure layouts are fluid and adapt gracefully to different screen sizes and content variations.
+    *   For common layout patterns like centered content or card layouts, establish consistent styling approaches (e.g., the `AuthPage` "card" pattern).
 
 ## 5. Accessibility
 *   Ensure sufficient color contrast by defining accessible color combinations in `src/Theme/Tokens.ts` and using them appropriately.

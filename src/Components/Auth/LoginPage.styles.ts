@@ -32,5 +32,7 @@ export const useLoginPageStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--fableforge-spacing-m)',
+    width: '80%', // Form takes 80% of its container (the card)
+    margin: '0 auto', // Center the form if it's narrower than container
   },
 })

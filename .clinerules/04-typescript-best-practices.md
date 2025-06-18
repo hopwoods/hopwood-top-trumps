@@ -1,10 +1,11 @@
 # TypeScript and General Best Practices
 
 ## 1. Type Safety and `any` Type
-*   **Avoid `any`:** The `any` type should be avoided whenever possible. Strive for maximum type safety.
+*   **Strictly Avoid `any`:** The `any` type is strictly forbidden in application code. Maximum type safety is paramount. Do not use ESLint disable comments to bypass `any`-related type errors.
 *   **Explicit Typing:** If types are not automatically inferred or are too broad, provide explicit types.
 *   **Create Types/Interfaces:** Define custom types and interfaces as needed to accurately model data structures and function signatures.
-*   **Placeholder Types:** If a type is temporarily unknown (e.g., pending integration with an external service like Firebase Auth), use a descriptive placeholder type (e.g., `type FirebaseUser = unknown;` or a more specific placeholder interface) rather than `any`, and add a `// TODO:` comment to revisit it.
+*   **Placeholder Types (`unknown`):** If a type is genuinely unknown during initial development (e.g., awaiting an external API definition or complex third-party library integration), use `unknown` as a placeholder. This forces type checking and assertions before use. Add a `// TODO: [JIRA_TICKET/ISSUE_LINK] Refine this 'unknown' type once [reason]` comment to track and resolve it. The use of `unknown` should be temporary and actively managed.
+*   **ESLint Disables for `any`:** Disabling ESLint rules related to `any` (e.g., `@typescript-eslint/no-explicit-any`) in application code is not permitted. Such issues must be resolved by providing proper types. (See `.clinerules/02-testing-strategy.md` for specific, limited exceptions in complex test mocks only).
 
 ## 2. DRY (Don't Repeat Yourself) Principle
 *   **Reusable Logic:** Encapsulate reusable logic into functions, hooks, or services.
@@ -33,7 +34,10 @@
 
 ## 5. ReactJS Specific Best Practices
 *   **Functional Components:** Exclusively use React functional components.
-*   **Custom Hooks for Logic:** Encapsulate component logic, state management (not handled by XState), and side effects into custom React Hooks to keep component files clean, focused on rendering, and to promote reusability of logic.
+*   **Mandatory Custom Hooks for Logic:** All component logic, local state management (e.g., form inputs, UI toggles not managed by a global XState machine), side effects (e.g., API calls not handled by XState actors), and event handlers MUST be encapsulated within custom React Hooks (e.g., `useMyComponentLogic.ts`).
+    *   Component files (`.tsx`) MUST be primarily presentational. They should import and utilize their corresponding custom hook, receiving state and callback functions from it.
+    *   The goal is a clear separation of concerns: hooks handle *how* things work, components handle *what* things look like.
+    *   This promotes reusability, testability (hooks can be tested in isolation), and cleaner component code.
 *   **Component Typing:** Define component props explicitly using interfaces or types. Avoid `React.FC`.
     *   Example:
         ```typescript

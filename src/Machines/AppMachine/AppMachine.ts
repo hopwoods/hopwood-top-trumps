@@ -12,6 +12,7 @@ import { checkAuthStatusActor } from './Services/CheckAuthStatus.actor'
 import { loginWithEmailActor } from './Services/LoginWithEmail.actor'
 import { loginWithGoogleActor } from './Services/LoginWithGoogle.actor'
 import { logoutActor } from './Services/Logout.actor'
+import { registerWithEmailActor } from './Services/RegisterWithEmail.actor' // Added
 
 export const appMachine = setup({
   types: {} as {
@@ -23,6 +24,7 @@ export const appMachine = setup({
     loginWithEmailActor,
     loginWithGoogleActor,
     logoutActor,
+    registerWithEmailActor, // Added
   },
   guards: {},
   actions: {},
@@ -71,6 +73,35 @@ export const appMachine = setup({
           on: {
             LOGIN_WITH_EMAIL: 'submittingEmail',
             LOGIN_WITH_GOOGLE: 'submittingGoogle',
+            SUBMIT_REGISTRATION: 'submittingRegistration', // Added
+          },
+        },
+        submittingRegistration: { // Added state
+          invoke: {
+            src: 'registerWithEmailActor',
+            input: ({ event }) => {
+              // Ensure event is correctly typed for SUBMIT_REGISTRATION
+              const registrationEvent = event as Extract<AppEvent, { type: 'SUBMIT_REGISTRATION' }>
+              return { event: registrationEvent } // Pass the whole event as per actor input
+            },
+            onDone: {
+              target: '#app.authenticated.home',
+              actions: assign({
+                user: ({ event }) => event.output, // event.output is User from Firebase
+                error: null,
+              }),
+            },
+            onError: {
+              target: 'loginForm', // Or a specific registration form state if different
+              actions: assign({
+                error: ({ event }: { event: AnyEventObject }) => {
+                  if (event.data && typeof (event.data as { message?: unknown }).message === 'string') {
+                    return (event.data as { message: string }).message
+                  }
+                  return 'Registration failed.'
+                },
+              }),
+            },
           },
         },
         submittingEmail: {

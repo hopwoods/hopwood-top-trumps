@@ -43,8 +43,15 @@ export const useGlobalStyles = makeStaticStyles({
     WebkitTextSizeAdjust: '100%',
   },
 
+  html: { // Added html styles
+    height: '100%',
+    overflowX: 'hidden',
+  },
+
   body: {
     margin: '0',
+    height: '100%', // Ensure body also takes full height
+    overflowX: 'hidden', // Prevent horizontal scroll on body
     fontFamily: 'var(--fableforge-typography-font-family-body)',
     color: 'var(--fableforge-color-text-primary)',
     backgroundColor: 'var(--fableforge-color-background-body)', // Solid color

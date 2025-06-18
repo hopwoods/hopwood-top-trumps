@@ -1,46 +1,83 @@
-import { makeStyles /* shorthands removed if not used elsewhere */ } from '@griffel/react'
-// Import necessary tokens if directly used, otherwise rely on CSS variables
-// import { spacingTokens, shadowTokens, borderRadiiTokens } from '../../Theme/Tokens';
+import { makeStyles } from '@griffel/react'
+import { breakpointTokens } from '../../Theme/Tokens' // Import breakpointTokens
 
 export const useAuthPageStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 0,
-    backgroundColor: 'var(--fableforge-color-panel-color)', // Use panelColor from theme
-    border: '1px solid var(--fableforge-color-brand-secondary)', // Gold border
-    borderRadius: 'var(--fableforge-border-l)',
-    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)', // More pronounced shadow
-    position: 'relative',
-    overflow: 'clip',
+    alignItems: 'center', // Center the card horizontally
+    justifyContent: 'flex-start', // Align card to the top
+    width: '100vw', // Ensure root takes full viewport width
+    minHeight: '100vh', // Ensure it takes full viewport height
+    paddingTop: 'var(--fableforge-spacing-xl)',
+    paddingLeft: 'var(--fableforge-spacing-m)',
+    paddingRight: 'var(--fableforge-spacing-m)',
+    paddingBottom: 'var(--fableforge-spacing-xl)',
+    backgroundColor: 'var(--fableforge-color-background-body)',
+    // Ensure no horizontal scroll even from padding issues on small screens
+    [`@media (max-width: ${breakpointTokens.tablet})`]: {
+      paddingLeft: '2.5vw', // Ensure padding allows 95vw child to center
+      paddingRight: '2.5vw',
+      paddingTop: 'var(--fableforge-spacing-l)', // Maybe less top/bottom padding on mobile
+      paddingBottom: 'var(--fableforge-spacing-l)',
+    },
+    // border: '1px solid var(--fableforge-color-brand-secondary)',
+    // borderRadius: 'var(--fableforge-border-l)', // Border radius removed from root
+    // boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)', // Shadow removed from root
+    position: 'relative', // Keep for potential future absolute positioned children if any
+    overflow: 'hidden', // Prevent scrollbars on the root itself
+    boxSizing: 'border-box',
+    // '::before': { // Removed from root, will be added to formContainer
+    // },
+  },
+  formContainer: {
+    position: 'relative', // For the ::before pseudo-element positioning
+    overflow: 'hidden',   // To clip the ::before pseudo-element
+    backgroundColor: 'rgba(38, 45, 53, 0.85)', // Dark semi-transparent background for the "card"
+    padding: '2em', // Use em units for padding (approx var(--fableforge-spacing-xl))
+    borderRadius: 'var(--fableforge-border-l)', // Card's border radius
+    boxShadow: '0 0.5em 1.5em rgba(0, 0, 0, 0.6)', // More pronounced shadow for the card itself (em units)
+    width: 'auto', // Let content or max-width define width initially
+    maxWidth: '31.25em', // Approx 500px (500/16)
+    minHeight: '37.5em', // Approx 600px (600/16)
+    border: '2px solid var(--fableforge-color-brand-secondary)', // Gold border for the card
+    zIndex: 2,
+    boxSizing: 'border-box',
+    display: 'flex', // To help center content within the card
+    flexDirection: 'column',
+    justifyContent: 'center', // Center content vertically
+    alignItems: 'center', // Center content horizontally
 
+    // Glossy Sheen for the card
     '::before': {
       content: '""',
       position: 'absolute',
-      top: '28em',
-      left: '18em',
-      width: '15em',
-      height: '30em',
-      background: 'linear-gradient(to top,rgb(78, 74, 74),rgb(37, 38, 41))',
-      opacity: '0.6',
-      zIndex: '1',
-      rotate: '230deg',
+      top: '-50%', // Adjust to position the sheen
+      left: '-50%',
+      width: '200%', // Make it large enough to cover with rotation
+      height: '200%',
+      background:
+        'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.0) 50%, rgba(255, 255, 255, 0.1) 100%)', // Ensured sheen gradient is active
+      opacity: '0.6', // Adjust opacity of sheen
+      transform: 'rotate(25deg)', // Diagonal sheen
+      zIndex: 1, // Behind the form content but above card background
+      pointerEvents: 'none', // Allow clicks to pass through
     },
-  },
-  formContainer: {
-    backgroundColor: 'var(--fableforge-color-transparent)',
-    padding: 'var(--fableforge-spacing-xl)',
-    borderRadius: 'var(--fableforge-border-l)',
-    boxShadow: 'var(--fableforge-shadow-s)',
-    width: '100%',
-    maxWidth: '40vw',
-    border: '12px solid var(--fableforge-color-black)', // Gold border
-    zIndex: 2
+
+    // Responsive adjustments for tablet and below
+    [`@media (max-width: ${breakpointTokens.tablet})`]: {
+      width: '95vw', // Use 95% of viewport width
+      maxWidth: 'none', // Remove desktop max-width
+      minHeight: 'auto', // Let content define height
+      padding: '1.5em', // Approx var(--fableforge-spacing-l)
+      borderWidth: '1px', // Thinner border on mobile
+    },
   },
   // Tertiary actions like toggle links should be styled as links, not buttons
   toggleLink: {
+    // Ensure toggle link is not covered by the sheen
+    position: 'relative',
+    zIndex: 3,
     display: 'block',
     marginTop: 'var(--fableforge-spacing-l)',
     textAlign: 'center',
