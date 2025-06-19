@@ -26,7 +26,6 @@ const LoginPage = () => {
     // or similar structure. If LoginPage needs its own specific root div, it can be added.
     <>
       <form onSubmit={handleEmailLogin} className={styles.form}>
-        <h2 className={styles.title}>Login</h2>
         <img src="/assets/images/fable-forge-logo-2.PNG" alt="Fable Forge Logo" className={styles.logo} />
         <Input
           type="email"
