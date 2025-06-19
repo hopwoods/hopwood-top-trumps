@@ -3,18 +3,34 @@
 
 name: Deploy to Firebase Hosting on merge
 'on':
-  push:
-    branches:
-      - main
+ - pull_request
+ - push
+  
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
     steps:
-      - uses: actions/checkout@v3
-      - run: pnpm build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HOPWOOD_TOP_TRUMPS }}'
-          channelId: live
-          projectId: hopwood-top-trumps
+    - uses: actions/checkout@v4
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm install
+    - name: Build Project
+      run: pnpm build
+    - name: Deploy App
+      uses: FirebaseExtended/action-hosting-deploy@v0
+      with:
+        repoToken: '${{ secrets.GITHUB_TOKEN }}'
+        firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HOPWOOD_TOP_TRUMPS }}'
+        channelId: live
+        projectId: hopwood-top-trumps
