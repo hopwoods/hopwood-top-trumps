@@ -1,31 +1,33 @@
 import { useHeaderStyles } from './Header.styles'
 import type { HeaderProps } from './Header.types'
-import { Button } from '../../Common/Button/Button' // Assuming Button is reusable
+import { mergeClasses } from '@griffel/react'
 
 const Header = ({ onLogout, onNavigateHome, onNavigateManageDecks, onNavigatePlayGame }: HeaderProps) => {
   const styles = useHeaderStyles()
 
-  return (
+  return <>
     <header className={styles.root}>
-      <a href='#' className={styles.logo} onClick={onNavigateHome}>
-        Hopwood Top Trumps
-      </a>
+      <div className={styles.logo} onClick={onNavigateHome}>
+        <img src='/public/assets/images/fable-forge-logo-title.PNG' alt='Fable Forge Logo' />
+      </div>
       <nav className={styles.nav}>
-        <a href='#' className={styles.navLink} onClick={onNavigateHome}>
+        <div className={styles.navLink} onClick={onNavigateHome}>
           Home
-        </a>
-        <a href='#' className={styles.navLink} onClick={onNavigateManageDecks}>
+        </div>
+        <div className={styles.navLink} onClick={onNavigateManageDecks}>
           Manage Decks
-        </a>
-        <a href='#' className={styles.navLink} onClick={onNavigatePlayGame}>
+        </div>
+        <div className={styles.navLink} onClick={onNavigatePlayGame}>
           Play Game
-        </a>
+        </div>
       </nav>
-      <Button className={styles.logoutButton} onClick={onLogout}>
-        Logout
-      </Button>
+      <div className={mergeClasses(styles.logoutButton, styles.navLink)} onClick={onLogout}>
+        Menu
+      </div>
+
     </header>
-  )
+  </>
 }
+
 
 export default Header

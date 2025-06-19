@@ -27,7 +27,7 @@ export const useGlobalStyles = makeStaticStyles({
     ...tokensToCssVars(colorTokens, 'color-'),
     ...tokensToCssVars(typographyTokens, 'typography-'),
     ...tokensToCssVars(spacingTokens, 'spacing-'),
-    ...tokensToCssVars(borderRadiiTokens, 'border-'),
+    ...tokensToCssVars(borderRadiiTokens, 'border-radii-'),
     ...tokensToCssVars(shadowTokens, 'shadow-'), // Generate shadow CSS vars
 
     fontSize: 'var(--fableforge-typography-font-size-root-clamp)',

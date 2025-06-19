@@ -27,7 +27,7 @@ const App = () => {
     // AuthPage will internally manage showing Login or Register based on authMachine's state (or local UI toggle)
     // It will also need access to the authActorRef to pass events to it.
     return (
-      <AppLayout>
+      <AppLayout isAuthenticated={false}>
         <AuthPage />
       </AppLayout>
     )
@@ -35,7 +35,7 @@ const App = () => {
 
   if (authenticatedHome) {
     return (
-      <AppLayout>
+      <AppLayout isAuthenticated={true}>
         <HomePage />
       </AppLayout>
     )

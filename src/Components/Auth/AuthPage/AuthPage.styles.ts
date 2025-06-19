@@ -13,7 +13,7 @@ export const useAuthPageStyles = makeStyles({
     paddingLeft: 'var(--fableforge-spacing-m)',
     paddingRight: 'var(--fableforge-spacing-m)',
     paddingBottom: 'var(--fableforge-spacing-xl)',
-    backgroundColor: 'var(--fableforge-color-background-body)',
+
     // Ensure no horizontal scroll even from padding issues on small screens
     [`@media (max-width: ${breakpointTokens.tablet})`]: {
       paddingLeft: '2.5vw', // Ensure padding allows 95vw child to center
@@ -21,21 +21,16 @@ export const useAuthPageStyles = makeStyles({
       paddingTop: 'var(--fableforge-spacing-l)', // Maybe less top/bottom padding on mobile
       paddingBottom: 'var(--fableforge-spacing-l)',
     },
-    // border: '1px solid var(--fableforge-color-brand-secondary)',
-    // borderRadius: 'var(--fableforge-border-l)', // Border radius removed from root
-    // boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)', // Shadow removed from root
     position: 'relative', // Keep for potential future absolute positioned children if any
     overflow: 'hidden', // Prevent scrollbars on the root itself
     boxSizing: 'border-box',
-    // '::before': { // Removed from root, will be added to formContainer
-    // },
   },
   formContainer: {
     position: 'relative', // For the ::before pseudo-element positioning
     overflow: 'hidden',   // To clip the ::before pseudo-element
     backgroundColor: 'rgba(38, 45, 53, 0.85)', // Dark semi-transparent background for the "card"
     padding: '2em', // Use em units for padding (approx var(--fableforge-spacing-xl))
-    borderRadius: 'var(--fableforge-border-l)', // Card's border radius
+    borderRadius: 'var(--fableforge-border-radii-l)', // Card's border radius
     boxShadow: '0 0.5em 1.5em rgba(0, 0, 0, 0.6)', // More pronounced shadow for the card itself (em units)
     width: 'auto', // Let content or max-width define width initially
     maxWidth: '31.25em', // Approx 500px (500/16)

@@ -3,8 +3,11 @@
 export const colorTokens = {
   // Cleaner Dark Theme Palette
   backgroundBody: '#202124', // Dark grey
-  panelColor: '#262D35',    // Slightly lighter for surfaces/panels
+  panel: '#262D35',    // Slightly lighter for surfaces/panels
   backgroundSubtle: '#3C4043', // For subtle backgrounds or hover states on dark elements
+  header: '#3C444C', // Darker for header backgrounds
+
+  cardBorder: '#0E0F11',
 
   textPrimary: '#E8EAED',   // Off-white for primary text
   textSecondary: '#BDC1C6', // Lighter grey for secondary text
@@ -19,6 +22,7 @@ export const colorTokens = {
   brandSecondaryActive: '#806517',
 
   black: '#000000',
+  white: '#FFFFFF',
 
   // Semantic Colors (can be adjusted for better harmony with the new palette)
   error: '#EA4335', // Google's Red
@@ -72,11 +76,10 @@ export const borderRadiiTokens = {
 } as const
 
 export const shadowTokens = {
-  // Minimized and subtle shadows
   xs: '0 1px 2px 0 rgba(0, 0, 0, 0.1)', // Very subtle
-  s: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)', // Standard subtle
-  // Remove heavier shadows m, l unless specifically needed for a floating element
-  // m: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+  s: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+  m: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+  l: '0 8px 12px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
 } as const
 
 export const zIndexTokens = {

@@ -48,7 +48,7 @@ export const useButtonStyles = makeStyles({
     },
   },
   secondary: {
-    backgroundColor: 'var(--fableforge-color-panel-color)',
+    backgroundColor: 'var(--fableforge-color-panel)',
     color: 'var(--fableforge-color-text-primary)',
     borderTopColor: 'var(--fableforge-color-border-opaque)',
     borderRightColor: 'var(--fableforge-color-border-opaque)',

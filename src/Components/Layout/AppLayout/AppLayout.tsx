@@ -2,12 +2,14 @@ import React from 'react'
 import { useAppLayoutStyles } from './AppLayout.styles'
 import Header from '../Header/Header'
 import { GlobalStateContext } from '../../../Hooks/UseAppState'
+import { mergeClasses } from '../../Common/Button/Button.styles'
 
 interface AppLayoutProps {
+  isAuthenticated?: boolean
   children: React.ReactNode
 }
 
-const AppLayout = ({ children }: AppLayoutProps) => {
+const AppLayout = ({ children, isAuthenticated }: AppLayoutProps) => {
   const styles = useAppLayoutStyles()
   const appActor = GlobalStateContext.useActorRef()
 
@@ -29,15 +31,26 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
   return (
     <div className={styles.root}>
-      <Header
-        onLogout={handleLogout}
-        onNavigateHome={handleNavigateHome}
-        onNavigateManageDecks={handleNavigateManageDecks}
-        onNavigatePlayGame={handleNavigatePlayGame}
-      />
-      <main className={styles.main}>
-        {children}
+      {
+        isAuthenticated && <Header
+          onLogout={handleLogout}
+          onNavigateHome={handleNavigateHome}
+          onNavigateManageDecks={handleNavigateManageDecks}
+          onNavigatePlayGame={handleNavigatePlayGame}
+        />
+      }
+      <main className={mergeClasses('main',styles.main, isAuthenticated && styles.isAuthenticated)}>
+        <div className={mergeClasses('cardBorder', isAuthenticated && styles.cardBorder)}>
+          <div className={mergeClasses('mainContent', styles.mainContent)}>
+          {children}
+          </div>
+          </div>
       </main>
+      {isAuthenticated && (
+        <footer className={styles.footer}>
+          <p>&copy; {new Date().getFullYear()} FableForge. All rights reserved.</p>
+        </footer>
+      )}
     </div>
   )
 }
