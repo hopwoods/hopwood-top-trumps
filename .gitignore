@@ -25,3 +25,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Testing Reports
+playwright-report
+test-results
+playwright-report/**/*.*
+test-results/**/*.*
+test-results/.last-run.json
+playwright-report/index.html

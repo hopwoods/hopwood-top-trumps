@@ -14,9 +14,9 @@ const RegisterPage = () => {
     setPassword,
     confirmPassword,
     setConfirmPassword,
-    passwordMismatch,
-    // setPasswordMismatch, // Not directly used by component, handled in hook
-    error,
+    // passwordMismatch, // This is now part of validationErrors
+    machineError, // Renamed in the hook
+    validationErrors, // New state for form validation errors
     isLoading,
     handleRegister,
   } = useRegisterPage()
@@ -42,7 +42,9 @@ const RegisterPage = () => {
           label="Email"
           iconLeft={faEnvelope}
           autoComplete="email"
+          error={validationErrors.email}
         />
+        {/* The Input component now handles displaying its own error message */}
         <Input
           type="password"
           id="register-password"
@@ -54,7 +56,9 @@ const RegisterPage = () => {
           label="Password"
           iconLeft={faLock}
           autoComplete="new-password"
+          error={validationErrors.password}
         />
+        {/* The Input component now handles displaying its own error message */}
         <Input
           type="password"
           id="register-confirm-password"
@@ -66,10 +70,16 @@ const RegisterPage = () => {
           label="Confirm Password"
           iconLeft={faLock}
           autoComplete="new-password"
+          error={validationErrors.confirmPassword}
         />
+        {/* The Input component now handles displaying its own error message */}
 
-        {passwordMismatch && <p data-testid="password-mismatch-error" className={styles.errorMessage}>Passwords do not match.</p>}
-        {error && !passwordMismatch && <p data-testid="generic-error-message" className={styles.errorMessage}>{error}</p>}
+        {/* Display machine error if no specific validation errors are present for that field */}
+        {machineError && !validationErrors.email && !validationErrors.password && !validationErrors.confirmPassword && (
+          <p data-testid="generic-error-message" className={styles.errorMessage}>
+            {machineError}
+          </p>
+        )}
 
         <Button type="submit" variant="primary" disabled={isLoading} data-testid="register-submit-button">
           {isLoading ? <FontAwesomeIcon icon={faSpinner} spin /> : <FontAwesomeIcon icon={faUserPlus} />}

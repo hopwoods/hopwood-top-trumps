@@ -41,7 +41,7 @@ export const Input = (props: Props) => {
           className={mergeClasses(styles.input, className)} // Apply styles including passed className
           data-testid="test-input"
         />
-        {error && <p className={styles.errorMessage}>{error}</p>}
+        {error && <p className={styles.errorMessage} data-testid="input-error-message">{error}</p>}
       </div>
     )
   }

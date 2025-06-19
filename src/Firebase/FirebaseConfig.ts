@@ -1,18 +1,17 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAoxVqrygoKEeq4Unr2BX1N8XIi4TsB4sI",
   authDomain: "hopwood-top-trumps.firebaseapp.com",
   projectId: "hopwood-top-trumps",
-  storageBucket: "hopwood-top-trumps.firebasestorage.app", // Corrected from .firebasestorage.app to .appspot.com
+  storageBucket: "hopwood-top-trumps.firebasestorage.app",
   messagingSenderId: "32711001149",
   appId: "1:32711001149:web:ea14830d44a70463385654",
   measurementId: "G-W5M02P4E40"

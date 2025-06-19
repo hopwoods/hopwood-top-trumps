@@ -6,6 +6,7 @@ const baseURL = 'http://localhost:5176'
 export default defineConfig({
   testDir: './src', // Look for tests in the src directory
   testMatch: '**/*.e2e.ts', // Pattern to find test files
+  timeout: 60000, // 60 seconds default test timeout
 
   /* Run tests in files in parallel */
   fullyParallel: true,

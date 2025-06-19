@@ -92,10 +92,14 @@ describe('RegisterPage', () => {
       appState: {
         matches: vi.fn().mockReturnValue(false), // Default to not loading
         value: { authenticating: 'loginForm' }, // Default state
-        context: { error: null, user: null }, // Add default context
+        context: { error: null, user: null },
       },
       send: mockSend,
-      getAppStateValue: mockGetAppStateValue.mockReturnValue(null), // Default to no error
+      // getAppStateValue is called by useRegisterPage to get what it calls `machineError`
+      getAppStateValue: mockGetAppStateValue.mockImplementation((path) => {
+        if (path === 'error') return null // Default to no machine error
+        return undefined
+      }),
     })
   })
 
@@ -135,66 +139,201 @@ describe('RegisterPage', () => {
     fireEvent.change(passwordInput, { target: { value: 'password123' } })
     fireEvent.change(confirmPasswordInput, { target: { value: 'password456' } })
 
-    const form = screen.getByTestId('register-form') // Use data-testid
+    const form = screen.getByTestId('register-form')
     act(() => {
-      fireEvent.submit(form) // Explicitly submit the form
+      fireEvent.submit(form)
     })
 
     await waitFor(() => {
-      expect(screen.getByTestId('password-mismatch-error')).toBeInTheDocument()
-      expect(screen.getByText(/Passwords do not match./i)).toBeInTheDocument() // Keep text check as well
+      // Password mismatch is now part of validationErrors.confirmPassword
+      expect(screen.getByTestId('confirm-password-error')).toBeInTheDocument()
+      // The text check is implicitly covered by checking the content of 'confirm-password-error'
+      // If getByTestId finds the element, and later we check its text content, that's sufficient.
+      // For this specific error, the text is "Passwords do not match."
+      expect(screen.getByTestId('confirm-password-error')).toHaveTextContent(/Passwords do not match./i)
     })
     expect(mockSend).not.toHaveBeenCalled()
   })
 
-  it('calls handleRegister and sends SUBMIT_REGISTRATION event if passwords match', () => {
+  it('calls handleRegister and sends SUBMIT_REGISTRATION event if form is valid', () => {
     renderWithProvider(<RegisterPage />)
     const emailInput = screen.getByLabelText(/Email/i)
     const passwordInput = screen.getByLabelText(/^Password$/i)
     const confirmPasswordInput = screen.getByLabelText(/Confirm Password/i)
     const registerButton = screen.getByTestId('register-button')
 
+    // Valid inputs
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
-    fireEvent.change(passwordInput, { target: { value: 'password123' } })
-    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } })
+    fireEvent.change(passwordInput, { target: { value: 'ValidPass1!' } })
+    fireEvent.change(confirmPasswordInput, { target: { value: 'ValidPass1!' } })
     fireEvent.click(registerButton)
 
-    expect(screen.queryByText(/Passwords do not match./i)).not.toBeInTheDocument()
+    expect(screen.queryByTestId('email-error')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('password-error')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('confirm-password-error')).not.toBeInTheDocument()
+
     expect(mockSend).toHaveBeenCalledWith({
       type: 'SUBMIT_REGISTRATION',
       email: 'test@example.com',
-      password: 'password123',
+      password: 'ValidPass1!',
     })
   })
 
-  it('displays a general error message from appState if not password mismatch', () => {
-    mockGetAppStateValue.mockReturnValue('Registration failed. Please try again.')
+  it('displays a machine error message if no validation errors are present for specific fields', () => {
+    mockGetAppStateValue.mockImplementation((path) => {
+      if (path === 'error') return 'Registration failed due to a server issue.'
+      return undefined
+    })
     renderWithProvider(<RegisterPage />)
-    expect(screen.getByText(/Registration failed. Please try again./i)).toBeInTheDocument()
+    // Ensure no validation errors are triggered by default empty fields for this specific test
+    // We are testing the display of machineError when other validation errors are not present
+    // (or rather, when the conditions for displaying machineError are met)
+    expect(screen.getByTestId('generic-error-message')).toBeInTheDocument()
+    expect(screen.getByText(/Registration failed due to a server issue./i)).toBeInTheDocument()
   })
 
-  it('does not display general error if password mismatch error is present', async () => {
-    mockGetAppStateValue.mockReturnValue('Some other error') // General error
+  it('does not display machine error if a specific field validation error is present', async () => {
+    mockGetAppStateValue.mockImplementation((path) => {
+      if (path === 'error') return 'Some machine error'
+      return undefined
+    })
     renderWithProvider(<RegisterPage />)
 
-    // Trigger password mismatch
-    const passwordInput = screen.getByLabelText(/^Password$/i)
-    const confirmPasswordInput = screen.getByLabelText(/Confirm Password/i)
-    // const registerButton = screen.getByTestId('register-button') // Unused
-    fireEvent.change(passwordInput, { target: { value: 'password123' } })
-    fireEvent.change(confirmPasswordInput, { target: { value: 'password456' } })
-
-    const form = screen.getByTestId('register-form') // Use data-testid
+    // Trigger a specific validation error (e.g., empty email)
+    const form = screen.getByTestId('register-form')
+    fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'ValidPass1!' } })
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'ValidPass1!' } })
     act(() => {
-      fireEvent.submit(form) // Explicitly submit the form
+      fireEvent.submit(form)
     })
 
     await waitFor(() => {
-      expect(screen.getByTestId('password-mismatch-error')).toBeInTheDocument()
-      expect(screen.getByText(/Passwords do not match./i)).toBeInTheDocument() // Keep text check as well
+      expect(screen.getByTestId('email-error')).toBeInTheDocument() // e.g. "Email cannot be empty"
     })
-    expect(screen.queryByText(/Some other error/i)).not.toBeInTheDocument()
+    // The generic-error-message for machineError should not be visible
+    // because a specific validation error (email-error) is present.
+    expect(screen.queryByTestId('generic-error-message')).not.toBeInTheDocument()
+    expect(screen.queryByText(/Some machine error/i)).not.toBeInTheDocument()
   })
+
+
+  // --- New Validation Tests ---
+
+  it('shows error if email is empty on submit', async () => {
+    renderWithProvider(<RegisterPage />)
+    const form = screen.getByTestId('register-form')
+    fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'ValidPass1!' } })
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'ValidPass1!' } })
+    act(() => { fireEvent.submit(form) })
+    await waitFor(() => {
+      expect(screen.getByTestId('email-error')).toHaveTextContent('Email cannot be empty.')
+    })
+    expect(mockSend).not.toHaveBeenCalled()
+  })
+
+  it('shows error if email is invalid on submit', async () => {
+    renderWithProvider(<RegisterPage />)
+    const form = screen.getByTestId('register-form')
+    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'invalidemail' } })
+    fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'ValidPass1!' } })
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'ValidPass1!' } })
+    act(() => { fireEvent.submit(form) })
+    await waitFor(() => {
+      expect(screen.getByTestId('email-error')).toHaveTextContent('Email address is invalid.')
+    })
+    expect(mockSend).not.toHaveBeenCalled()
+  })
+
+  it('shows error if password is empty on submit', async () => {
+    renderWithProvider(<RegisterPage />)
+    const form = screen.getByTestId('register-form')
+    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@example.com' } })
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'ValidPass1!' } })
+    act(() => { fireEvent.submit(form) })
+    await waitFor(() => {
+      expect(screen.getByTestId('password-error')).toHaveTextContent('Password cannot be empty.')
+    })
+    expect(mockSend).not.toHaveBeenCalled()
+  })
+
+  it('shows error if password is too short', async () => {
+    renderWithProvider(<RegisterPage />)
+    const form = screen.getByTestId('register-form')
+    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@example.com' } })
+    fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'Short1!' } })
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'Short1!' } })
+    act(() => { fireEvent.submit(form) })
+    await waitFor(() => {
+      expect(screen.getByTestId('password-error')).toHaveTextContent('Password must be at least 8 characters long.')
+    })
+    expect(mockSend).not.toHaveBeenCalled()
+  })
+
+  it('shows error if password has no uppercase letter', async () => {
+    renderWithProvider(<RegisterPage />)
+    const form = screen.getByTestId('register-form')
+    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@example.com' } })
+    fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'nouppercase1!' } })
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'nouppercase1!' } })
+    act(() => { fireEvent.submit(form) })
+    await waitFor(() => {
+      expect(screen.getByTestId('password-error')).toHaveTextContent('Password must contain at least one uppercase letter.')
+    })
+    expect(mockSend).not.toHaveBeenCalled()
+  })
+
+  it('shows error if password has no lowercase letter', async () => {
+    renderWithProvider(<RegisterPage />)
+    const form = screen.getByTestId('register-form')
+    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@example.com' } })
+    fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'NOLOWERCASE1!' } })
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'NOLOWERCASE1!' } })
+    act(() => { fireEvent.submit(form) })
+    await waitFor(() => {
+      expect(screen.getByTestId('password-error')).toHaveTextContent('Password must contain at least one lowercase letter.')
+    })
+    expect(mockSend).not.toHaveBeenCalled()
+  })
+
+  it('shows error if password has no number', async () => {
+    renderWithProvider(<RegisterPage />)
+    const form = screen.getByTestId('register-form')
+    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@example.com' } })
+    fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'NoNumberPass!' } })
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'NoNumberPass!' } })
+    act(() => { fireEvent.submit(form) })
+    await waitFor(() => {
+      expect(screen.getByTestId('password-error')).toHaveTextContent('Password must contain at least one number.')
+    })
+    expect(mockSend).not.toHaveBeenCalled()
+  })
+
+  it('shows error if password has no special character', async () => {
+    renderWithProvider(<RegisterPage />)
+    const form = screen.getByTestId('register-form')
+    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@example.com' } })
+    fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'NoSpecial1Pass' } })
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'NoSpecial1Pass' } })
+    act(() => { fireEvent.submit(form) })
+    await waitFor(() => {
+      expect(screen.getByTestId('password-error')).toHaveTextContent('Password must contain at least one special character.')
+    })
+    expect(mockSend).not.toHaveBeenCalled()
+  })
+
+  it('shows error if confirm password is empty on submit', async () => {
+    renderWithProvider(<RegisterPage />)
+    const form = screen.getByTestId('register-form')
+    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@example.com' } })
+    fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'ValidPass1!' } })
+    act(() => { fireEvent.submit(form) })
+    await waitFor(() => {
+      expect(screen.getByTestId('confirm-password-error')).toHaveTextContent('Confirm Password cannot be empty.')
+    })
+    expect(mockSend).not.toHaveBeenCalled()
+  })
+
+  // End of New Validation Tests
 
   it('disables form elements and shows spinner when isLoading is true', () => {
     ;(UseAppState.useAppState as Mock).mockReturnValue({

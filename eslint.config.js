@@ -7,7 +7,21 @@ import reactX from 'eslint-plugin-react-x'
 import reactDom from 'eslint-plugin-react-dom'
 
 export default tseslint.config(
-  { ignores: ['dist'] },
+  {
+    ignores: [
+      'dist/',
+      'node_modules/',
+      'coverage/',
+      '.turbo/',
+      '*.log',
+      '*.lock',
+      'playwright.config.ts',
+      'playwright-report/', // Added from common ignore patterns
+      'test-results/', // Added from common ignore patterns
+      'fable-forge-functions/lib/', // Common for compiled TS in functions
+      'fable-forge-functions/node_modules/',
+    ],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
     files: ['**/*.{ts,tsx}'],
@@ -35,18 +49,18 @@ export default tseslint.config(
       ...reactDom.configs.recommended.rules,
     },
   },
-  // Configuration for the 'functions' directory
+  // Configuration for the 'fable-forge-functions' directory
   {
-    files: ['functions/**/*.{ts,tsx}'], // Target files in the functions folder
+    files: ['fable-forge-functions/src/**/*.{ts,tsx}'], // Target files in the functions src folder
     extends: [js.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
     languageOptions: {
-      ecmaVersion: 2020, // Or appropriate for your Firebase Functions environment
+      ecmaVersion: 2020,
       globals: {
-        ...globals.node, // Firebase Functions run in a Node.js environment
+        ...globals.node,
       },
       parserOptions: {
-        project: ['./functions/tsconfig.json'], // Use the tsconfig specific to functions
-        tsconfigRootDir: import.meta.dirname,
+        project: ['./fable-forge-functions/tsconfig.json'], // Use the tsconfig specific to functions
+        tsconfigRootDir: import.meta.dirname, // Root of the monorepo
       },
     },
     plugins: {
