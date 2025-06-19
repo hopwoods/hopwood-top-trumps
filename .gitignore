@@ -12,8 +12,6 @@ dist
 dist-ssr
 *.local
 
-# Local development certificates
-.certs/
 
 # Editor directories and files
 .vscode/*
