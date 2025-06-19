@@ -23,6 +23,9 @@ importers:
       '@fontsource/playfair-display':
         specifier: ^5.2.6
         version: 5.2.6
+      '@fortawesome/fontawesome-svg-core':
+        specifier: ^6.7.2
+        version: 6.7.2
       '@fortawesome/free-brands-svg-icons':
         specifier: ^6.7.2
         version: 6.7.2
