@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { useAuthMachineState } from '../../Hooks/UseAuthMachineState' // Changed to useAuthMachineState
-import type { SubmitLoginWithEmailEvent, SubmitLoginWithGoogleEvent } from '../../Machines/AuthMachine/AuthMachine.types'
+import { useAuthMachineState } from '../../../Hooks/UseAuthMachineState' // Changed to useAuthMachineState
+import type { SubmitLoginWithEmailEvent, SubmitLoginWithGoogleEvent } from '../../../Machines/AuthMachine/AuthMachine.types'
 // Removed ActorRefFrom, authMachine, GlobalStateContext, useAppState imports
 
 export const useLoginPage = () => {

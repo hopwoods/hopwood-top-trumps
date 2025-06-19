@@ -1,9 +1,9 @@
-import { useAppState } from '../../Hooks/UseAppState'
+import { useAppState } from '../../../Hooks/UseAppState'
 import type {
   LogoutEvent,
   NavigateToPlayGameEvent,
   NavigateToManageDecksEvent,
-} from '../../Machines/AppMachine/AppMachine.types'
+} from '../../../Machines/AppMachine/AppMachine.types'
 
 export const useHomePage = () => {
   const { send, getAppStateValue } = useAppState()

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { useAuthMachineState } from '../../Hooks/UseAuthMachineState' // Changed to useAuthMachineState
-import type { SubmitRegistrationEvent } from '../../Machines/AuthMachine/AuthMachine.types'
+import { useAuthMachineState } from '../../../Hooks/UseAuthMachineState' // Changed to useAuthMachineState
+import type { SubmitRegistrationEvent } from '../../../Machines/AuthMachine/AuthMachine.types'
 // Removed ActorRefFrom and authMachine imports as they are handled by useAuthMachineState
 
 interface ValidationErrors {

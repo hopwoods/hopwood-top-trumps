@@ -1,5 +1,5 @@
 import { makeStyles } from '@griffel/react'
-import { breakpointTokens } from '../../Theme/Tokens' // Import breakpointTokens
+import { breakpointTokens } from '../../../Theme/Tokens' // Import breakpointTokens
 
 export const useAuthPageStyles = makeStyles({
   root: {

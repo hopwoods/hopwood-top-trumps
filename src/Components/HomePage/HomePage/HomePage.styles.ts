@@ -1,7 +1,7 @@
 import { makeStyles /* shorthands removed if not used elsewhere */ } from '@griffel/react'
 // Tokens are used via CSS variables
 import { shorthands } from '@griffel/react' // Import shorthands
-import { breakpointTokens } from '../../Theme/Tokens'
+import { breakpointTokens } from '../../../Theme/Tokens'
 
 export const useHomePageStyles = makeStyles({
   root: {
