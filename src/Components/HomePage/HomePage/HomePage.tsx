@@ -3,7 +3,6 @@ import { useHomePage } from './UseHomePage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faGamepad,
-  faLayerGroup,
   faTrophy,
 } from '@fortawesome/free-solid-svg-icons'
 import { Button } from '../../Common/Button/Button'

@@ -1,18 +1,13 @@
 import { createUserWithEmailAndPassword, type User } from 'firebase/auth' // Added User type
 import { fromPromise } from 'xstate'
 import { auth } from '../../../Firebase/FirebaseConfig' // Adjust path as necessary
-import type { AppEvent } from '../AppMachine.types' // Adjust path as necessary
 
+// Simplified input structure to match the loginWithEmailActor pattern
 export const registerWithEmailActor = fromPromise<
-  User, // Output type is now User
-  { event: Extract<AppEvent, { type: 'SUBMIT_REGISTRATION' }> }
+  User, // Output type is User
+  { email: string; password: string }
 >(async ({ input }) => {
-  // Type guard to ensure input.event is correctly typed
-  if (input.event.type !== 'SUBMIT_REGISTRATION') {
-    throw new Error('Invalid event type for registerWithEmailActor')
-  }
-
-  const { email, password } = input.event
+  const { email, password } = input
   // Original production logic:
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)

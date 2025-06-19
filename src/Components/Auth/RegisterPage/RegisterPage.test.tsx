@@ -1,8 +1,8 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest'
 import RegisterPage from './RegisterPage'
-import * as UseAppState from '../../Hooks/UseAppState' // To mock useAppState
-import { AppStateProvider } from '../../Context/AppStateProvider' // To wrap component
+import * as UseAppState from '../../../Hooks/UseAppState' // To mock useAppState
+import { AppStateProvider } from '../../../Context/AppStateProvider' // To wrap component
 
 // Mock the useAppState hook
 const mockSend = vi.fn()

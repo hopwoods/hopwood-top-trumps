@@ -127,8 +127,10 @@ export const authMachine = setup({
         src: 'registerWithEmailActor',
         input: ({ event }) => {
           const registrationEvent = event as SubmitRegistrationEvent
-          // The actor expects { event: registrationEvent }
-          return { event: registrationEvent }
+          return {
+            email: registrationEvent.email,
+            password: registrationEvent.password
+          }
         },
         onDone: {
           target: 'authenticated',
