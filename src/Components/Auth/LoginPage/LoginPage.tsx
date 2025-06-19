@@ -3,8 +3,8 @@ import { useLoginPage } from './UseLoginPage' // Import the custom hook
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faLock, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { faGoogle } from '@fortawesome/free-brands-svg-icons'
-import { Button } from '../Common/Button/Button' // Corrected path
-import { Input } from '../Common/Input/Input' // Corrected path
+import { Button } from '../../Common/Button/Button' // Corrected path
+import { Input } from '../../Common/Input/Input' // Corrected path
 
 const LoginPage = () => {
   const styles = useLoginPageStyles()
@@ -13,13 +13,16 @@ const LoginPage = () => {
     setEmail,
     password,
     setPassword,
-    error,
+    machineError, // Changed from 'error'
     isLoadingEmail,
     isLoadingGoogle,
     isLoading,
     handleEmailLogin,
     handleGoogleLogin,
   } = useLoginPage()
+
+  // Use machineError for display
+  const error = machineError
 
   return (
     // Assuming AuthPage.tsx provides the main container with id="login-form-container"

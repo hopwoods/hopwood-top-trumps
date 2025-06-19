@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { useAppState } from '../../Hooks/UseAppState'
-import type { AppEvent } from '../../Machines/AppMachine/AppMachine.types'
+import { useState, useEffect } from 'react'
+import { useAuthMachineState } from '../../Hooks/UseAuthMachineState' // Changed to useAuthMachineState
+import type { SubmitRegistrationEvent } from '../../Machines/AuthMachine/AuthMachine.types'
+// Removed ActorRefFrom and authMachine imports as they are handled by useAuthMachineState
 
 interface ValidationErrors {
   email?: string
@@ -9,19 +10,20 @@ interface ValidationErrors {
 }
 
 export const useRegisterPage = () => {
-  const { appState, send, getAppStateValue } = useAppState()
+  const { sendToAuthMachine, error: authMachineError, isLoading, authContext } = useAuthMachineState()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({})
 
-  const error = getAppStateValue('error') // This is for machine-level errors
-  const isLoading = appState.matches({ authenticating: 'submittingRegistration' })
+  // Debugging useEffect can be kept or removed as needed
+  useEffect(() => {
+    console.log('[UseRegisterPage] authMachine context:', authContext)
+  }, [authContext])
 
   console.log(
     '[UseRegisterPage] Render. isLoading:', isLoading,
-    'appState.value:', JSON.stringify(appState.value),
-    'machineError:', error,
+    'authMachineError:', authMachineError,
     'validationErrors:', JSON.stringify(validationErrors)
   )
 
@@ -71,10 +73,13 @@ export const useRegisterPage = () => {
       return
     }
 
-    console.log('[UseRegisterPage] handleRegister called. Current isLoading:', isLoading, 'appState.value before send:', JSON.stringify(appState.value))
-    if (!isLoading) {
-      send({ type: 'SUBMIT_REGISTRATION', email, password } as Extract<AppEvent, { type: 'SUBMIT_REGISTRATION' }>)
+    console.log('[UseRegisterPage] handleRegister called. Current isLoading:', isLoading)
+    if (sendToAuthMachine && !isLoading) {
+      const event: SubmitRegistrationEvent = { type: 'SUBMIT_REGISTRATION', email, password }
+      sendToAuthMachine(event)
       console.log('[UseRegisterPage] SUBMIT_REGISTRATION event sent.')
+    } else if (!sendToAuthMachine) {
+      console.error('[UseRegisterPage] handleRegister: sendToAuthMachine is not available (authMachine not spawned or hook issue).')
     } else {
       console.log('[UseRegisterPage] handleRegister: submission already in progress (isLoading is true).')
     }
@@ -87,7 +92,7 @@ export const useRegisterPage = () => {
     setPassword,
     confirmPassword,
     setConfirmPassword,
-    machineError: error, // Renamed to avoid confusion with form validation errors
+    machineError: authMachineError,
     validationErrors,
     isLoading,
     handleRegister,

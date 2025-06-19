@@ -1,21 +1,31 @@
-import { useAppState } from './Hooks/UseAppState'
-import AppLayout from './Components/Layout/AppLayout'
-import AuthPage from './Components/Auth/AuthPage'
-import HomePage from './Components/HomePage/HomePage'
-import LoadingIndicator from './Components/Common/LoadingIndicator'
-import './App.css' // We can keep this for now or move styles later
+import { GlobalStateContext } from './Hooks/UseAppState' // Changed to use GlobalStateContext.useSelector
+import AppLayout from './Components/Layout/AppLayout/AppLayout'
+import AuthPage from './Components/Auth/AuthPage/AuthPage'
+import HomePage from './Components/HomePage/HomePage/HomePage'
+import ManageDecksPage from './Components/Decks/ManageDecksPage/ManageDecksPage' // Added
+import PlayGamePage from './Components/Game/PlayGamePage/PlayGamePage' // Added
+import LoadingIndicator from './Components/Common/LoadingIndicator/LoadingIndicator'
+import './App.css'
 
 const App = () => {
-  const { appState } = useAppState()
+  // Use useSelector to react to state changes for rendering
+  const appStateValue = GlobalStateContext.useSelector(state => state.value)
+  const initializing = GlobalStateContext.useSelector(state => state.matches('initializing'))
+  const unauthenticated = GlobalStateContext.useSelector(state => state.matches('unauthenticated'))
+  const authenticatedHome = GlobalStateContext.useSelector(state => state.matches({ authenticated: 'home' }))
+  const authenticatedPlayGame = GlobalStateContext.useSelector(state => state.matches({ authenticated: 'playGame' }))
+  const authenticatedManageDecks = GlobalStateContext.useSelector(state => state.matches({ authenticated: 'manageDecks' }))
 
-  // The 'initializing' state covers the initial auth check
-  if (appState.matches('initializing')) {
+  console.log('[App.tsx] Current appMachine state value:', appStateValue)
+
+
+  if (initializing) {
     return <LoadingIndicator />
   }
 
-  // The 'authenticating' state is where login/register forms will be shown.
-  // Errors during login attempts are handled within this state, updating appState.context.error.
-  if (appState.matches('authenticating')) {
+  if (unauthenticated) {
+    // AuthPage will internally manage showing Login or Register based on authMachine's state (or local UI toggle)
+    // It will also need access to the authActorRef to pass events to it.
     return (
       <AppLayout>
         <AuthPage />
@@ -23,7 +33,7 @@ const App = () => {
     )
   }
 
-  if (appState.matches('authenticated')) {
+  if (authenticatedHome) {
     return (
       <AppLayout>
         <HomePage />
@@ -31,7 +41,24 @@ const App = () => {
     )
   }
 
-  // Fallback or initial state before machine fully initializes (should be brief)
+  if (authenticatedPlayGame) {
+    return (
+      <AppLayout>
+        <PlayGamePage />
+      </AppLayout>
+    )
+  }
+
+  if (authenticatedManageDecks) {
+    return (
+      <AppLayout>
+        <ManageDecksPage />
+      </AppLayout>
+    )
+  }
+
+  // Fallback or if none of the states match (should ideally not happen with a well-defined machine)
+  console.warn('[App.tsx] No matching state for rendering, falling back to LoadingIndicator. Current state:', appStateValue)
   return <LoadingIndicator />
 }
 

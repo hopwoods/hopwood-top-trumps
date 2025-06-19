@@ -1,7 +1,7 @@
 import { useAuthPageStyles } from './AuthPage.styles'
 import { useAuthPage } from './UseAuthPage' // Import the custom hook
-import LoginPage from './LoginPage'
-import RegisterPage from './RegisterPage' // Import the actual RegisterPage
+import LoginPage from '../LoginPage/LoginPage'
+import RegisterPage from '../RegisterPage/RegisterPage' // Import the actual RegisterPage
 
 const AuthPage = () => {
   const styles = useAuthPageStyles()

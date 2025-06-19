@@ -2,8 +2,8 @@ import { useRegisterPageStyles } from './RegisterPage.styles'
 import { useRegisterPage } from './UseRegisterPage' // Import the custom hook
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faLock, faSpinner, faUserPlus } from '@fortawesome/free-solid-svg-icons'
-import { Button } from '../Common/Button/Button'
-import { Input } from '../Common/Input/Input'
+import { Button } from '../../Common/Button/Button'
+import { Input } from '../../Common/Input/Input'
 
 const RegisterPage = () => {
   const styles = useRegisterPageStyles()

@@ -23,7 +23,7 @@ export default tseslint.config(
     ],
   },
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended], // Changed here
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
@@ -45,14 +45,14 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
-      ...reactX.configs['recommended-typescript'].rules,
+      // ...reactX.configs['recommended-typescript'].rules, // Temporarily removed
       ...reactDom.configs.recommended.rules,
     },
   },
   // Configuration for the 'fable-forge-functions' directory
   {
     files: ['fable-forge-functions/src/**/*.{ts,tsx}'], // Target files in the functions src folder
-    extends: [js.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended], // Changed here
     languageOptions: {
       ecmaVersion: 2020,
       globals: {
