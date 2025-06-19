@@ -155,21 +155,23 @@ test.describe('RegisterPage E2E Tests', () => {
     await page.getByLabel('Password', { exact: true }).fill('ValidPass1!')
     await page.getByLabel('Confirm Password').fill('ValidPass1!')
     await page.getByRole('button', { name: /Register/i }).click()
-    await page.waitForTimeout(1000) // Increased delay for DOM update for debugging
 
-    const emailErrorLocator = page.getByTestId('input-error-message').filter({ hasText: 'Email cannot be empty.' })
-    const count = await emailErrorLocator.count()
-    console.log(`[E2E DEBUG] Email empty - Locator count for "Email cannot be empty.": ${count}`)
-    if (count > 0) {
-      const text = await emailErrorLocator.innerText()
-      console.log(`[E2E DEBUG] Email empty - Found text: "${text}"`)
-    } else {
-      const allErrorMessages = await page.locator('[data-testid="input-error-message"]').allTextContents();
-      console.log(`[E2E DEBUG] Email empty - No specific locator found. All input-error-messages: ${JSON.stringify(allErrorMessages)}`);
-    }
+    // Debugging: Take a screenshot and log HTML
+    await page.waitForTimeout(1000); // Give some time for potential DOM updates
+    await page.screenshot({ path: `test-results/debug/email-empty-screenshot-${Date.now()}.png`, fullPage: true });
+    const html = await page.content();
+    console.log(`[E2E DEBUG] HTML content for 'email is empty' test after click:\n${html}`);
 
-    await expect(emailErrorLocator).toHaveCount(1, { timeout: 10000 })
-    await expect(emailErrorLocator).toBeVisible()
+    const emailErrorLocator = page.getByTestId('input-error-message').filter({ hasText: 'Email cannot be empty.' });
+    // Log current visibility and count before assertion
+    const isVisible = await emailErrorLocator.isVisible().catch(() => false);
+    const count = await emailErrorLocator.count().catch(() => 0);
+    console.log(`[E2E DEBUG] Email empty - Before assertion - Visible: ${isVisible}, Count: ${count}`);
+    const allMessages = await page.locator('[data-testid="input-error-message"]').allTextContents();
+    console.log(`[E2E DEBUG] Email empty - All messages with data-testid: ${JSON.stringify(allMessages)}`);
+
+
+    await expect(emailErrorLocator).toBeVisible({ timeout: 10000 })
     await expect(page.getByRole('heading', { name: /Register/i, level: 2 })).toBeVisible()
   })
 
@@ -178,20 +180,14 @@ test.describe('RegisterPage E2E Tests', () => {
     await page.getByLabel('Password', { exact: true }).fill('ValidPass1!')
     await page.getByLabel('Confirm Password').fill('ValidPass1!')
     await page.getByRole('button', { name: /Register/i }).click()
-    await page.waitForTimeout(250)
-    const emailInvalidLocator = page.getByTestId('input-error-message').filter({ hasText: 'Email address is invalid.' })
-    await expect(emailInvalidLocator).toHaveCount(1, { timeout: 10000 })
-    await expect(emailInvalidLocator).toBeVisible()
+    await expect(page.getByTestId('input-error-message').filter({ hasText: 'Email address is invalid.' })).toBeVisible({ timeout: 10000 })
   })
 
   test('should show error if password is empty', async ({ page }) => {
     await page.getByLabel('Email').fill(`test_${Date.now()}@example.com`)
     await page.getByLabel('Confirm Password').fill('ValidPass1!')
     await page.getByRole('button', { name: /Register/i }).click()
-    await page.waitForTimeout(250)
-    const passwordEmptyLocator = page.getByTestId('input-error-message').filter({ hasText: 'Password cannot be empty.' })
-    await expect(passwordEmptyLocator).toHaveCount(1, { timeout: 10000 })
-    await expect(passwordEmptyLocator).toBeVisible()
+    await expect(page.getByTestId('input-error-message').filter({ hasText: 'Password cannot be empty.' })).toBeVisible({ timeout: 10000 })
   })
 
   test('should show error if password is too short', async ({ page }) => {
@@ -199,10 +195,7 @@ test.describe('RegisterPage E2E Tests', () => {
     await page.getByLabel('Password', { exact: true }).fill('Short1!')
     await page.getByLabel('Confirm Password').fill('Short1!')
     await page.getByRole('button', { name: /Register/i }).click()
-    await page.waitForTimeout(250)
-    const passwordShortLocator = page.getByTestId('input-error-message').filter({ hasText: 'Password must be at least 8 characters long.' })
-    await expect(passwordShortLocator).toHaveCount(1, { timeout: 10000 })
-    await expect(passwordShortLocator).toBeVisible()
+    await expect(page.getByTestId('input-error-message').filter({ hasText: 'Password must be at least 8 characters long.' })).toBeVisible({ timeout: 10000 })
   })
 
   test('should show error if password has no uppercase letter', async ({ page }) => {
@@ -210,10 +203,7 @@ test.describe('RegisterPage E2E Tests', () => {
     await page.getByLabel('Password', { exact: true }).fill('nouppercase1!')
     await page.getByLabel('Confirm Password').fill('nouppercase1!')
     await page.getByRole('button', { name: /Register/i }).click()
-    await page.waitForTimeout(250)
-    const passwordNoUpperLocator = page.getByTestId('input-error-message').filter({ hasText: 'Password must contain at least one uppercase letter.' })
-    await expect(passwordNoUpperLocator).toHaveCount(1, { timeout: 10000 })
-    await expect(passwordNoUpperLocator).toBeVisible()
+    await expect(page.getByTestId('input-error-message').filter({ hasText: 'Password must contain at least one uppercase letter.' })).toBeVisible({ timeout: 10000 })
   })
 
   test('should show error if password has no lowercase letter', async ({ page }) => {
@@ -221,10 +211,7 @@ test.describe('RegisterPage E2E Tests', () => {
     await page.getByLabel('Password', { exact: true }).fill('NOLOWERCASE1!')
     await page.getByLabel('Confirm Password').fill('NOLOWERCASE1!')
     await page.getByRole('button', { name: /Register/i }).click()
-    await page.waitForTimeout(250)
-    const passwordNoLowerLocator = page.getByTestId('input-error-message').filter({ hasText: 'Password must contain at least one lowercase letter.' })
-    await expect(passwordNoLowerLocator).toHaveCount(1, { timeout: 10000 })
-    await expect(passwordNoLowerLocator).toBeVisible()
+    await expect(page.getByTestId('input-error-message').filter({ hasText: 'Password must contain at least one lowercase letter.' })).toBeVisible({ timeout: 10000 })
   })
 
   test('should show error if password has no number', async ({ page }) => {
@@ -232,10 +219,7 @@ test.describe('RegisterPage E2E Tests', () => {
     await page.getByLabel('Password', { exact: true }).fill('NoNumberPass!')
     await page.getByLabel('Confirm Password').fill('NoNumberPass!')
     await page.getByRole('button', { name: /Register/i }).click()
-    await page.waitForTimeout(250)
-    const passwordNoNumberLocator = page.getByTestId('input-error-message').filter({ hasText: 'Password must contain at least one number.' })
-    await expect(passwordNoNumberLocator).toHaveCount(1, { timeout: 10000 })
-    await expect(passwordNoNumberLocator).toBeVisible()
+    await expect(page.getByTestId('input-error-message').filter({ hasText: 'Password must contain at least one number.' })).toBeVisible({ timeout: 10000 })
   })
 
   test('should show error if password has no special character', async ({ page }) => {
@@ -243,20 +227,14 @@ test.describe('RegisterPage E2E Tests', () => {
     await page.getByLabel('Password', { exact: true }).fill('NoSpecial1Pass')
     await page.getByLabel('Confirm Password').fill('NoSpecial1Pass')
     await page.getByRole('button', { name: /Register/i }).click()
-    await page.waitForTimeout(250)
-    const passwordNoSpecialLocator = page.getByTestId('input-error-message').filter({ hasText: 'Password must contain at least one special character.' })
-    await expect(passwordNoSpecialLocator).toHaveCount(1, { timeout: 10000 })
-    await expect(passwordNoSpecialLocator).toBeVisible()
+    await expect(page.getByTestId('input-error-message').filter({ hasText: 'Password must contain at least one special character.' })).toBeVisible({ timeout: 10000 })
   })
 
   test('should show error if confirm password is empty', async ({ page }) => {
     await page.getByLabel('Email').fill(`test_${Date.now()}@example.com`)
     await page.getByLabel('Password', { exact: true }).fill('ValidPass1!')
     await page.getByRole('button', { name: /Register/i }).click()
-    await page.waitForTimeout(250)
-    const confirmPasswordEmptyLocator = page.getByTestId('input-error-message').filter({ hasText: 'Confirm Password cannot be empty.' })
-    await expect(confirmPasswordEmptyLocator).toHaveCount(1, { timeout: 10000 })
-    await expect(confirmPasswordEmptyLocator).toBeVisible()
+    await expect(page.getByTestId('input-error-message').filter({ hasText: 'Confirm Password cannot be empty.' })).toBeVisible({ timeout: 10000 })
   })
 
   // --- End of new E2E validation tests ---

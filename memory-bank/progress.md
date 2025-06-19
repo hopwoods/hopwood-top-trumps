@@ -25,7 +25,7 @@
 
 ## Known Issues
 
--
+- **E2E Test Flakiness:** Several E2E tests for the Registration Page validation (`RegisterPage.e2e.ts`) are consistently failing. Playwright is unable to find the dynamically rendered error message elements, despite various locator strategies, timeouts, and debugging attempts. Unit tests for the same functionality pass, and console logs within the relevant custom hook (`UseRegisterPage.ts`) indicate that the validation logic and state updates are working correctly. This suggests a complex interaction issue within the E2E test environment related to DOM updates, styling, or Playwright's detection mechanisms. Further investigation, potentially with interactive debugging (`PWDEBUG=1`), is needed to resolve these.
 
 ## Evolution of Project Decisions
 
@@ -238,3 +238,56 @@ We've made significant progress in defining the project's technical foundation a
 **Next Steps Planned:**
 *   Run full linting, all tests (unit and E2E), and a project build to ensure overall integrity.
 *   If all checks pass, proceed to the next major feature: Enhancing the Home Page (e.g., adding "Manage Decks" and "Play Game" options).
+
+---
+## Progress Update: 2025-06-19
+
+**IX. Enhanced Registration Page Validation & E2E Debugging:**
+
+1.  **Enhanced Validation Logic:**
+    *   Updated `UseRegisterPage.ts` to include comprehensive client-side validation for:
+        *   Empty fields (email, password, confirm password).
+        *   Email format.
+        *   Password complexity (minimum length, uppercase, lowercase, number, special character).
+        *   Password confirmation match (retained).
+    *   The hook now returns a `validationErrors` object.
+2.  **UI Updates for Validation:**
+    *   Modified `RegisterPage.tsx` to display the new validation errors from `validationErrors` by passing them to the `error` prop of the reusable `Input` component.
+    *   Removed redundant error message rendering from `RegisterPage.tsx`.
+3.  **Unit Test Updates:**
+    *   Updated `RegisterPage.test.tsx` to cover all new validation scenarios. All unit tests are passing.
+4.  **E2E Test Updates & Debugging:**
+    *   Updated `RegisterPage.e2e.ts` to test the new validation rules.
+    *   Encountered persistent failures where Playwright could not find the validation error messages rendered by the `Input` component.
+    *   **Debugging Steps Taken:**
+        *   Verified `useRegisterPage` hook correctly sets `validationErrors` via console logs.
+        *   Modified `Input.tsx` to add `data-testid="input-error-message"` to the error paragraph.
+        *   Attempted various Playwright locator strategies:
+            *   `page.getByTestId(...).filter({ hasText: '...' })`
+            *   `page.locator('[data-testid="input-error-message"]', { hasText: '...' })`
+            *   `page.waitForFunction(...)` to wait for the specific error text.
+            *   Increased assertion timeouts significantly (e.g., to 10 seconds).
+        *   Temporarily removed styling from the error paragraph in `Input.tsx` to rule out CSS visibility issues.
+        *   Modified `Input.tsx` to always render the error `<p>` tag and control its visibility via `style={{ visibility: error ? 'visible' : 'hidden' }}`.
+        *   Added extensive console logging and screenshot capture within a failing E2E test (`should show error if email is empty`) to inspect DOM state. Debug logs confirmed that Playwright was not finding any elements with `data-testid="input-error-message"`, or they were empty, at the time of assertion.
+    *   **Current E2E Status:** 4 E2E tests related to specific field validation messages are still failing. The root cause appears to be a disconnect between React's state updates and the DOM state observed by Playwright, where the error messages rendered by the `Input` component are not being detected.
+5.  **Linting & Build:**
+    *   Resolved ESLint issues related to `.eslintignore` deprecation and unused variables in the `fable-forge-functions` directory.
+    *   Project (`pnpm lint`) lints successfully.
+    *   Project (`pnpm build`) builds successfully.
+
+**Key Learnings from E2E Debugging (also added to `.clinerules/02-testing-strategy.md`):**
+*   Distinguishing between Playwright's various timeout settings (test timeout vs. webServer timeout vs. assertion timeouts).
+*   The challenge of synchronizing Playwright with React's asynchronous DOM updates, especially for conditionally rendered or dynamically updated text content.
+*   Various locator strategies (`getByTestId`, `filter({ hasText: ... })`, `page.locator`, `page.waitForFunction`) and their effectiveness in different scenarios.
+*   The utility of `locator.count()`, `locator.allTextContents()`, `page.screenshot()`, and `page.content()` for debugging what Playwright "sees".
+*   The importance of considering rendering discrepancies between unit test (JSDOM) and E2E (full browser) environments.
+*   The potential need for interactive debugging (`PWDEBUG=1` or `page.pause()`) for deeply problematic E2E test failures.
+
+**Current Status:**
+*   Registration page validation logic is implemented and unit-tested.
+*   The application lints and builds successfully.
+*   **Known Issue:** 4 E2E tests for `RegisterPage` validation messages are failing due to issues detecting the error messages in the DOM. This requires further investigation, likely with interactive debugging.
+
+**Next Steps Planned (as of previous completion attempt):**
+*   Proceed with enhancing the Home Page, while noting the E2E test instability.

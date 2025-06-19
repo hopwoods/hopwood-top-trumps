@@ -41,7 +41,13 @@ export const Input = (props: Props) => {
           className={mergeClasses(styles.input, className)} // Apply styles including passed className
           data-testid="test-input"
         />
-        {error && <p className={styles.errorMessage} data-testid="input-error-message">{error}</p>}
+        <p
+          data-testid="input-error-message"
+          className={styles.errorMessage}
+          style={{ visibility: error ? 'visible' : 'hidden' }}
+        >
+          {error || ''} {/* Ensure there's always a child, even if empty string */}
+        </p>
       </div>
     )
   }

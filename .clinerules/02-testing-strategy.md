@@ -109,4 +109,26 @@ When working with complex mocks, particularly for hooks or external modules (e.g
 - **Timing for UI Updates (React/XState):**
     - After actions triggering XState events and React re-renders, a brief `await page.waitForTimeout(250);` before assertions can help stabilize tests by giving the DOM time to update.
     - For conditionally rendered elements, assert existence/count (`toHaveCount(1)`), then text content (`toHaveText`), then visibility (`toBeVisible`) to better diagnose issues.
->>>>>>> REPLACE
+
+- **Playwright Timeout Configuration:**
+    - Playwright has multiple timeout settings. The `timeout` property in the main `defineConfig` (e.g., in `playwright.config.ts`) sets the default for individual tests and hooks like `beforeEach`.
+    - The `webServer.timeout` specifically controls how long Playwright waits for the development server (e.g., Vite) to start.
+    - Individual assertions like `await expect(locator).toBeVisible({ timeout: ... })` can also have their own specific timeouts.
+    - It's crucial to identify which timeout is being exceeded when debugging. For instance, a `Test timeout of Xms exceeded while running "beforeEach" hook` often points to the main test `timeout`, not necessarily the `webServer.timeout`.
+
+- **Debugging Flaky E2E Tests (DOM Update Issues):**
+    - When E2E tests fail to find elements that are expected based on component logic and unit tests (especially after state changes):
+        - **Confirm State Changes:** Use browser console logs within component hooks/effects to verify that the state controlling the UI element's visibility or content *is* actually updating as expected.
+        - **Robust Locators:** Use `data-testid` attributes for stable locators.
+        - **Playwright Waiting Mechanisms:**
+            - `await expect(locator).toBeVisible({ timeout: ... })`: Standard way to wait for visibility.
+            - `await expect(locator).toHaveCount(1, { timeout: ... })`: Ensures the element is uniquely present.
+            - `await page.waitForFunction(() => { /* DOM condition */ }, { timeout: ... })`: More powerful for complex conditions; executes JavaScript in the browser to check the DOM state.
+            - `await page.waitForTimeout(ms)`: Use sparingly as a last resort for brief, fixed delays if other waiting mechanisms fail, but it can make tests brittle.
+        - **Inspect DOM State:**
+            - `await page.screenshot({ path: 'debug.png', fullPage: true })`: Capture what the page looks like.
+            - `console.log(await page.content())`: Log the full HTML content to see if the element is present.
+            - `locator.count()` and `locator.allTextContents()`: Programmatically check what Playwright finds for a given locator.
+        - **Interactive Debugging:** The most powerful tool is often `PWDEBUG=1 pnpm test:e2e` or `await page.pause()` in the test script. This allows interactive inspection of the DOM, styles, and element properties in the browser's DevTools at the point of failure.
+    - **Rendering Discrepancies:** Be aware that components might render or update differently in a full browser (E2E) vs. a simulated DOM (unit tests). Styling (CSS-in-JS, global styles) can also behave differently and affect element visibility or interactability in ways not caught by unit tests.
+    - **Consider Component Rendering Strategy:** If an element is conditionally rendered (e.g., `{error && <p>{error}</p>}`), and it's proving hard for Playwright to detect, consider rendering it always but controlling its visibility via CSS (e.g., `style={{ visibility: error ? 'visible' : 'hidden' }}`). This can sometimes make its presence in the DOM more stable for test runners, though it didn't resolve the specific issue in the FableForge registration form error messages.
