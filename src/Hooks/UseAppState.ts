@@ -35,7 +35,6 @@ export const useAppState = () => {
     appState,
     send: actorRef.send, // send to appMachine
     getAppStateValue,
-    authActorRef, // ref to the spawned authMachine
-    // actorRef, // appMachine actorRef itself
+    authActorRef
   }
 }
