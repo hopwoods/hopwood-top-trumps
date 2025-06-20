@@ -6,4 +6,5 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   error?: string
   iconLeft?: IconDefinition
   iconRight?: IconDefinition
+  ref?: React.Ref<HTMLInputElement>
 }
