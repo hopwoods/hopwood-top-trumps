@@ -9,13 +9,13 @@ export interface AuthContext {
 // Define individual event types for the authentication machine
 export type SubmitLoginWithEmailEvent = { type: 'SUBMIT_LOGIN_WITH_EMAIL'; email: string; password: string }
 export type SubmitLoginWithGoogleEvent = { type: 'SUBMIT_LOGIN_WITH_GOOGLE' }
-export type SubmitRegistrationEvent = { type: 'SUBMIT_REGISTRATION'; email: string; password: string }
+// export type SubmitRegistrationEvent = { type: 'SUBMIT_REGISTRATION'; email: string; password: string } // Removed
 
 // Events sent from actors to the machine
 export type ActorLoginSuccessEvent = { type: 'ACTOR_LOGIN_SUCCESS'; user: User }
 export type ActorLoginFailureEvent = { type: 'ACTOR_LOGIN_FAILURE'; error: string }
-export type ActorRegistrationSuccessEvent = { type: 'ACTOR_REGISTRATION_SUCCESS'; user: User }
-export type ActorRegistrationFailureEvent = { type: 'ACTOR_REGISTRATION_FAILURE'; error: string }
+// export type ActorRegistrationSuccessEvent = { type: 'ACTOR_REGISTRATION_SUCCESS'; user: User } // Removed
+// export type ActorRegistrationFailureEvent = { type: 'ACTOR_REGISTRATION_FAILURE'; error: string } // Removed
 
 // Events sent from AuthMachine to parent (AppMachine)
 export type AuthenticationSuccessEvent = { type: 'AUTHENTICATION_SUCCESS'; user: User }
@@ -26,11 +26,11 @@ export type AuthenticationCancelledEvent = { type: 'AUTHENTICATION_CANCELLED' } 
 export type AuthEvent =
   | SubmitLoginWithEmailEvent
   | SubmitLoginWithGoogleEvent
-  | SubmitRegistrationEvent
+  // | SubmitRegistrationEvent // Removed
   | ActorLoginSuccessEvent
   | ActorLoginFailureEvent
-  | ActorRegistrationSuccessEvent
-  | ActorRegistrationFailureEvent
+  // | ActorRegistrationSuccessEvent // Removed
+  // | ActorRegistrationFailureEvent // Removed
   | AuthenticationSuccessEvent // These might be primarily for external communication
   | AuthenticationFailureEvent
   | AuthenticationCancelledEvent

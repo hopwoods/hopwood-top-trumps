@@ -50,6 +50,7 @@
           // ... component logic
         };
 ```
+*   **Conditional Rendering for Visibility:** Prefer React's conditional rendering (e.g., `{condition && <Element />}` or ternary operators) for showing or hiding UI elements. Avoid toggling CSS `visibility` or `display` properties directly for this purpose, as conditional rendering is often cleaner, more performant (elements not rendered are not in the DOM), and aligns better with React's declarative nature.
 *   **Playwright Tests:** Generate Playwright tests for UI elements and user flows.
 *   **Co-location:** Follow component co-location guidelines (tests, types, styles with components) as specified in `.clinerules/01-coding-standards.md` and prioritize creating reusable components as detailed in `.clinerules/09-component-reusability.md`.
 

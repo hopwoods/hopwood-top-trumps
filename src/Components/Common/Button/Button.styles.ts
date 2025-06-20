@@ -89,9 +89,7 @@ export const useButtonStyles = makeStyles({
     position: 'relative', // For spinner positioning
     // Potentially change background or add an overlay if needed
   },
-  contentHidden: {
-    visibility: 'hidden',
-  },
+  // contentHidden style is no longer needed as Button.tsx uses conditional rendering for content.
   spinner: {
     position: 'absolute',
     top: '50%',

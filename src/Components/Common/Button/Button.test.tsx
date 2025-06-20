@@ -54,12 +54,19 @@ describe('Button Component', () => {
         Loading Button
       </Button>,
     )
-    const button = screen.getByRole('button') // Name might be hidden
+    const button = screen.getByRole('button') // Get the button element
     // Check for spinner icon
-    expect(button.querySelector('svg[data-icon="spinner"]')).toBeInTheDocument()
-    // Check if original content/icon is hidden (span has *any* class)
-    const contentSpan = button.querySelector('span')
-    expect(contentSpan).toHaveAttribute('class') // Check for any class
+    expect(screen.getByTestId('button-spinner')).toBeInTheDocument() // Assuming spinner has data-testid
+
+    // Check that the main content span is NOT rendered
+    // The content span has styles.buttonContent class
+    // A more direct way is to check for the absence of the text or specific icons
+    expect(screen.queryByText('Loading Button')).not.toBeInTheDocument()
+
+    // Check that the iconLeft (faCoffee) is NOT rendered
+    // FontAwesome icons are SVGs, we can check for its data-icon attribute
+    const coffeeIcon = button.querySelector('svg[data-icon="coffee"]')
+    expect(coffeeIcon).not.toBeInTheDocument()
   })
 
   it('sets the button type attribute', () => {

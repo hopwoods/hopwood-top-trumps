@@ -1,10 +1,10 @@
 import { setup, assign, sendParent, type AnyEventObject, type DoneActorEvent } from 'xstate' // Removed ErrorActorEvent
 import type { User } from 'firebase/auth' // Added top-level import
-import type { AuthContext, AuthEvent, SubmitLoginWithEmailEvent, SubmitRegistrationEvent } from './AuthMachine.types'
+import type { AuthContext, AuthEvent } from './AuthMachine.types' // Removed SubmitLoginWithEmailEvent
 
-import { loginWithEmailActor } from '../AppMachine/Services/LoginWithEmail.actor' // Adjust path if moved
+// import { loginWithEmailActor } from '../AppMachine/Services/LoginWithEmail.actor' // Fully remove this line
 import { loginWithGoogleActor } from '../AppMachine/Services/LoginWithGoogle.actor' // Adjust path if moved
-import { registerWithEmailActor } from '../AppMachine/Services/RegisterWithEmail.actor' // Adjust path if moved
+// import { registerWithEmailActor } from '../AppMachine/Services/RegisterWithEmail.actor' // Removed
 
 export const authMachine = setup({
   types: {} as {
@@ -17,9 +17,9 @@ export const authMachine = setup({
       | { type: 'AUTHENTICATION_CANCELLED' },
   },
   actors: {
-    loginWithEmailActor,
     loginWithGoogleActor,
-    registerWithEmailActor,
+    // loginWithEmailActor, // This actor is also removed from here
+    // registerWithEmailActor, // Removed
   },
   actions: {
     sendAuthSuccessToParent: sendParent(({ event }) => {
@@ -69,39 +69,13 @@ export const authMachine = setup({
   states: {
     idle: {
       on: {
-        SUBMIT_LOGIN_WITH_EMAIL: 'submittingEmail',
+        // SUBMIT_LOGIN_WITH_EMAIL: 'submittingEmail', // Removed email login
         SUBMIT_LOGIN_WITH_GOOGLE: 'submittingGoogle',
-        SUBMIT_REGISTRATION: 'submittingRegistration',
+        // SUBMIT_REGISTRATION: 'submittingRegistration', // Removed
         // AUTHENTICATION_CANCELLED: { actions: 'sendAuthCancelledToParent' } // Example
       },
     },
-    submittingEmail: {
-      invoke: {
-        src: 'loginWithEmailActor',
-        input: ({ event }) => {
-          const loginEvent = event as SubmitLoginWithEmailEvent
-          return { email: loginEvent.email, password: loginEvent.password }
-        },
-        onDone: {
-          target: 'authenticated',
-          actions: assign({
-            error: null, // Clear previous errors
-            // User data is sent to parent, not stored here directly unless needed
-          }),
-        },
-        onError: {
-          target: 'idle', // Or a specific error state
-          actions: assign({
-            error: ({ event }: { event: AnyEventObject }) => {
-              if (event.data && typeof (event.data as { message?: unknown }).message === 'string') {
-                return (event.data as { message: string }).message
-              }
-              return 'Email login failed.'
-            },
-          }),
-        },
-      },
-    },
+    // submittingEmail state removed
     submittingGoogle: {
       invoke: {
         src: 'loginWithGoogleActor',
@@ -122,34 +96,7 @@ export const authMachine = setup({
         },
       },
     },
-    submittingRegistration: {
-      invoke: {
-        src: 'registerWithEmailActor',
-        input: ({ event }) => {
-          const registrationEvent = event as SubmitRegistrationEvent
-          return {
-            email: registrationEvent.email,
-            password: registrationEvent.password
-          }
-        },
-        onDone: {
-          target: 'authenticated',
-          actions: assign({ error: null }),
-        },
-        onError: {
-          target: 'idle',
-          actions: assign({
-            error: ({ event }: { event: AnyEventObject }) => {
-              if (event.data instanceof Error) return event.data.message
-              if (event.data && typeof (event.data as { message?: unknown }).message === 'string') {
-                return (event.data as { message: string }).message
-              }
-              return 'Registration failed.'
-            },
-          }),
-        },
-      },
-    },
+    // submittingRegistration state removed
     authenticated: {
       // This state signifies successful authentication within this child machine.
       // It will send an event to the parent (AppMachine).

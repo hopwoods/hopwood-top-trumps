@@ -1,30 +1,17 @@
 import { useAuthPageStyles } from './AuthPage.styles'
-import { useAuthPage } from './UseAuthPage' // Import the custom hook
+// import { useAuthPage } from './UseAuthPage' // Hook might no longer be needed or will be simplified
 import LoginPage from '../LoginPage/LoginPage'
-import RegisterPage from '../RegisterPage/RegisterPage' // Import the actual RegisterPage
+// import RegisterPage from '../RegisterPage/RegisterPage' // RegisterPage is removed
 
 const AuthPage = () => {
   const styles = useAuthPageStyles()
-  const { showLogin, switchToLogin, switchToRegister } = useAuthPage()
+  // const { showLogin, switchToLogin, switchToRegister } = useAuthPage() // Logic removed
 
   return (
     <div id="auth-page-root" className={styles.root}>
       <div className={styles.formContainer}>
-        {showLogin ? (
-          <>
-            <LoginPage />
-            <a href="#" onClick={switchToRegister} className={styles.toggleLink}>
-              Need an account? Register
-            </a>
-          </>
-        ) : (
-          <>
-            <RegisterPage />
-            <a href="#" onClick={switchToLogin} className={styles.toggleLink}>
-              Already have an account? Login
-            </a>
-          </>
-        )}
+        <LoginPage />
+        {/* Toggle links removed as RegisterPage is removed */}
       </div>
     </div>
   )
