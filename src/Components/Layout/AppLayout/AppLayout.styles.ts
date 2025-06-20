@@ -4,27 +4,21 @@ export const useAppLayoutStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '100vh',
-    //backgroundColor: 'var(--fableforge-color-background-body)',
-    color: 'var(--fableforge-color-text-primary)', // Default text color for the app
+    height: '100%',
+    color: 'var(--fableforge-color-text-primary)'
   },
   main: {
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center', // Center content horizontally within the main area
+    alignItems: 'center',
     justifyContent: 'flex-start',
     width: '100%',
-    maxWidth: '1200px', // Max width for content to prevent it from stretching too wide on large screens
-    margin: '0 auto', // Center the main content block
-
     boxSizing: 'border-box', // Include padding in the width calculation
-
     marginTop: 'var(--fableforge-spacing-s)', // Space below header
     marginBottom: 'var(--fableforge-spacing-m)', // Space above footer
 
     '@media (max-width: 768px)': { // Adjust for smaller screens
-      padding: 'var(--fableforge-spacing-m)',
       marginTop: 'var(--fableforge-spacing-m)',
       marginBottom: 'var(--fableforge-spacing-m)',
       borderRadius: 'var(--fableforge-border-radii-m)',
@@ -34,9 +28,15 @@ export const useAppLayoutStyles = makeStyles({
     padding: 'var(--fableforge-spacing-l)',
     border: '1em solid var(--fableforge-color-card-border)',
     borderRadius: 'var(--fableforge-border-radii-l)',
+    display: 'flex',
+    flexGrow: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
   mainContent: {
     borderRadius: 'var(--fableforge-border-radii-l)',
+    width: '100%'
   },
   isAuthenticated: {
     backgroundColor: 'var(--fableforge-color-panel)',

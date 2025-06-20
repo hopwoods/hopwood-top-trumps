@@ -30,7 +30,7 @@ const AppLayout = ({ children, isAuthenticated }: AppLayoutProps) => {
   }
 
   return (
-    <div className={styles.root}>
+    <div className={mergeClasses('app-root', styles.root)}>
       {
         isAuthenticated && <Header
           onLogout={handleLogout}

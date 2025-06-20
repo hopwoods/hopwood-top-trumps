@@ -50,12 +50,11 @@ export const useGlobalStyles = makeStaticStyles({
 
   body: {
     margin: '0',
-    height: '100%', // Ensure body also takes full height
-    overflowX: 'hidden', // Prevent horizontal scroll on body
+    height: '100%',
+    overflowX: 'hidden',
     fontFamily: 'var(--fableforge-typography-font-family-body)',
     color: 'var(--fableforge-color-text-primary)',
-    backgroundColor: 'var(--fableforge-color-background-body)', // Solid color
-    // backgroundImage: `...`, // Texture removed
+    backgroundColor: 'var(--fableforge-color-background-body)',
     lineHeight: '1.6',
     minHeight: '100vh',
     display: 'flex',

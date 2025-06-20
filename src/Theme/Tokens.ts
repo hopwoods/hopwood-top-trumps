@@ -36,7 +36,7 @@ export const colorTokens = {
 } as const
 
 export const typographyTokens = {
-  fontFamilyHeading: "'Inter', sans-serif",
+  fontFamilyHeading: "'cofo-kabeltouw-solid-0', sans-serif",
   fontFamilyBody: "'Inter', sans-serif",
 
   fontSizeRootClamp: 'clamp(0.9375rem, 0.85rem + 0.25vw, 1.0625rem)', // Slightly smaller base: ~15px-17px

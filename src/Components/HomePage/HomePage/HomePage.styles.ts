@@ -3,13 +3,14 @@ import { breakpointTokens } from '../../../Theme/Tokens'
 
 export const useHomePageStyles = makeStyles({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: 'grid',
+    gridTemplateRows: '7em min-content min-content 1fr',
+    gridTemplateColumns: '1fr',
     alignItems: 'center',
+    justifyItems: 'center',
     textAlign: 'center',
     width: '100%',
-    boxSizing: 'border-box',
-    backgroundColor: 'var(--fableforge-color-panel)',
+    minHeight: '100vh',
   },
   // Hero section
   hero: {
@@ -17,9 +18,8 @@ export const useHomePageStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginBottom: 'var(--fableforge-spacing-xl)',
-    paddingTop: 'var(--fableforge-spacing-xl)',
-    paddingBottom: 'var(--fableforge-spacing-l)',
+    marginBlock: 'var(--fableforge-spacing-m)',
+
     '& img': {
       width: '40%',
       height: 'auto',
@@ -27,61 +27,69 @@ export const useHomePageStyles = makeStyles({
     }
   },
   title: {
-    fontFamily: 'var(--fableforge-typography-font-family-heading)',
-    fontSize: 'var(--fableforge-typography-font-size-4xl)',
-    fontWeight: 'var(--fableforge-typography-font-weight-bold)',
-    color: 'var(--fableforge-color-brand-primary)',
     marginBottom: 'var(--fableforge-spacing-m)',
-    textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', // Subtle text shadow for depth
-    [`@media (min-width: ${breakpointTokens.tablet})`]: {
-      fontSize: 'calc(var(--fableforge-typography-font-size-4xl) * 1.5)',
-    },
   },
   subtitle: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 'var(--fableforge-spacing-l)',
     fontFamily: 'var(--fableforge-typography-font-family-body)',
     fontSize: 'var(--fableforge-typography-font-size-l)',
     color: 'var(--fableforge-color-text-secondary)',
-    marginBottom: 'var(--fableforge-spacing-l)',
-    maxWidth: '600px',
+    marginBottom: 'var(--fableforge-spacing-xl)',
+    justifyContent: 'center',
+    textAlign: 'justify',
+    paddingRight: 'var(--fableforge-spacing-l)',
+
+    '& img': {
+      width: '15em',
+      aspectRatio: 1 / 1,
+    }
   },
+  welcomeText: {
+    color: 'var(--fableforge-color-brand-secondary)',
+    marginRight: 'var(--fableforge-spacing-s)',
+  },
+
   // Featured banner
   featuredBanner: {
-    backgroundColor: 'var(--fableforge-color-brand-secondary)',
-    color: 'var(--fableforge-color-black)',
+    backgroundColor: 'var(--fableforge-color-brand-primary)',
+    color: 'var(--fableforge-color-white)',
     width: 'calc(100% - var(--fableforge-spacing-l))',
-    maxWidth: '1000px',
-    ...shorthands.padding('var(--fableforge-spacing-m)'),
-    marginBottom: 'var(--fableforge-spacing-xl)',
+    padding: 'var(--fableforge-spacing-m)',
     borderRadius: 'var(--fableforge-border-radii-m)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: 'var(--fableforge-shadow-s)',
+    boxShadow: 'var(--fableforge-shadow-l)',
     fontSize: 'var(--fableforge-typography-font-size-m)',
     fontWeight: 'var(--fableforge-typography-font-weight-medium)',
+    fontFamily: 'var(--fableforge-typography-font-family-heading)',
   },
   bannerIcon: {
     fontSize: 'var(--fableforge-typography-font-size-xl)',
     marginRight: 'var(--fableforge-spacing-s)',
-    color: 'var(--fableforge-color-brand-primary)',
   },
   // Options container
   optionsContainer: {
     display: 'grid',
     gridTemplateColumns: '1fr',
-    gap: 'var(--fableforge-spacing-xl)',
+    gap: 'var(--fableforge-spacing-l)',
     width: '100%',
-    maxWidth: '1200px',
+    height: '100%',
+    justifyItems: 'center',
+    alignItems: 'start',
     padding: 'var(--fableforge-spacing-m)',
+    marginTop: 'var(--fableforge-spacing-xl)',
+
     [`@media (min-width: ${breakpointTokens.tablet})`]: {
       gridTemplateColumns: 'repeat(2, 1fr)',
-    },
-    [`@media (min-width: ${breakpointTokens.laptop})`]: {
-      gridTemplateColumns: 'repeat(3, 1fr)',
     },
   },
   // Option cards
   optionCard: {
+    aspectRatio: 1 / 1,
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
@@ -89,7 +97,9 @@ export const useHomePageStyles = makeStyles({
     backgroundColor: 'var(--fableforge-color-panel-color)',
     borderRadius: 'var(--fableforge-border-radii-l)',
     ...shorthands.padding('var(--fableforge-spacing-xl)', 'var(--fableforge-spacing-l)'),
-    minHeight: '300px',
+    width: '100%',
+    maxHeight: '400px',
+    maxWidth: '400px',
     boxShadow: 'var(--fableforge-shadow-s)',
     cursor: 'pointer',
     transition: 'transform 0.2s ease, box-shadow 0.2s ease',
@@ -101,41 +111,13 @@ export const useHomePageStyles = makeStyles({
         opacity: 1,
       },
     },
-    '& h2': {
-      fontSize: 'var(--fableforge-typography-font-size-xl)',
-      fontWeight: 'var(--fableforge-typography-font-weight-bold)',
-      color: 'var(--fableforge-color-text-primary)',
-      marginTop: 'var(--fableforge-spacing-m)',
-      marginBottom: 'var(--fableforge-spacing-s)',
-    },
-  },
-  cardIcon: {
-    fontSize: '3rem',
-    color: 'var(--fableforge-color-brand-secondary)',
-    backgroundColor: 'var(--fableforge-color-background-body)',
-    borderRadius: '50%',
-    width: '80px',
-    height: '80px',
-    display: 'flex',
-    alignItems: 'start',
-    justifyContent: 'start',
-    marginBottom: 'var(--fableforge-spacing-m)',
-    boxShadow: 'var(--fableforge-shadow-s)',
-  },
-  cardDescription: {
-    color: 'var(--fableforge-color-text-secondary)',
-    fontSize: 'var(--fableforge-typography-font-size-m)',
-    lineHeight: '1.5',
-    marginBottom: 'var(--fableforge-spacing-l)',
-    textAlign: 'center',
-    maxWidth: '90%',
   },
   cardOverlay: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(38, 45, 53, 0.9)', // Semi-transparent panel color
+    backgroundColor: 'rgba(176, 183, 192, 0.9)', // Semi-transparent panel color
     ...shorthands.padding('var(--fableforge-spacing-l)'),
     display: 'flex',
     justifyContent: 'center',
@@ -147,9 +129,15 @@ export const useHomePageStyles = makeStyles({
   optionButton: {
     width: '100%',
     textAlign: 'center',
+    height: '20em',
   },
   manageDecks: {
-    backgroundImage: 'url(/public/assets/images/manage-decks.png)',
+    backgroundImage: 'url(./assets/images/fable-forge-manage-decks.png)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  findMatch: {
+    backgroundImage: 'url(./assets/images/fable-forge-find-match.png)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   }

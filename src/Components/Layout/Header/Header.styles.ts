@@ -3,8 +3,9 @@ import { makeStyles } from '@griffel/react'
 export const useHeaderStyles = makeStyles({
   root: {
     display: 'grid',
-    gridTemplateColumns: '1fr auto 1fr',
+    gridTemplateColumns: '0.33fr 0.33fr 0.33fr',
     gridTemplateRows: 'auto',
+    gap: 'var(--fableforge-spacing-s)',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'var(--fableforge-color-panel-color)',
@@ -14,16 +15,21 @@ export const useHeaderStyles = makeStyles({
     paddingLeft: 'var(--fableforge-spacing-s)',
     paddingRight: 'var(--fableforge-spacing-s)',
     zIndex: 0,
-    height: '4em',
+    height: '6em',
+    fontFamily: 'var(--fableforge-typography-font-family-heading)',
+  },
+  icon: {
+    marginRight: 'var(--fableforge-spacing-s)',
   },
   logo: {
     display: 'flex',
     alignItems: 'center',
     justifySelf: 'start',
+    flexGrow: 1,
     cursor: 'pointer',
     '& img': {
+      width: '100%',
       cursor: 'pointer',
-      width: '14em',
       display: 'inline-block',
       alignSelf: 'center',
     }
@@ -33,6 +39,7 @@ export const useHeaderStyles = makeStyles({
     justifyContent: 'center',
     gap: 'var(--fableforge-spacing-l)',
     alignItems: 'center',
+
   },
   menu: {
     position: 'fixed',
@@ -52,6 +59,8 @@ export const useHeaderStyles = makeStyles({
     textDecorationLine: 'none',
     fontSize: 'var(--fableforge-typography-font-size-m)',
     fontWeight: 'var(--fableforge-typography-font-weight-medium)',
+    cursor: 'pointer',
+    
     '&:hover': {
       color: 'var(--fableforge-color-brand-secondary)',
     },
