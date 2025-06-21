@@ -7,30 +7,18 @@ export interface AuthContext {
 }
 
 // Define individual event types for the authentication machine
-export type SubmitLoginWithEmailEvent = { type: 'SUBMIT_LOGIN_WITH_EMAIL'; email: string; password: string }
 export type SubmitLoginWithGoogleEvent = { type: 'SUBMIT_LOGIN_WITH_GOOGLE' }
-// export type SubmitRegistrationEvent = { type: 'SUBMIT_REGISTRATION'; email: string; password: string } // Removed
 
-// Events sent from actors to the machine
-export type ActorLoginSuccessEvent = { type: 'ACTOR_LOGIN_SUCCESS'; user: User }
-export type ActorLoginFailureEvent = { type: 'ACTOR_LOGIN_FAILURE'; error: string }
-// export type ActorRegistrationSuccessEvent = { type: 'ACTOR_REGISTRATION_SUCCESS'; user: User } // Removed
-// export type ActorRegistrationFailureEvent = { type: 'ACTOR_REGISTRATION_FAILURE'; error: string } // Removed
-
-// Events sent from AuthMachine to parent (AppMachine)
+// Events sent from AuthMachine to parent (AppMachine) - These are 'emitted' types
+// These type definitions are useful for defining the `emitted` shape in setup.
 export type AuthenticationSuccessEvent = { type: 'AUTHENTICATION_SUCCESS'; user: User }
-export type AuthenticationFailureEvent = { type: 'AUTHENTICATION_FAILURE'; error: string } // Optional, if parent needs to know
+export type AuthenticationFailureEvent = { type: 'AUTHENTICATION_FAILURE'; error: string }
 export type AuthenticationCancelledEvent = { type: 'AUTHENTICATION_CANCELLED' } // If user can cancel/go back
 
-// Define the AuthEvent union type
+// Define the AuthEvent union type for events the AuthMachine can RECEIVE
 export type AuthEvent =
-  | SubmitLoginWithEmailEvent
   | SubmitLoginWithGoogleEvent
-  // | SubmitRegistrationEvent // Removed
-  | ActorLoginSuccessEvent
-  | ActorLoginFailureEvent
-  // | ActorRegistrationSuccessEvent // Removed
-  // | ActorRegistrationFailureEvent // Removed
-  | AuthenticationSuccessEvent // These might be primarily for external communication
-  | AuthenticationFailureEvent
-  | AuthenticationCancelledEvent
+  // If the machine needs to receive a cancellation event from UI/parent:
+  | AuthenticationCancelledEvent // Assuming it can be received to trigger cancellation logic.
+  // Actor-specific success/failure events (like ActorLoginSuccessEvent) are typically
+  // not part of this union if handled by onDone/onError of invokes.

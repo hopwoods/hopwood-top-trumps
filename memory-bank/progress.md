@@ -103,6 +103,10 @@
         *   Created `src/Components/Decks/ManageDecksPage/ManageDecksPage.styles.ts` with initial styling.
         *   Created `src/Components/Decks/ManageDecksPage/UseManageDecksPage.ts` as a placeholder custom hook, typed for future `DeckMachine` integration.
         *   Updated `src/Components/Decks/ManageDecksPage/ManageDecksPage.tsx` with a basic layout including a title, "Create New Deck" button, and placeholder for deck listing/empty state. Resolved TypeScript errors.
+    *   **DeckMachine Integrated with AppMachine & UI (Basic Wiring):**
+        *   Updated `AppMachine.ts` to invoke `deckMachine` (as `deckMachineActor`) when entering the `authenticated.manageDecks` state.
+        *   Created `src/Hooks/UseDeckMachineState.ts` hook to provide access to the invoked `deckMachineActor`'s snapshot and `send` function.
+        *   Updated `src/Components/Decks/ManageDecksPage/UseManageDecksPage.ts` to use `useDeckMachineState`, connecting the `ManageDecksPage` UI to `deckMachine` for data display and event dispatching.
 
 2.  **Address Known Unit Test Issues:**
     *   Revisit the two failing unit tests in `AppMachine.test.ts` related to mocking invoked actors and `invoke.onError` handling, attempting to refine mock strategies.

@@ -1,5 +1,6 @@
 import { setup, assign } from 'xstate'
 import type { DeckMachineContext, DeckMachineEvents } from './DeckMachine.types'
+import { appMachineInspector } from '../AppMachine/stateInspector' // Import the inspector
 import { fetchDecksActor } from './Actors/FetchDecks.actor'
 import { saveDeckActor } from './Actors/SaveDeck.actor'
 import { deleteDeckActor } from './Actors/DeleteDeck.actor'
@@ -62,6 +63,7 @@ export const deckMachine = setup({
   },
 }).createMachine({
   id: 'deckMachine',
+  inspect: process.env.NODE_ENV === 'development' ? appMachineInspector : undefined,
   initial: 'initializing',
   context: {
     decks: [],
