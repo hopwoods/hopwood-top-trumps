@@ -2,7 +2,7 @@ import { useHomePageStyles } from './HomePage.styles'
 import { useHomePage } from './UseHomePage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrophy } from '@fortawesome/free-solid-svg-icons'
-import { Button } from '../../Common/Button/Button'
+import { Button } from '../Common/Button/Button' // Adjusted path
 import { mergeClasses } from '@griffel/react'
 
 const HomePage = () => {

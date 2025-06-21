@@ -3,7 +3,7 @@ import type { User } from 'firebase/auth' // Added top-level import
 import type { AuthContext, AuthEvent } from './AuthMachine.types' // Removed SubmitLoginWithEmailEvent
 
 // import { loginWithEmailActor } from '../AppMachine/Services/LoginWithEmail.actor' // Fully remove this line
-import { loginWithGoogleActor } from '../AppMachine/Services/LoginWithGoogle.actor' // Adjust path if moved
+import { loginWithGoogleActor } from './Services/LoginWithGoogle.actor' // Adjust path if moved
 // import { registerWithEmailActor } from '../AppMachine/Services/RegisterWithEmail.actor' // Removed
 
 export const authMachine = setup({

@@ -1,5 +1,5 @@
 import { makeStyles, shorthands } from '@griffel/react'
-import { breakpointTokens } from '../../../Theme/Tokens'
+import { breakpointTokens } from '../../Theme/Tokens' // Adjusted path
 
 export const useHomePageStyles = makeStyles({
   root: {

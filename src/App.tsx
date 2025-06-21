@@ -1,7 +1,7 @@
 import { GlobalStateContext } from './Hooks/UseAppState' // Changed to use GlobalStateContext.useSelector
 import AppLayout from './Components/Layout/AppLayout/AppLayout'
 import AuthPage from './Components/Auth/AuthPage/AuthPage'
-import HomePage from './Components/HomePage/HomePage/HomePage'
+import HomePage from './Components/HomePage/HomePage' // Corrected path
 import ManageDecksPage from './Components/Decks/ManageDecksPage/ManageDecksPage' // Added
 import PlayGamePage from './Components/Game/PlayGamePage/PlayGamePage' // Added
 import LoadingIndicator from './Components/Common/LoadingIndicator/LoadingIndicator'
