@@ -118,6 +118,61 @@
     *   Investigate the persistent "Cannot find namespace 'vi'" TypeScript error in test files if it becomes a blocker, though it currently does not affect test execution or builds.
 
 ---
+## DevOps & Build Configuration Updates (as of 2025-06-21)
+
+*   **Firebase Emulators Decision:**
+    *   Initially configured the client app (`src/Firebase/FirebaseConfig.ts`) to connect to Firebase emulators for Auth and Firestore during development.
+    *   Updated the `pnpm dev` script in `package.json` to use `concurrently` to run Vite and Firebase emulators together.
+    *   **Reverted emulator setup:** Based on user feedback, removed emulator connection logic from `FirebaseConfig.ts` and reverted the `dev` script in `package.json` to solely run `vite`. Local development will now connect to live Firebase services.
+*   **GitHub Workflow for Functions Deployment:**
+    *   Modified `.github/workflows/firebase-hosting-merge.yml` to include steps for:
+        *   Installing dependencies for Firebase Functions (`cd fable-forge-functions && pnpm install --frozen-lockfile`).
+        *   Building Firebase Functions (`cd fable-forge-functions && pnpm run build`).
+        *   Deploying Firebase Functions using `firebase deploy --only functions` with service account authentication, conditioned to run on push to the `main` branch.
+    *   The hosting deployment step was also conditioned to run on push events.
+    *   **Emulator Setup Reverted (User Request):**
+        *   Removed Firebase emulator connection logic from `src/Firebase/FirebaseConfig.ts`.
+        *   Reverted the `dev` script in `package.json` from using `concurrently` (for Vite + emulators) back to just `vite`. Local development will now connect to live Firebase services by default. The GitHub workflow for deploying functions remains.
+
+---
+## Progress Update: 2025-06-21 (Afternoon/Evening)
+
+**XII. Deck Management - Phase 2 & 3: Default Deck Provisioning & UI Enhancements**
+
+1.  **Default Deck Provisioning (Server-Side via Firebase Function):**
+    *   **Card Type Update:** Modified `src/Machines/DeckMachine/DeckMachine.types.ts` to make `specialAbility` optional in the `Card` interface, accommodating default cards without abilities.
+    *   **Static Deck Data:** Created `fable-forge-functions/src/data/defaultDeckData.ts` defining a "Starter Deck" with 20 cards. Card attributes were provided by the user and adjusted to meet the 1-10 per attribute and 50 total points rules. Special abilities were omitted for these default cards as requested.
+    *   **Firebase Function Implementation:**
+        *   Added `firebase-functions` and `firebase-admin` dependencies to the `fable-forge-functions` project.
+        *   Implemented an `onCreateUserProvisionDefaultDeck` auth trigger in `fable-forge-functions/src/index.ts`. This function automatically creates the default deck and its cards in Firestore for each new user.
+        *   Resolved TypeScript issues related to imports and parameter typing within the Firebase Function.
+
+2.  **Deck List UI Enhancements (`ManageDecksPage`):**
+    *   **`DeckListItem` Component:**
+        *   Created `src/Components/Decks/DeckListItem/DeckListItem.tsx` (with associated `.types.ts` and `.styles.ts`) to display individual deck information (name, card count, description snippet) and action buttons (Edit, Delete).
+    *   **Button Component & Icon System Refinements:**
+        *   Updated `src/Components/Common/Button/Button.types.ts` to support an `iconName` prop (typed via a new `IconName` type derived from `useIcons.tsx`), re-added `iconLeft`/`iconRight` for FontAwesome icons, and added a `danger` variant.
+        *   Updated `src/Theme/useIcons.tsx` to export `IconName` (derived from `iconKeys` const) and added `edit` and `delete` icons (using Font Awesome).
+        *   Updated `src/Components/Common/Button/Button.tsx` to render icons based on `iconName` (from `useIcons`) or `iconLeft`/`iconRight` (FontAwesome).
+        *   Added styles for the `danger` button variant in `src/Components/Common/Button/Button.styles.ts`.
+        *   Resolved various TypeScript and ESLint errors across these components related to prop types and icon usage.
+    *   **`ManageDecksPage` Update:**
+        *   Modified `src/Components/Decks/ManageDecksPage/UseManageDecksPage.ts` to include placeholder handler functions (`handleEditDeck`, `handleDeleteDeck`).
+        *   Updated `src/Components/Decks/ManageDecksPage/ManageDecksPage.tsx` to use the `DeckListItem` component to render the list of decks (which will initially be empty or show the default deck once a new user is created and data is fetched).
+
+**Current Status (Deck Management):**
+*   The foundational backend logic for provisioning a default deck to new users is in place via a Firebase Function.
+*   The UI for displaying a list of decks on `ManageDecksPage` is set up, with individual decks rendered by `DeckListItem`.
+*   The `Button` component is more flexible with icon handling and variants.
+*   The client-side `DeckMachine` fetches decks (which would include the default deck for new users after their first login and subsequent data fetch).
+
+**Next Steps Planned (Deck Management):**
+*   Implement UI for creating a new deck (form, state handling).
+*   Implement actual "Edit Deck" and "Delete Deck" functionality by connecting `DeckListItem` actions to `DeckMachine` events and corresponding Firebase service calls.
+*   Implement card management within a deck (add, edit, remove cards).
+*   Write comprehensive tests.
+
+---
 ## Progress Update: 2025-06-19 (Afternoon)
 
 **X. Authentication Refactor & Home Page Navigation Setup:**

@@ -57,8 +57,8 @@ export interface Card {
   imageUrl?: string;
   /** The core attributes of the card. */
   attributes: CardAttributes;
-  /** Each card has exactly one special ability. */
-  specialAbility: SpecialAbility;
+  /** Each card can have one special ability (optional for default deck). */
+  specialAbility?: SpecialAbility;
   /** Timestamp for when the card was created. */
   readonly createdAt: Date;
   /** Timestamp for when the card was last updated. */
