@@ -79,6 +79,8 @@ export interface Deck {
   description?: string;
   /** An array containing the cards in this deck. */
   cards: Card[];
+  /** Optional: The number of cards in the deck. */
+  cardCount?: number;
   /** Optional: The maximum number of cards allowed in this deck. */
   maxSize?: number;
   /** Optional: The minimum number of cards required in this deck. */

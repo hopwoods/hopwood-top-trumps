@@ -105,6 +105,32 @@ export const useButtonStyles = makeStyles({
     position: 'relative',
     top: '0.05em'
   },
+  danger: {
+    // TODO: Define danger color tokens in Theme/Tokens.ts and use them here
+    backgroundColor: 'var(--fableforge-color-danger-default, #dc3545)', // Fallback red
+    color: 'var(--fableforge-color-text-on-danger, white)', // Fallback white
+    borderTopColor: 'var(--fableforge-color-danger-border, #dc3545)',
+    borderRightColor: 'var(--fableforge-color-danger-border, #dc3545)',
+    borderBottomColor: 'var(--fableforge-color-danger-border, #dc3545)',
+    borderLeftColor: 'var(--fableforge-color-danger-border, #dc3545)',
+    ':hover': {
+      backgroundColor: 'var(--fableforge-color-danger-hover, #c82333)', // Darker red
+      borderTopColor: 'var(--fableforge-color-danger-hover-border, #bd2130)',
+      borderRightColor: 'var(--fableforge-color-danger-hover-border, #bd2130)',
+      borderBottomColor: 'var(--fableforge-color-danger-hover-border, #bd2130)',
+      borderLeftColor: 'var(--fableforge-color-danger-hover-border, #bd2130)',
+    },
+    ':active': {
+      backgroundColor: 'var(--fableforge-color-danger-active, #bd2130)', // Even darker red
+      borderTopColor: 'var(--fableforge-color-danger-active-border, #b21f2d)',
+      borderRightColor: 'var(--fableforge-color-danger-active-border, #b21f2d)',
+      borderBottomColor: 'var(--fableforge-color-danger-active-border, #b21f2d)',
+      borderLeftColor: 'var(--fableforge-color-danger-active-border, #b21f2d)',
+    },
+    ':focus-visible': {
+      outlineColor: 'var(--fableforge-color-danger-focus, #fd7e14)', // Example focus color
+    },
+  },
 })
 
 // Helper for merging classes, can be used in the component

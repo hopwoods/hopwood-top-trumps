@@ -107,6 +107,11 @@
         *   Updated `AppMachine.ts` to invoke `deckMachine` (as `deckMachineActor`) when entering the `authenticated.manageDecks` state.
         *   Created `src/Hooks/UseDeckMachineState.ts` hook to provide access to the invoked `deckMachineActor`'s snapshot and `send` function.
         *   Updated `src/Components/Decks/ManageDecksPage/UseManageDecksPage.ts` to use `useDeckMachineState`, connecting the `ManageDecksPage` UI to `deckMachine` for data display and event dispatching.
+    *   **Deck List Display and Action Placeholders (as of 2025-06-21):**
+        *   Created `DeckListItem.tsx` component (with types and styles) to display individual deck information and action buttons (Edit, Delete).
+        *   Resolved issues related to icon handling in the `Button` component by updating `Button.types.ts` (adding `iconName` and `danger` variant, re-adding `iconLeft`/`iconRight`), `Button.tsx` (to render icons via `iconName` or `iconLeft`/`Right`), and `useIcons.tsx` (adding `edit` and `delete` icons).
+        *   Updated `ManageDecksPage.tsx` to use `DeckListItem` for rendering the list of decks (currently empty as `fetchDecksActor` returns an empty array).
+        *   Updated `UseManageDecksPage.ts` to include placeholder `handleEditDeck` and `handleDeleteDeck` functions, passing them to `DeckListItem`.
 
 2.  **Address Known Unit Test Issues:**
     *   Revisit the two failing unit tests in `AppMachine.test.ts` related to mocking invoked actors and `invoke.onError` handling, attempting to refine mock strategies.

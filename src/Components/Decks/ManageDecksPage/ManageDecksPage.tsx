@@ -2,6 +2,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { Button } from '../../Common/Button/Button'
 import { useManageDecksPageStyles } from './ManageDecksPage.styles'
 import { useManageDecksPage } from './UseManageDecksPage'
+import { DeckListItem } from '../DeckListItem/DeckListItem' // Import DeckListItem
 // TODO: [DECK_MGMT_UI_ICONS] Import icons if needed for buttons or list items
 
 /**
@@ -10,7 +11,14 @@ import { useManageDecksPage } from './UseManageDecksPage'
  */
 const ManageDecksPage = () => {
   const styles = useManageDecksPageStyles()
-  const { decks, isLoading, error, handleCreateNewDeck } = useManageDecksPage()
+  const {
+    decks,
+    isLoading,
+    error,
+    handleCreateNewDeck,
+    handleEditDeck,
+    handleDeleteDeck,
+  } = useManageDecksPage()
 
   // TODO: [DECK_MGMT_UI_LOADING_ERROR] Implement proper loading and error state UI
   if (isLoading) {
@@ -46,10 +54,14 @@ const ManageDecksPage = () => {
             You haven't created any decks yet. Get started by creating one!
           </p>
         ) : (
-          <ul>
-            {/* TODO: [DECK_MGMT_UI_LIST] Map over 'decks' array and render DeckListItem components */}
+          <ul style={{ listStyle: 'none', padding: 0, width: '100%' }}>
             {decks.map(deck => (
-              <li key={deck.id}>{deck.name}</li> // Placeholder list item
+              <DeckListItem
+                key={deck.id}
+                deck={deck}
+                onEdit={handleEditDeck}
+                onDelete={handleDeleteDeck}
+              />
             ))}
           </ul>
         )}
