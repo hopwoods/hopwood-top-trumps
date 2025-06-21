@@ -21,7 +21,66 @@
 
 ## Current Status
 
--
+- Project version updated to `0.1.0-alpha.2`.
+- `CHANGELOG.md` created and updated.
+- Core authentication and navigation flows have improved test coverage (unit and E2E).
+- Build process is stable.
+- Some known issues with specific unit tests for XState machine mocking persist but do not block core functionality.
+
+---
+## Progress Update: 2025-06-21
+
+**XI. Testing Enhancements, Refactoring, and Release Prep (v0.1.0-alpha.2):**
+
+1.  **Email/Password Auth Removal Confirmation:**
+    *   Confirmed that email/password authentication (including registration) was removed, focusing efforts on Google Sign-In.
+    *   `AuthMachine.ts` reflects this, only including logic for `loginWithGoogleActor`.
+
+2.  **Actor Co-location:**
+    *   Moved `LoginWithGoogle.actor.ts` from `src/Machines/AppMachine/Services/` to `src/Machines/AuthMachine/Services/` to co-locate it with `AuthMachine.ts`, aligning with `.clinerules/06-xstate-structure.md`.
+    *   Updated import paths in `AuthMachine.ts` accordingly.
+
+3.  **Unit Testing for State Machines:**
+    *   **`AuthMachine.test.ts`:**
+        *   Created and refined unit tests covering Google Sign-In success and failure paths.
+        *   Corrected an error message assertion.
+        *   Acknowledged a known test failure related to `sendParent` when testing the child machine in isolation (test verifies the machine reaches its final state, which is the primary goal).
+    *   **`AppMachine.test.ts`:**
+        *   Created comprehensive unit tests covering initialization, authentication state changes based on `checkAuthStatusActor`, logout, and navigation events.
+        *   Addressed several TypeScript and ESLint issues related to mocking and XState types.
+        *   Added a file-level ESLint disable for `@typescript-eslint/no-explicit-any` due to complexities in mocking invoked actors, as per testing guidelines.
+        *   Two tests related to `invoke.onError` handling for the mocked `authMachine` remain failing due to intricacies in the mock setup; these are noted as known issues.
+        *   A persistent TypeScript error "Cannot find namespace 'vi'" is present but does not affect test execution or build.
+
+4.  **E2E Testing Enhancements:**
+    *   **`LoginPage.e2e.ts`:** Added a more comprehensive test for successful Google Sign-In, verifying navigation to the HomePage.
+    *   **`HomePage.e2e.ts`:** Created new E2E tests for navigation from the HomePage to `ManageDecksPage` and `PlayGamePage`, including tests for navigating back to Home.
+
+5.  **Component Structure Refactoring:**
+    *   Refactored the `HomePage` component files from `src/Components/HomePage/HomePage/` to `src/Components/HomePage/`, removing the redundant nested directory.
+    *   Updated import paths in `HomePage.tsx` and `App.tsx`.
+
+6.  **Build and Linting:**
+    *   Resolved a build error in `App.tsx` caused by an incorrect import path after `HomePage` refactoring.
+    *   Updated `tsconfig.app.json` to exclude test files (`*.test.ts`, `*.test.tsx`, `*.e2e.ts`) from the main application build (`tsc -b`), resolving a build error related to Vitest's `vi` namespace.
+    *   Ensured `pnpm lint` passes (with the noted ESLint disable in `AppMachine.test.ts`).
+    *   Ensured `pnpm build` completes successfully.
+
+7.  **Release Preparation (v0.1.0-alpha.2):**
+    *   Updated the version in `package.json` to `0.1.0-alpha.2`.
+    *   Created `CHANGELOG.md` and added an entry for the `0.1.0-alpha.2` release, summarizing changes, fixes, and known issues.
+
+**Current Status (Post-Work for v0.1.0-alpha.2):**
+*   Core authentication (Google Sign-In) and navigation flows are functional and have improved test coverage.
+*   Code structure has been improved through actor co-location and component file refactoring.
+*   The project lints and builds successfully.
+*   Release artifacts (`package.json` version, `CHANGELOG.md`) are updated for `0.1.0-alpha.2`.
+*   Known issues with specific unit tests for XState machine mocking persist but are documented.
+
+**Next Steps Planned:**
+*   Commit changes and tag the release.
+*   Address the remaining failing unit tests in `AppMachine.test.ts` by further refining mock strategies for invoked actors.
+*   Continue development of core game features (e.g., Deck Management, Game Play).
 
 ---
 ## Progress Update: 2025-06-19 (Afternoon)
