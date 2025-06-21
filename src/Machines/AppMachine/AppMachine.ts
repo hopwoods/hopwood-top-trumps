@@ -6,6 +6,7 @@ import { appMachineInspector } from './stateInspector' // Import the inspector
 // Import actors
 import { checkAuthStatusActor } from './Services/CheckAuthStatus.actor'
 import { logoutActor } from './Services/Logout.actor'
+import { checkAndProvisionDefaultDeckActor } from './Actors/CheckAndProvisionDefaultDeck.actor' // Added import
 
 // Import types
 import type {
@@ -25,6 +26,7 @@ export const appMachine = setup({
     logoutActor,
     authMachine,
     deckMachine, // Add deckMachine here
+    checkAndProvisionDefaultDeckActor, // Added actor
   },
   guards: {},
   actions: {
@@ -123,8 +125,28 @@ export const appMachine = setup({
     },
     authenticated: {
       initial: 'home',
+      invoke: [ // Invoke checkAndProvisionDefaultDeckActor when entering authenticated state
+        {
+          id: 'deckProvisioner',
+          src: 'checkAndProvisionDefaultDeckActor',
+          input: ({ context }) => {
+            if (!context.user?.uid) {
+              // This should ideally not happen if we are in an authenticated state.
+              // Throwing an error or providing a default/invalid ID might be options.
+              console.error('User ID is missing when invoking checkAndProvisionDefaultDeckActor. This should not happen.')
+              // Consider how to handle this; perhaps the actor itself should guard against missing userId.
+              // For now, we rely on the actor's internal check.
+              return { userId: '' } // Actor handles empty string
+            }
+            return { userId: context.user.uid }
+          },
+          // No onDone or onError needed here as per plan (fire and forget for side effect)
+          // onError: { actions: assign({ error: 'Deck provisioning check failed.' }) } // Optional: log error
+        },
+      ],
       states: {
         home: {
+          // Removed the entry action from here as it's now invoked at the parent 'authenticated' level
           on: {
             LOGOUT: '#app.loggingOut',
             NAVIGATE_TO_PLAY_GAME: 'playGame',

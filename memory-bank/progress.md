@@ -135,19 +135,18 @@
         *   Reverted the `dev` script in `package.json` from using `concurrently` (for Vite + emulators) back to just `vite`. Local development will now connect to live Firebase services by default. The GitHub workflow for deploying functions remains.
 
 ---
-## Progress Update: 2025-06-21 (Afternoon/Evening)
+## Progress Update: 2025-06-21 (Evening)
 
-**XII. Deck Management - Phase 2 & 3: Default Deck Provisioning & UI Enhancements**
+**XII. Deck Management Evolution & DevOps Achievements**
 
-1.  **Default Deck Provisioning (Server-Side via Firebase Function):**
-    *   **Card Type Update:** Modified `src/Machines/DeckMachine/DeckMachine.types.ts` to make `specialAbility` optional in the `Card` interface, accommodating default cards without abilities.
-    *   **Static Deck Data:** Created `fable-forge-functions/src/data/defaultDeckData.ts` defining a "Starter Deck" with 20 cards. Card attributes were provided by the user and adjusted to meet the 1-10 per attribute and 50 total points rules. Special abilities were omitted for these default cards as requested.
-    *   **Firebase Function Implementation:**
-        *   Added `firebase-functions` and `firebase-admin` dependencies to the `fable-forge-functions` project.
-        *   Implemented an `onCreateUserProvisionDefaultDeck` auth trigger in `fable-forge-functions/src/index.ts`. This function automatically creates the default deck and its cards in Firestore for each new user.
-        *   Resolved TypeScript issues related to imports and parameter typing within the Firebase Function.
+1.  **Default Deck Provisioning - Strategy Pivot to Client-Side:**
+    *   **Initial Server-Side Attempt:**
+        *   The `Card` type in `src/Machines/DeckMachine/DeckMachine.types.ts` was updated to make `specialAbility` optional.
+        *   A static "Starter Deck" definition (20 cards, adjusted attributes, no special abilities) was created in `fable-forge-functions/src/data/defaultDeckData.ts`.
+        *   An `onCreateUser` Firebase Function was implemented in `fable-forge-functions/src/index.ts` to auto-provision this deck. This included installing `firebase-functions`, `firebase-admin`, and `@google-cloud/functions-framework` in the functions sub-project and resolving various TypeScript build errors related to Firebase SDK versions and import paths.
+    *   **Pivot Decision:** After discussion regarding the `onCreateUser` trigger's behavior (firing only for truly new Firebase Auth users, not existing test accounts), it was decided to pivot to a **client-side mechanism** for provisioning the default deck. This approach will provide more flexibility for ensuring all users (new and existing without the deck) receive it. The server-side Firebase Function for this purpose will be removed.
 
-2.  **Deck List UI Enhancements (`ManageDecksPage`):**
+2.  **Deck List UI Enhancements (`ManageDecksPage`):** (Completed as previously noted and documented)
     *   **`DeckListItem` Component:**
         *   Created `src/Components/Decks/DeckListItem/DeckListItem.tsx` (with associated `.types.ts` and `.styles.ts`) to display individual deck information (name, card count, description snippet) and action buttons (Edit, Delete).
     *   **Button Component & Icon System Refinements:**
@@ -160,17 +159,44 @@
         *   Modified `src/Components/Decks/ManageDecksPage/UseManageDecksPage.ts` to include placeholder handler functions (`handleEditDeck`, `handleDeleteDeck`).
         *   Updated `src/Components/Decks/ManageDecksPage/ManageDecksPage.tsx` to use the `DeckListItem` component to render the list of decks (which will initially be empty or show the default deck once a new user is created and data is fetched).
 
-**Current Status (Deck Management):**
-*   The foundational backend logic for provisioning a default deck to new users is in place via a Firebase Function.
-*   The UI for displaying a list of decks on `ManageDecksPage` is set up, with individual decks rendered by `DeckListItem`.
-*   The `Button` component is more flexible with icon handling and variants.
-*   The client-side `DeckMachine` fetches decks (which would include the default deck for new users after their first login and subsequent data fetch).
+**Current Status (Deck Management & Related):**
+*   The UI for displaying a list of decks on `ManageDecksPage` (using `DeckListItem`) is set up.
+*   The `Button` component and icon system have been enhanced for flexibility.
+*   The client-side `DeckMachine` is integrated to fetch decks.
+*   The strategy for default deck provisioning has been shifted to a client-side implementation (detailed below).
+*   The server-side Firebase Function for default deck provisioning is slated for removal.
 
-**Next Steps Planned (Deck Management):**
-*   Implement UI for creating a new deck (form, state handling).
+**Next Major Feature: Client-Side Default Deck Provisioning & Continued Deck Management UI**
+
+*   **Implement Client-Side Default Deck Provisioning:**
+    *   **Cleanup:** Remove the `onCreateUserProvisionDefaultDeck` function from `fable-forge-functions/src/index.ts` and delete `fable-forge-functions/src/data/defaultDeckData.ts`.
+    *   **Client-Side Data:** Create `src/Data/DefaultDeckData.ts` with the static "Starter Deck" definition (20 cards, attributes adjusted, no special abilities).
+    *   **Service Layer Enhancement:** Add a `createDeckWithCards` function to `src/Firebase/firebaseDeckService.ts` capable of creating a deck document and its card subcollection documents in a batch.
+    *   **New Actor:** Create `CheckAndProvisionDefaultDeck.actor.ts` (e.g., in `src/Machines/AppMachine/Actors/`). This actor will:
+        *   Accept `userId` as input.
+        *   Call `getUserDecks(userId)` from `firebaseDeckService.ts`.
+        *   If no decks exist (or no "Starter Deck" specifically), call `createDeckWithCards(userId, staticDefaultDeckData)`.
+    *   **AppMachine Integration:** Update `AppMachine.ts` to invoke `checkAndProvisionDefaultDeckActor` upon successful user authentication (e.g., on entry to the `authenticated` state or a relevant substate).
+    *   Update `AppMachine.types.ts` for any new actor types or events if `AppMachine` needs to react to the provisioning outcome.
+*   **Continue Deck Management UI Development:**
+    *   Implement UI for creating a new custom deck (form, state handling, connected to `DeckMachine`).
 *   Implement actual "Edit Deck" and "Delete Deck" functionality by connecting `DeckListItem` actions to `DeckMachine` events and corresponding Firebase service calls.
 *   Implement card management within a deck (add, edit, remove cards).
 *   Write comprehensive tests.
+
+---
+## DevOps & Build Configuration Updates (as of 2025-06-21)
+
+*   **GitHub Workflow for Functions Deployment:**
+    *   The workflow in `.github/workflows/firebase-hosting-merge.yml` was successfully configured to install dependencies, build, and deploy Firebase Functions. This involved resolving several iterative build failures:
+        *   Correcting `firebase.json` to point to the `fable-forge-functions` source directory and use `pnpm` for predeploy scripts.
+        *   Aligning ESLint versions (`eslint@^9`, `typescript-eslint@^8`) and configurations between the root project and `fable-forge-functions` (switching functions to use flat config by removing local `.eslintrc.js` and updating its `lint` script).
+        *   Updating `fable-forge-functions/pnpm-lock.yaml` after dependency changes.
+        *   Adding the required `@google-cloud/functions-framework` dependency to `fable-forge-functions`.
+        *   Resolving Firebase Functions SDK import issues in `fable-forge-functions/src/index.ts` by ensuring correct v1 imports for auth triggers with `firebase-functions@6.3.2`.
+    *   The general mechanism for deploying functions via CI is now robust, even though the specific default deck provisioning function will be removed in favor of a client-side approach.
+*   **Firebase Emulators Decision (Reverted):**
+    *   The setup for using Firebase emulators during local development was implemented and then reverted per user request. Local development will connect to live Firebase services.
 
 ---
 ## Progress Update: 2025-06-19 (Afternoon)

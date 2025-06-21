@@ -22,6 +22,17 @@ export type AuthenticationSuccessEventFromChild = { type: 'AUTHENTICATION_SUCCES
 export type AuthenticationFailureEventFromChild = { type: 'AUTHENTICATION_FAILURE'; error: string }
 export type AuthenticationCancelledEventFromChild = { type: 'AUTHENTICATION_CANCELLED' } // If authMachine can be cancelled
 
+// Events from checkAndProvisionDefaultDeckActor
+export type DeckProvisioningSuccessEvent = {
+  type: 'xstate.done.actor.deckProvisioner' // Default event type for successful actor completion
+  output: { provisioned: boolean; userId: string; existingDeckCount?: number }
+}
+export type DeckProvisioningErrorEvent = {
+  type: 'xstate.error.actor.deckProvisioner' // Default event type for actor error
+  error: Error // Or a more specific error type if known
+}
+
+
 // Define the AppEvent union type
 export type AppEvent =
   | AuthStatusCheckCompleteEvent
@@ -33,6 +44,8 @@ export type AppEvent =
   | AuthenticationSuccessEventFromChild
   | AuthenticationFailureEventFromChild
   | AuthenticationCancelledEventFromChild
+  | DeckProvisioningSuccessEvent // Added event
+  | DeckProvisioningErrorEvent // Added event
 // Removed:
 // | LoginWithEmailEvent
 // | LoginWithGoogleEvent

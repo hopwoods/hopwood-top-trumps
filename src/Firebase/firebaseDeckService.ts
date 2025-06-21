@@ -10,11 +10,15 @@ import {
   serverTimestamp,
   Timestamp, // Import Timestamp for type casting if needed
   type DocumentSnapshot, // Added top-level import for DocumentSnapshot
+  writeBatch, // Import writeBatch for batch operations
+  getDoc, // Import getDoc for fetching a single document
 } from 'firebase/firestore'
 import { firestore as db } from './FirebaseConfig' // Import firestore and alias it as db
-import type { Deck } from '../Machines/DeckMachine/DeckMachine.types' // Adjust path as needed
+import type { Deck, Card } from '../Machines/DeckMachine/DeckMachine.types' // Adjust path as needed
+import type { DeckDataForCreation } from '../Data/DefaultDeckData' // Import creation types
 
 const DECKS_COLLECTION = 'decks'
+const CARDS_SUBCOLLECTION = 'cards'
 
 /**
  * Converts a Firestore document snapshot to a Deck object.
@@ -35,10 +39,30 @@ const deckFromSnapshot = (snapshotDoc: DocumentSnapshot): Deck => {
     minSize: data.minSize,
     createdAt: (data.createdAt as Timestamp)?.toDate() ?? new Date(),
     updatedAt: (data.updatedAt as Timestamp)?.toDate() ?? new Date(),
-    // cardCount: data.cardCount, // If you add this field
+    cardCount: data.cardCount ?? 0, // Ensure cardCount is handled
   } as Deck // Cast to Deck, ensuring all fields are covered
 }
 
+/**
+ * Converts a Firestore card document snapshot to a Card object.
+ * Handles timestamp conversion.
+ */
+const cardFromSnapshot = (snapshotDoc: DocumentSnapshot): Card => {
+  const data = snapshotDoc.data()
+  if (!data) {
+    throw new Error('Card document data was undefined.')
+  }
+  return {
+    id: snapshotDoc.id,
+    name: data.name,
+    imageUrl: data.imageUrl,
+    attributes: data.attributes,
+    // specialAbility will be undefined if not present in Firestore
+    specialAbility: data.specialAbility,
+    createdAt: (data.createdAt as Timestamp)?.toDate() ?? new Date(),
+    updatedAt: (data.updatedAt as Timestamp)?.toDate() ?? new Date(),
+  } as Card
+}
 
 /**
  * Fetches all decks for a given user.
@@ -153,3 +177,73 @@ export const deleteDeck = async (deckId: string): Promise<void> => {
 // TODO: Implement functions for card operations (add, update, delete cards in a deck's subcollection)
 // e.g., addCardToDeck(deckId: string, cardData: Omit<Card, 'id' | 'createdAt' | 'updatedAt'>): Promise<Card>
 // e.g., getDeckCards(deckId: string): Promise<Card[]>
+
+/**
+ * Creates a new deck with its cards in Firestore using a batch write.
+ * @param userId The ID of the user creating the deck.
+ * @param deckToCreate Data for the new deck, including card data.
+ * @returns A promise that resolves to the fully created Deck object.
+ */
+export const createDeckWithCards = async (
+  userId: string,
+  deckToCreate: DeckDataForCreation,
+): Promise<Deck> => {
+  if (!userId) {
+    throw new Error('createDeckWithCards: userId is required.')
+  }
+  if (!deckToCreate || !deckToCreate.cardsData || deckToCreate.cardsData.length === 0) {
+    throw new Error('createDeckWithCards: deckToCreate must include cardsData.')
+  }
+
+  const deckDocRef = doc(collection(db, DECKS_COLLECTION)) // Generate ID for the new deck
+
+  try {
+    const batch = writeBatch(db)
+
+    // 1. Prepare deck document data
+    const deckDocumentData = {
+      userId,
+      name: deckToCreate.name,
+      description: deckToCreate.description || '',
+      cardCount: deckToCreate.cardsData.length,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    }
+    batch.set(deckDocRef, deckDocumentData)
+
+    // 2. Prepare card documents and add to batch
+    const cardsCollectionRef = collection(deckDocRef, CARDS_SUBCOLLECTION)
+    deckToCreate.cardsData.forEach((cardData) => {
+      const cardDocRef = doc(cardsCollectionRef) // Generate ID for each new card
+      const cardDocument = {
+        ...cardData, // name, imageUrl, attributes
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      }
+      batch.set(cardDocRef, cardDocument)
+    })
+
+    // 3. Commit the batch
+    await batch.commit()
+
+    // 4. Fetch the created deck document to get server timestamps
+    const createdDeckSnap = await getDoc(deckDocRef)
+    const newDeck = deckFromSnapshot(createdDeckSnap)
+
+    // 5. Fetch the created card documents to get their server timestamps
+    const createdCardsQuerySnap = await getDocs(cardsCollectionRef)
+    const fetchedCards: Card[] = []
+    createdCardsQuerySnap.forEach((cardDocSnap) => {
+      fetchedCards.push(cardFromSnapshot(cardDocSnap))
+    })
+
+    // 6. Return the full Deck object with populated cards
+    return {
+      ...newDeck,
+      cards: fetchedCards,
+    }
+  } catch (error) {
+    console.error('Error creating deck with cards:', error)
+    throw error
+  }
+}
