@@ -1,9 +1,59 @@
+import { Button } from '../../Common/Button/Button'
+import { useManageDecksPageStyles } from './ManageDecksPage.styles'
+import { useManageDecksPage } from './UseManageDecksPage'
+// TODO: [DECK_MGMT_UI_ICONS] Import icons if needed for buttons or list items
+
+/**
+ * ManageDecksPage component.
+ * This page allows users to view, create, edit, and delete their decks.
+ */
 const ManageDecksPage = () => {
+  const styles = useManageDecksPageStyles()
+  const { decks, isLoading, error, handleCreateNewDeck } = useManageDecksPage()
+
+  // TODO: [DECK_MGMT_UI_LOADING_ERROR] Implement proper loading and error state UI
+  if (isLoading) {
+    return <div className={styles.root}>Loading decks...</div> // Placeholder
+  }
+
+  if (error !== null) {
+    // Explicitly assert error to Error type after null check
+    const err = error as Error
+    return (
+      <div className={styles.root}>
+        Error loading decks: {err.message} {/* Placeholder */}
+      </div>
+    )
+  }
+
   return (
-    <div>
-      <h1>Manage Decks</h1>
-      <p>This is where users will manage their card decks.</p>
-      {/* Content for managing decks will go here */}
+    <div className={styles.root}>
+      <div className={styles.headerContainer}>
+        <h1 className={styles.title}>Manage Decks</h1>
+        <Button
+          variant="primary"
+          onClick={handleCreateNewDeck}
+          // TODO: [DECK_MGMT_UI_LOADING] Add isLoading prop if button should be disabled during machine transitions
+        >
+          Create New Deck
+        </Button>
+      </div>
+
+      <div className={styles.deckListContainer}>
+        {decks.length === 0 ? (
+          <p className={styles.noDecksMessage}>
+            You haven't created any decks yet. Get started by creating one!
+          </p>
+        ) : (
+          <ul>
+            {/* TODO: [DECK_MGMT_UI_LIST] Map over 'decks' array and render DeckListItem components */}
+            {decks.map(deck => (
+              <li key={deck.id}>{deck.name}</li> // Placeholder list item
+            ))}
+          </ul>
+        )}
+      </div>
+      {/* TODO: [DECK_MGMT_UI_MODALS] Add Modals for deck creation/editing if not a separate page/view */}
     </div>
   )
 }

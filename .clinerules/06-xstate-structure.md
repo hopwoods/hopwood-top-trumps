@@ -29,16 +29,16 @@ While a single XState machine with parallel and child states can manage signific
 
 The `AppMachine` in this project will serve as the root machine, orchestrating global concerns like initialization and authentication state. As more complex, distinct features are developed (e.g., deck building, active gameplay, AI art generation), they will be prime candidates for implementation as separate machines invoked or spawned by `AppMachine` or other relevant parent machines. This aligns with the actor model, where machines communicate by sending and receiving events.
 
-### Organizing Guards and Services
+### Organizing Machine Implementations (Guards, Actors, etc.)
 
 To maintain clarity and modularity within individual XState machine definitions:
 
 1.  **Separate Files for Implementations:**
     *   Each XState guard function should be defined in its own file.
-    *   Each XState invoked actor (service/promise) logic should be defined in its own file.
+    *   Each XState invoked actor (logic sourced via `fromPromise`, `fromObservable`, `fromCallback`, other machines, etc.) should be defined in its own file. The term "actor" is preferred over "service" for these implementations.
 
 2.  **Co-located Folder Structure (Per-Machine):**
-    *   These individual guard and service files should be organized into `Guards` and `Services` subdirectories, co-located with the machine definition file they pertain to.
+    *   These individual implementation files should be organized into dedicated subdirectories like `Guards` and `Actors`, co-located with the machine definition file they pertain to.
     *   **Example Structure:**
         ```
         src/
@@ -49,11 +49,11 @@ To maintain clarity and modularity within individual XState machine definitions:
             |   ├── Guards/
             |   │   ├── isUserAdmin.guard.ts
             |   │   └── canProceed.guard.ts
-            |   └── Services/
-            |       ├── loadUserProfile.service.ts
-            |       └── submitForm.service.ts
+            |   └── Actors/  // For invoked promises, observables, callbacks, etc.
+            |       ├── loadUserProfile.actor.ts
+            |       └── submitForm.actor.ts
         ```
 
 3.  **Naming Conventions:**
     *   Guard files should be named descriptively, ending with `.guard.ts` (e.g., `isUserAuthenticated.guard.ts`).
-    *   Service files should be named descriptively, ending with `.service.ts` (e.g., `fetchGameSettings.service.ts`).
+    *   Actor files (for invoked logic) should be named descriptively, ending with `.actor.ts` (e.g., `fetchGameSettings.actor.ts`).
