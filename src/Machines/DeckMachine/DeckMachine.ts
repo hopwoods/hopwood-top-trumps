@@ -1,5 +1,5 @@
 import { setup, assign } from 'xstate'
-import type { DeckMachineContext, DeckMachineEvents } from './DeckMachine.types'
+import type { DeckMachineContext, DeckMachineEvents, DeckMachineInput } from './DeckMachine.types'
 import { appMachineInspector } from '../AppMachine/stateInspector' // Import the inspector
 import { fetchDecksActor } from './Actors/FetchDecks.actor'
 import { saveDeckActor } from './Actors/SaveDeck.actor'
@@ -9,7 +9,7 @@ export const deckMachine = setup({
   types: {} as {
     context: DeckMachineContext,
     events: DeckMachineEvents,
-    // input: any, // If the machine accepts input
+    input: DeckMachineInput,
   },
   actors: {
     fetchDecksActor,
@@ -30,10 +30,6 @@ export const deckMachine = setup({
         if (event.type === 'SAVE_DECK_SUCCESS') {
           return event.output
         }
-        // If called in other contexts where event is not SAVE_DECK_SUCCESS,
-        // it might need to behave differently or this action should be more specific.
-        // For now, this covers the usage in savingDeck.onDone.
-        // Fallback to existing selectedDeck if event is not relevant for this action's primary purpose here.
         return context.selectedDeck
       },
     }),
@@ -56,27 +52,34 @@ export const deckMachine = setup({
       error: null,
     }),
     // TODO: [DECK_MGMT_ACTIONS] Add more actions for card operations
-    // e.g., addCardToSelectedDeck, updateCardInSelectedDeck, removeCardFromSelectedDeck
   },
   guards: {
-    // TODO: [DECK_MGMT_GUARDS] Add guards if needed (e.g., canEditDeck)
+    // TODO: [DECK_MGMT_GUARDS] Add guards if needed
   },
 }).createMachine({
   id: 'deckMachine',
   inspect: process.env.NODE_ENV === 'development' ? appMachineInspector : undefined,
   initial: 'initializing',
-  context: {
+  context: ({ input }) => ({
+    userId: input.userId,
     decks: [],
     selectedDeck: null,
     error: null,
-  } satisfies DeckMachineContext,
+  }) satisfies DeckMachineContext,
   states: {
     initializing: {
-      always: 'loadingDecks', // Or could fetch initial data here if needed immediately
+      always: 'loadingDecks',
     },
     loadingDecks: {
       invoke: {
         src: 'fetchDecksActor',
+        input: ({ context }) => {
+          if (!context.userId) {
+            console.error('DeckMachine: userId is null when trying to fetch decks.');
+            throw new Error('User ID is missing, cannot fetch decks.');
+          }
+          return { userId: context.userId };
+        },
         onDone: {
           target: 'viewingDeckList',
           actions: ['assignDecksToContext', 'clearError'],
@@ -93,29 +96,26 @@ export const deckMachine = setup({
         CREATE_NEW_DECK: 'creatingDeck',
         EDIT_DECK: {
           target: 'editingDeck',
-          // actions: 'assignSelectedDeckToContext' // This needs careful handling of how selectedDeck is populated
+          // actions: 'assignSelectedDeckToContext'
         },
-        DELETE_DECK: 'deletingDeck', // Transition to a state to confirm and invoke delete
+        DELETE_DECK: 'deletingDeck',
       },
     },
     creatingDeck: {
-      // This state would manage the UI for a new deck form
-      entry: ['clearSelectedDeck', 'clearError'], // Start with a clean slate
+      entry: ['clearSelectedDeck', 'clearError'],
       on: {
         SAVE_DECK: 'savingDeck',
-        CANCEL_DECK_EDIT: 'viewingDeckList', // Or 'idle' if that's more appropriate
+        CANCEL_DECK_EDIT: 'viewingDeckList',
         VIEW_DECK_LIST: 'viewingDeckList',
       },
-      // TODO: [DECK_MGMT_CARD_CREATE_UI] Define how cards are added during creation
+      // TODO: [DECK_MGMT_CARD_CREATE_UI]
     },
     editingDeck: {
-      // This state manages UI for editing an existing deck (name, description, cards)
-      // It should have the selectedDeck in context
       entry: 'clearError',
       on: {
         SAVE_DECK: 'savingDeck',
         ADD_CARD_TO_DECK: {
-          // actions: 'addCardToSelectedDeck' // Action to update selectedDeck in context
+          // actions: 'addCardToSelectedDeck'
         },
         UPDATE_CARD_IN_DECK: {
           // actions: 'updateCardInSelectedDeck'
@@ -136,23 +136,26 @@ export const deckMachine = setup({
     savingDeck: {
       invoke: {
         src: 'saveDeckActor',
-        input: ({ event }) => { // Removed unused 'context'
+        input: ({ context, event }) => {
           if (event.type === 'SAVE_DECK') {
-            return { deck: event.deck }
+            if (!event.deck.id && !context.userId) {
+              console.error('DeckMachine: userId is null when trying to create a new deck via saveDeckActor.');
+              throw new Error('User ID is missing, cannot create new deck.');
+            }
+            return { deck: event.deck, userId: context.userId };
           }
-          // This should not happen if machine logic is correct
-          throw new Error('Invalid event for saving deck')
+          throw new Error('Invalid event for saving deck');
         },
         onDone: {
-          target: 'loadingDecks', // Or directly to viewingDeckList/editingDeck with updated data
+          target: 'loadingDecks',
           actions: [
-            'assignSelectedDeckToContext', // Assigns the saved deck
-            // TODO: [DECK_MGMT_SAVE_SUCCESS] Potentially update context.decks as well or refetch
+            'assignSelectedDeckToContext',
+            // TODO: [DECK_MGMT_SAVE_SUCCESS]
             'clearError',
           ],
         },
         onError: {
-          target: 'error', // Or back to creating/editing with error displayed
+          target: 'error',
           actions: 'assignErrorToContext',
         },
       },
@@ -162,13 +165,13 @@ export const deckMachine = setup({
         src: 'deleteDeckActor',
         input: ({ event }) => {
           if (event.type === 'DELETE_DECK') {
-            return { deckId: event.deckId }
+            return { deckId: event.deckId };
           }
-          throw new Error('Invalid event for deleting deck')
+          throw new Error('Invalid event for deleting deck');
         },
         onDone: {
-          target: 'loadingDecks', // Refresh deck list
-          // TODO: [DECK_MGMT_DELETE_SUCCESS] Action to remove deck from context.decks if not refetching
+          target: 'loadingDecks',
+          // TODO: [DECK_MGMT_DELETE_SUCCESS]
           actions: ['clearSelectedDeck', 'clearError'],
         },
         onError: {
@@ -179,8 +182,8 @@ export const deckMachine = setup({
     },
     error: {
       on: {
-        FETCH_DECKS: 'loadingDecks', // Allow retrying
-        // TODO: [DECK_MGMT_ERROR_HANDLING] Add other recovery events
+        FETCH_DECKS: 'loadingDecks',
+        // TODO: [DECK_MGMT_ERROR_HANDLING]
       },
     },
   },

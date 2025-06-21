@@ -141,8 +141,21 @@ export const appMachine = setup({
         },
         manageDecks: {
           invoke: {
-            id: 'deckMachineActor', // ID for the invoked machine
+            id: 'deckMachineActor',
             src: 'deckMachine',
+            input: ({ context }) => {
+              if (!context.user?.uid) {
+                // This should ideally not happen if we are in an authenticated state
+                // and manageDecks is only reachable when authenticated.
+                // Throwing an error or providing a default/invalid ID might be options,
+                // but indicates a flaw in state transition logic if user is not present.
+                console.error('User ID is missing when invoking deckMachine. This should not happen.');
+                // Fallback or error needed. For now, let's assume user is always present here.
+                // Or, guard the transition to manageDecks to ensure user exists.
+                return { userId: 'MISSING_USER_ID_ERROR' }; // Or throw
+              }
+              return { userId: context.user.uid };
+            },
             // TODO: Handle data from deckMachine if it sends events to AppMachine
             // onError: { actions: assign({ error: 'Deck machine encountered an error.' }) }
           },

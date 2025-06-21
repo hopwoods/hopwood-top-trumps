@@ -89,7 +89,12 @@ export interface Deck {
   updatedAt: Date;
 }
 
+export interface DeckMachineInput {
+  userId: string;
+}
+
 export interface DeckMachineContext {
+  userId: string | null; // Store the userId from input
   decks: Deck[]
   selectedDeck: Deck | null
   error: Error | null
