@@ -21,6 +21,7 @@ export const useButtonStyles = makeStyles({
     transitionDuration: '0.2s',
     transitionTimingFunction: 'ease-in-out',
     transitionProperty: 'background-color, border-color, color, box-shadow',
+
     ':focus-visible': {
       outlineOffset: '2px',
       outlineWidth: '2px',
@@ -102,7 +103,7 @@ export const useButtonStyles = makeStyles({
     // Basic icon styling if needed, e.g., display: 'flex'
     marginRight: 'var(--fableforge-spacing-xs)',
     position: 'relative',
-    top: '0.5em'
+    top: '0.05em'
   },
 })
 

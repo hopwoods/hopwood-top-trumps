@@ -1,4 +1,4 @@
-import { faGamepad, faHouseChimney } from '@fortawesome/free-solid-svg-icons'
+import { faGamepad, faHouseChimney, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faInbox } from '@fortawesome/free-solid-svg-icons/faInbox'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons/faSignOutAlt'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -12,6 +12,7 @@ export const useIcons = () => {
         play: <span className={styles.icon}><FontAwesomeIcon icon={faGamepad} /></span>,
         home: <span className={styles.icon}><FontAwesomeIcon icon={faHouseChimney} /></span>,
         manageDecks: <span className={styles.icon}><FontAwesomeIcon icon={faInbox} /></span>,
+        add: <span className={styles.icon}><FontAwesomeIcon icon={faPlus} /></span>,
     }
 
     return { icons }

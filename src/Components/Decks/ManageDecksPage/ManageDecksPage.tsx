@@ -1,3 +1,4 @@
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { Button } from '../../Common/Button/Button'
 import { useManageDecksPageStyles } from './ManageDecksPage.styles'
 import { useManageDecksPage } from './UseManageDecksPage'
@@ -30,13 +31,13 @@ const ManageDecksPage = () => {
     <div className={styles.root}>
       <div className={styles.headerContainer}>
         <h1 className={styles.title}>Manage Decks</h1>
-        <Button
-          variant="primary"
-          onClick={handleCreateNewDeck}
-          // TODO: [DECK_MGMT_UI_LOADING] Add isLoading prop if button should be disabled during machine transitions
-        >
-          Create New Deck
-        </Button>
+        <span className={styles.createDeckButton}>
+          <Button variant="primary" onClick={handleCreateNewDeck} iconLeft={faPlus} className={styles.createDeckButton}>
+            {/* TODO: [DECK_MGMT_UI_LOADING] Add isLoading prop if button should be disabled during machine transitions */}
+
+            Create New Deck
+          </Button>
+        </span>
       </div>
 
       <div className={styles.deckListContainer}>

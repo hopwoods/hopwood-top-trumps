@@ -84,7 +84,6 @@ export const useGlobalStyles = makeStaticStyles({
 
   p: {
     marginBottom: 'var(--fableforge-spacing-m)',
-    maxWidth: '65ch',
     lineHeight: '1.7',
   },
 

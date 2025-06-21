@@ -43,7 +43,7 @@ const App = () => {
 
   if (authenticatedPlayGame) {
     return (
-      <AppLayout>
+      <AppLayout isAuthenticated={true}>
         <PlayGamePage />
       </AppLayout>
     )
@@ -51,7 +51,7 @@ const App = () => {
 
   if (authenticatedManageDecks) {
     return (
-      <AppLayout>
+      <AppLayout isAuthenticated={true}>
         <ManageDecksPage />
       </AppLayout>
     )
