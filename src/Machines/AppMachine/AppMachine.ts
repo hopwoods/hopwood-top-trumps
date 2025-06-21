@@ -1,5 +1,6 @@
 import { setup, assign, type AnyEventObject } from 'xstate'
 import { authMachine } from '../AuthMachine/AuthMachine' // Import the new authMachine
+import { deckMachine } from '../DeckMachine/DeckMachine' // Import the deckMachine
 
 // Import actors
 import { checkAuthStatusActor } from './Services/CheckAuthStatus.actor'
@@ -22,6 +23,7 @@ export const appMachine = setup({
     checkAuthStatusActor,
     logoutActor,
     authMachine,
+    deckMachine, // Add deckMachine here
   },
   guards: {},
   actions: {
@@ -136,11 +138,17 @@ export const appMachine = setup({
           },
         },
         manageDecks: {
-          // Placeholder state for "Manage Decks"
-          // Add specific logic, services, or UI events here later
+          invoke: {
+            id: 'deckMachineActor', // ID for the invoked machine
+            src: 'deckMachine',
+            // TODO: Handle data from deckMachine if it sends events to AppMachine
+            // onError: { actions: assign({ error: 'Deck machine encountered an error.' }) }
+          },
           on: {
             GO_TO_HOME: 'home', // Example navigation back
             LOGOUT: '#app.loggingOut',
+            // TODO: Potentially forward relevant events to deckMachineActor
+            // e.g., SOME_DECK_EVENT: { actions: sendTo('deckMachineActor', { type: 'EXTERNAL_EVENT' }) }
           },
         },
       },
