@@ -140,8 +140,33 @@ export const appMachine = setup({
             }
             return { userId: context.user.uid }
           },
-          // No onDone or onError needed here as per plan (fire and forget for side effect)
-          // onError: { actions: assign({ error: 'Deck provisioning check failed.' }) } // Optional: log error
+          onDone: {
+            actions: ({ event }) => {
+              console.log('Deck provisioning actor completed successfully:', event.output)
+            },
+          },
+          onError: {
+            actions: assign({
+              error: ({ event }: { event: AnyEventObject }) => { // Explicitly type event
+                console.error('Deck provisioning actor failed. Event data:', event.data)
+                const errorData = event.data
+                if (errorData instanceof Error) {
+                  return errorData.message
+                }
+                // If errorData is an object with a message property
+                if (typeof errorData === 'object' && errorData !== null && 'message' in errorData && typeof (errorData as { message: unknown }).message === 'string') {
+                  return (errorData as { message: string }).message
+                }
+                // If event itself is an error (less common for fromPromise but good to check)
+                if (event instanceof Error) {
+                    return event.message
+                }
+                return 'Deck provisioning failed with an unknown error.'
+              },
+            }),
+            // Optionally, transition to a specific error sub-state within authenticated
+            // or display a global error message. For now, just logging and setting context.
+          },
         },
       ],
       states: {

@@ -2,29 +2,54 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
-    }
-  }
-}
 
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
-service firebase.storage {
-  match /b/{bucket}/o {
+    // Rules for the 'decks' collection
+    match /decks/{deckId} {
+      // Allow read if the user is authenticated and the deck's userId matches their own UID
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
 
-    // This rule allows anyone with your Storage bucket reference to view, edit,
-    // and delete all data in your Storage bucket. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Storage bucket will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Storage bucket will be denied until you Update
-    // your rules
-    match /{allPaths=**} {
-      allow read, write: if request.time < timestamp.date(2025, 7, 19);
+      // Allow create if the user is authenticated and they are setting their own UID as the deck's userId
+      // Also ensure required fields are present on creation (example, can be more specific)
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid
+                      && ('name' in request.resource.data)
+                      && ('cardCount' in request.resource.data);
+
+
+      // Allow update if the user is authenticated and the deck's userId matches their own UID
+      // Prevent them from changing the userId and createdAt fields
+      allow update: if request.auth != null && resource.data.userId == request.auth.uid
+                      && request.resource.data.userId == resource.data.userId
+                      && !('createdAt' in request.resource.data);
+
+
+      // Allow delete if the user is authenticated and the deck's userId matches their own UID
+      allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
+
+      // Rules for the 'cards' subcollection within a deck
+      match /cards/{cardId} {
+        // Allow read if the user can read the parent deck
+        allow read: if request.auth != null && get(/databases/$(database)/documents/decks/$(deckId)).data.userId == request.auth.uid;
+
+        // Allow create if the user is authenticated and provides essential card data.
+        // This simplified rule is for batch creation with a parent deck.
+        // Assumes deck creation itself is properly secured by request.auth.uid.
+        allow create: if request.auth != null
+                        && request.resource.data.name != null
+                        && request.resource.data.attributes != null;
+
+        // Allow update if the user can write to (owns) the parent deck
+        // Prevent changing createdAt
+        allow update: if request.auth != null && get(/databases/$(database)/documents/decks/$(deckId)).data.userId == request.auth.uid
+                        && !('createdAt' in request.resource.data);
+
+        // Allow delete if the user can write to (owns) the parent deck
+        allow delete: if request.auth != null && get(/databases/$(database)/documents/decks/$(deckId)).data.userId == request.auth.uid;
+      }
     }
+    // If you have a /users/{userId} collection, you might add rules like:
+    // match /users/{userId} {
+    //   allow read, update: if request.auth != null && request.auth.uid == userId;
+    //   allow create: if request.auth != null; // Or more specific if users create their own doc
+    // }
   }
 }

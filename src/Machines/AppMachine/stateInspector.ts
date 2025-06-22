@@ -37,37 +37,75 @@ export const appMachineInspector: Observer<InspectionEvent> = {
     // Log actor snapshots (state changes)
     else if (inspectionEvent.type === '@xstate.snapshot') {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Inspector dev tool, type safety for snapshot is complex
-      const snapshot = inspectionEvent.snapshot as any;
+      const snapshot = inspectionEvent.snapshot as any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Bypassing complex type issue for dev tool
+      const actorIdForSnapshot: string = (inspectionEvent.actorRef as any)?.id ?? 'unknown_actor'
 
-      // Optionally filter which actor snapshots to log
-       // if ((inspectionEvent.actorRef as any).id !== 'app') return;
-
-      const stateValueString = typeof snapshot.value === 'undefined' ? 'undefined' : JSON.stringify(snapshot.value);
+      // Log actor done/error events specifically
+      if (snapshot.event?.type?.startsWith('xstate.done.actor')) {
+        console.groupCollapsed(
+          `%cACTOR DONE %c${actorIdForSnapshot}`,
+          'color: gray; font-weight: lighter;',
+          'color: #2196F3; font-weight: bold;', // Blue for actor done
+        )
+        console.log('Actor ID:', actorIdForSnapshot)
+        console.log('Output:', snapshot.output)
+        console.log('Originating Event:', snapshot.event)
+        console.groupEnd()
+      } else if (snapshot.event?.type?.startsWith('xstate.error.actor')) {
+        console.groupCollapsed(
+          `%cACTOR ERROR %c${actorIdForSnapshot}`,
+          'color: gray; font-weight: lighter;',
+          'color: #F44336; font-weight: bold;', // Red for actor error
+        )
+        console.log('Actor ID:', actorIdForSnapshot)
+        console.log('Error Data:', snapshot.error) // Or snapshot.data depending on XState version/event
+        console.log('Originating Event:', snapshot.event)
+        console.groupEnd()
+      } else {
+        // Standard snapshot logging
+        const stateValueString = typeof snapshot.value === 'undefined' ? 'undefined' : JSON.stringify(snapshot.value)
+        console.groupCollapsed(
+          `%cSNAPSHOT %c${stateValueString} %c(Actor: ${actorIdForSnapshot})`,
+          'color: gray; font-weight: lighter;',
+          'color: #4CAF50; font-weight: bold;', // Green for states
+          'color: gray; font-weight: lighter;',
+        )
+        console.log('State Value:', snapshot.value)
+        console.log('Context:', snapshot.context)
+        if (snapshot.children && typeof snapshot.children === 'object' && Object.keys(snapshot.children).length > 0) {
+          const childIds = Object.keys(snapshot.children)
+          console.log('Children:', childIds)
+        }
+        if ('event' in snapshot) {
+          console.log('Event that led to this snapshot:', snapshot.event)
+        }
+        console.groupEnd()
+      }
+    } else if (inspectionEvent.type === '@xstate.actor') {
+      // Type assertion to help TypeScript understand the specific event type
+      const actorStartEvent = inspectionEvent as InspectionEvent & { type: '@xstate.actor'; actorRef: { id: string; input?: unknown }; sourceRef?: { sessionId?: string } };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Bypassing complex type issue for dev tool
-      const actorIdForSnapshot: string = (inspectionEvent.actorRef as any)?.id ?? 'unknown_actor';
+      const actorRef = actorStartEvent.actorRef as any;
+      const actorId: string = actorRef?.id ?? 'unknown_actor'
+      const input = actorRef?.input
+
       console.groupCollapsed(
-        `%cSNAPSHOT %c${stateValueString} %c(Actor: ${actorIdForSnapshot})`,
+        `%cACTOR START %c${actorId}`,
         'color: gray; font-weight: lighter;',
-        'color: #4CAF50; font-weight: bold;', // Green for states
-        'color: gray; font-weight: lighter;',
+        'color: #FF9800; font-weight: bold;', // Orange for actor start
       )
-      console.log('State Value:', snapshot.value)
-      console.log('Context:', snapshot.context)
-      if (snapshot.children && typeof snapshot.children === 'object' && Object.keys(snapshot.children).length > 0) {
-        const childIds = Object.keys(snapshot.children)
-        console.log('Children:', childIds)
+      console.log('Actor ID:', actorId)
+      if (input !== undefined) {
+        console.log('Input:', input)
       }
-      // The 'event' property might not exist on all snapshot types from inspection events.
-      // It's more reliably on the State object itself.
-      // For inspection, the event that *led* to this state might be less direct.
-      // We can log snapshot.event if it exists.
-      if ('event' in snapshot) {
-        console.log('Event that led to this snapshot:', snapshot.event)
+      if (actorStartEvent.sourceRef) {
+        console.log('Source Session ID:', actorStartEvent.sourceRef.sessionId)
       }
       console.groupEnd()
     }
-    // Add more specific logging for other types like '@xstate.actor' or '@xstate.transition' if needed
+    // Add more specific logging for other types like '@xstate.transition' if needed
   },
   error: (err: unknown) => {
     console.error('%cINSPECTOR ERROR', 'color: red; font-weight: bold;', err)

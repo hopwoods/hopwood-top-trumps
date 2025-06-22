@@ -18,7 +18,7 @@ import type { Deck, Card } from '../Machines/DeckMachine/DeckMachine.types' // A
 import type { DeckDataForCreation } from '../Data/DefaultDeckData' // Import creation types
 
 const DECKS_COLLECTION = 'decks'
-const CARDS_SUBCOLLECTION = 'cards'
+const CARDS_SUBCOLLECTION = 'cards' // Re-enable
 
 /**
  * Converts a Firestore document snapshot to a Deck object.
@@ -75,9 +75,11 @@ export const getUserDecks = async (userId: string): Promise<Deck[]> => {
     return []
   }
   try {
+    console.log(`[firebaseDeckService] getUserDecks for userId: ${userId} - Attempting query...`) // Added log
     const decksRef = collection(db, DECKS_COLLECTION)
     const q = query(decksRef, where('userId', '==', userId))
     const querySnapshot = await getDocs(q)
+    console.log(`[firebaseDeckService] getUserDecks for userId: ${userId} - Query successful, found ${querySnapshot.size} docs.`) // Added log
     const decks: Deck[] = []
     querySnapshot.forEach((snapshotDoc) => {
       decks.push(deckFromSnapshot(snapshotDoc))
@@ -196,8 +198,10 @@ export const createDeckWithCards = async (
   }
 
   const deckDocRef = doc(collection(db, DECKS_COLLECTION)) // Generate ID for the new deck
+  console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - Deck ID ${deckDocRef.id} generated.`)
 
   try {
+    console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - Starting batch write...`)
     const batch = writeBatch(db)
 
     // 1. Prepare deck document data
@@ -210,6 +214,7 @@ export const createDeckWithCards = async (
       updatedAt: serverTimestamp(),
     }
     batch.set(deckDocRef, deckDocumentData)
+    console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - Deck document added to batch.`)
 
     // 2. Prepare card documents and add to batch
     const cardsCollectionRef = collection(deckDocRef, CARDS_SUBCOLLECTION)
@@ -222,20 +227,38 @@ export const createDeckWithCards = async (
       }
       batch.set(cardDocRef, cardDocument)
     })
+    console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - ${deckToCreate.cardsData.length} Card documents added to batch.`)
+
 
     // 3. Commit the batch
-    await batch.commit()
+    console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - Firestore instance:`, db)
+    console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - Batch object:`, batch)
+    console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - Committing batch...`)
+    await batch.commit().catch(error => {
+      console.error(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - BATCH COMMIT FAILED:`, error)
+      throw error // Re-throw to be caught by the outer try-catch
+    })
+    console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - Batch committed.`)
 
     // 4. Fetch the created deck document to get server timestamps
+    console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - Fetching created deck document...`)
     const createdDeckSnap = await getDoc(deckDocRef)
     const newDeck = deckFromSnapshot(createdDeckSnap)
 
     // 5. Fetch the created card documents to get their server timestamps
-    const createdCardsQuerySnap = await getDocs(cardsCollectionRef)
     const fetchedCards: Card[] = []
-    createdCardsQuerySnap.forEach((cardDocSnap) => {
-      fetchedCards.push(cardFromSnapshot(cardDocSnap))
-    })
+    if (deckToCreate.cardsData.length > 0) { // Only fetch if we attempted to create cards
+      console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - Fetching created card documents...`)
+      const cardsCollectionRefAfterCommit = collection(deckDocRef, CARDS_SUBCOLLECTION)
+      const createdCardsQuerySnap = await getDocs(cardsCollectionRefAfterCommit)
+      createdCardsQuerySnap.forEach((cardDocSnap) => {
+        fetchedCards.push(cardFromSnapshot(cardDocSnap))
+      })
+      console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - Fetched ${fetchedCards.length} cards.`)
+    } else {
+      console.log(`[firebaseDeckService] createDeckWithCards for userId: ${userId} - No cards in input, not fetching cards.`)
+    }
+
 
     // 6. Return the full Deck object with populated cards
     return {

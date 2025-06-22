@@ -19,10 +19,13 @@ export const deckMachine = setup({
   actions: {
     assignDecksToContext: assign({
       decks: ({ event }) => {
-        if (event.type === 'FETCH_DECKS_SUCCESS') {
+        // This action is specifically for the onDone of fetchDecksActor
+        if ('output' in event && Array.isArray(event.output)) {
           return event.output
         }
-        return [] // Should not happen if types are correct
+        // Fallback or error logging if event doesn't have expected output
+        console.warn('assignDecksToContext called with an event without expected output:', event)
+        return [] // Default to empty array if output is not as expected
       },
     }),
     assignSelectedDeckToContext: assign({
