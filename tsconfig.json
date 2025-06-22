@@ -1,7 +1,20 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+  "compilerOptions": {
+    // "composite": true, // Removed
+    "esModuleInterop": true, // Good for compatibility
+    "module": "ESNext", // Align with Vite/modern JS
+    "moduleResolution": "Bundler", // Changed from Node
+    "jsx": "react-jsx", // Assuming React
+    "types": ["vite/client", "vitest/globals"], // Include Vitest globals here
+    "skipLibCheck": true // Add skipLibCheck
+  },
+  // "files": [], // Removed empty files array
+  "include": [
+    "vitest.setup.ts",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx"
   ]
+  // "references": [] // Removed
 }

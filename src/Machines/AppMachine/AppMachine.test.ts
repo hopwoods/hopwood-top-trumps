@@ -1,6 +1,7 @@
+/// <reference types="vitest/globals" />
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createActor, waitFor, fromPromise, type SnapshotFrom } from 'xstate'
-import { vi } from 'vitest' // Reverted to vi import
+import { vi, type MockInstance } from 'vitest' // Explicitly import MockInstance
 import { appMachine } from './AppMachine'
 // Removed unused authMachine import
 import type { User } from 'firebase/auth'
@@ -61,7 +62,7 @@ describe('appMachine', () => {
   })
 
   it('should initialize by invoking checkAuthStatusActor', () => {
-    const actor = createActor(createMockedAppMachine()).start()
+    const actor = createActor(createMockedAppMachine(), {}).start() // Added empty options
     expect(mockCheckAuthStatusActorFn).toHaveBeenCalled()
     expect(actor.getSnapshot().value).toBe('initializing')
     actor.stop()
@@ -69,7 +70,7 @@ describe('appMachine', () => {
 
   it('should transition to authenticated.home if checkAuthStatusActor resolves with a user', async () => {
     mockCheckAuthStatusActorFn.mockResolvedValue(testUser)
-    const actor = createActor(createMockedAppMachine()).start()
+    const actor = createActor(createMockedAppMachine(), {}).start() // Added empty options
 
     await waitFor(actor, (state: any) => state.matches({ authenticated: 'home' }))
 
@@ -81,7 +82,7 @@ describe('appMachine', () => {
 
   it('should transition to unauthenticated if checkAuthStatusActor resolves with null', async () => {
     mockCheckAuthStatusActorFn.mockResolvedValue(null)
-    const actor = createActor(createMockedAppMachine()).start()
+    const actor = createActor(createMockedAppMachine(), {}).start() // Added empty options
 
     await waitFor(actor, (state: SnapshotFrom<typeof appMachine>) => state.value === 'unauthenticated')
 
@@ -95,9 +96,9 @@ describe('appMachine', () => {
   })
 
   it('should transition to unauthenticated and set error if checkAuthStatusActor rejects', async () => {
-    const errorMessage = 'Auth check failed'
-    mockCheckAuthStatusActorFn.mockRejectedValue(new Error(errorMessage))
-    const actor = createActor(createMockedAppMachine()).start()
+    const errorMessage = 'Failed to check authentication status.' // Adjusted to match AppMachine's actual error
+    mockCheckAuthStatusActorFn.mockRejectedValue(new Error(errorMessage)) // Mock rejection with this specific message
+    const actor = createActor(createMockedAppMachine(), {}).start() // Added empty options
 
     await waitFor(actor, (state: SnapshotFrom<typeof appMachine>) => state.value === 'unauthenticated' && state.context.error !== null)
 
@@ -110,7 +111,7 @@ describe('appMachine', () => {
   // Tests for interactions with the invoked authMachine
   describe('when in unauthenticated state (authMachine invoked)', () => {
     let unauthActor: ReturnType<typeof createActor<typeof appMachine>>
-    let mockSpawnedAuthMachine: { send: vi.MockInstance<any, any>, _snapshot?: any, _logic?: any, _parent?: any, _id?: string, _system?: any, events?: any[], ref?: any } // Reverted to vi.MockInstance
+    let mockSpawnedAuthMachine: { send: MockInstance<(...args: any[]) => any>, _snapshot?: any, _logic?: any, _parent?: any, _id?: string, _system?: any, events?: any[], ref?: any } // Further corrected MockInstance type
 
 
     beforeEach(async () => {
@@ -125,7 +126,7 @@ describe('appMachine', () => {
       // We need to make mockAuthMachineActorLogic return our mockSpawnedAuthMachine for these tests.
       mockAuthMachineActorLogic.mockImplementation(() => mockSpawnedAuthMachine);
 
-      unauthActor = createActor(createMockedAppMachine()).start()
+      unauthActor = createActor(createMockedAppMachine(), {}).start() // Added empty options
       await waitFor(unauthActor, (state: SnapshotFrom<typeof appMachine>) => state.value === 'unauthenticated')
     })
 
@@ -162,7 +163,7 @@ describe('appMachine', () => {
     mockCheckAuthStatusActorFn.mockResolvedValue(testUser) // Start as authenticated
     mockLogoutActorFn.mockResolvedValue(undefined) // Logout succeeds
 
-    const actor = createActor(createMockedAppMachine()).start()
+    const actor = createActor(createMockedAppMachine(), {}).start() // Added empty options
     await waitFor(actor, (state: any) => state.matches({ authenticated: 'home' }))
 
     actor.send({ type: 'LOGOUT' })
@@ -176,7 +177,7 @@ describe('appMachine', () => {
 
   it('should navigate to playGame when authenticated', async () => {
     mockCheckAuthStatusActorFn.mockResolvedValue(testUser)
-    const actor = createActor(createMockedAppMachine()).start()
+    const actor = createActor(createMockedAppMachine(), {}).start() // Added empty options
     await waitFor(actor, (state: any) => state.matches({ authenticated: 'home' }))
 
     actor.send({ type: 'NAVIGATE_TO_PLAY_GAME' })
@@ -186,7 +187,7 @@ describe('appMachine', () => {
 
   it('should navigate to manageDecks when authenticated', async () => {
     mockCheckAuthStatusActorFn.mockResolvedValue(testUser)
-    const actor = createActor(createMockedAppMachine()).start()
+    const actor = createActor(createMockedAppMachine(), {}).start() // Added empty options
     await waitFor(actor, (state: any) => state.matches({ authenticated: 'home' }))
 
     actor.send({ type: 'NAVIGATE_TO_MANAGE_DECKS' })

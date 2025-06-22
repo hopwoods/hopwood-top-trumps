@@ -7,7 +7,9 @@ const AuthPage = () => {
   return (
     <div id="auth-page-root" className={styles.root}>
       <div className={styles.formContainer}>
-        <LoginPage />
+        <div className={styles.cardBorder} >
+          <LoginPage />
+        </div>
       </div>
     </div>
   )

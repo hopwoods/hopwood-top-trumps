@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    // "composite": true, // Removed
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo", // Can be kept or removed
     "target": "ES2022",
     "lib": ["ES2023"],
     "module": "ESNext",
@@ -11,7 +12,9 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "noEmit": true,
+    // "emitDeclarationOnly": true, // Removed
+    // "declaration": true, // Removed
+    "noEmit": true, // Ensure no output from tsc for node files
 
     /* Linting */
     "strict": true,

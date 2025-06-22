@@ -2,7 +2,7 @@ import { fromPromise } from 'xstate'
 import { getUserDecks, createDeckWithCards } from '../../../Firebase/firebaseDeckService'
 import { staticDefaultDeckData } from '../../../Data/DefaultDeckData'
 
-interface CheckAndProvisionDefaultDeckInput {
+export interface CheckAndProvisionDefaultDeckInput { // Added export
   userId: string
 }
 

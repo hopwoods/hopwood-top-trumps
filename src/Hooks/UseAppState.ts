@@ -5,9 +5,18 @@ import { appMachine } from '../Machines/AppMachine/AppMachine'
 import { authMachine } from '../Machines/AuthMachine/AuthMachine'
 import type { AppContext } from '../Machines/AppMachine/AppMachine.types'
 
-export const GlobalStateContext = createActorContext(appMachine)
+// Explicit type for GlobalStateContext using ReturnType
+export const GlobalStateContext: ReturnType<typeof createActorContext<typeof appMachine>> = createActorContext(appMachine)
 
-export const useAppState = () => {
+// Define the return type for useAppState
+export interface UseAppStateReturn {
+  appState: SnapshotFrom<typeof appMachine>;
+  send: ActorRefFrom<typeof appMachine>['send'];
+  getAppStateValue: <K extends keyof AppContext>(key: K) => AppContext[K];
+  authActorRef: ActorRefFrom<typeof authMachine> | undefined;
+}
+
+export const useAppState = (): UseAppStateReturn => {
   const actorRef: ActorRefFrom<typeof appMachine> = GlobalStateContext.useActorRef()
   const [appState, setAppState] = useState<SnapshotFrom<typeof appMachine>>(
     actorRef.getSnapshot(),

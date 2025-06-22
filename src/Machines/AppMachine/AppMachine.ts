@@ -15,11 +15,38 @@ import type {
   AuthenticationSuccessEventFromChild,
   AuthenticationFailureEventFromChild
 } from './AppMachine.types'
+import type { CheckAndProvisionDefaultDeckInput } from './Actors/CheckAndProvisionDefaultDeck.actor' // Import the input type
+
+interface DeckMachineInput {
+  userId: string;
+}
+
+interface CheckAndProvisionDefaultDeckOutput {
+  provisioned: boolean;
+  userId: string;
+  existingDeckCount?: number;
+}
 
 export const appMachine = setup({
   types: {} as {
     context: AppContext,
     events: AppEvent,
+    guards: {
+      checkAuthOutputIsNotNull: (context: AppContext, event: AnyEventObject) => boolean;
+    },
+    actors: {
+      checkAndProvisionDefaultDeckActor: {
+        src: 'checkAndProvisionDefaultDeckActor', // String matches the key in the actors object below
+        input: CheckAndProvisionDefaultDeckInput,
+        output: CheckAndProvisionDefaultDeckOutput
+      },
+      deckMachine: {
+        src: 'deckMachine',
+        input: DeckMachineInput,
+        // Define output if deckMachine has a specific final output, otherwise omit or use 'unknown'
+      }
+      // authMachine can also be typed here if needed, e.g., its output if it's a final machine
+    }
   },
   actors: {
     checkAuthStatusActor,
@@ -28,7 +55,13 @@ export const appMachine = setup({
     deckMachine, // Add deckMachine here
     checkAndProvisionDefaultDeckActor, // Added actor
   },
-  guards: {},
+  guards: {
+    checkAuthOutputIsNotNull: function ({ event }: { event: AnyEventObject }) {
+      // This guard is specific to the onDone event of checkAuthStatusActor
+      // which should have an 'output' property.
+      return event.output !== null
+    }
+  },
   actions: {
     assignUserToContext: assign({
       user: ({ event }) => {
@@ -70,7 +103,7 @@ export const appMachine = setup({
         onDone: [
           {
             target: 'authenticated.home',
-            guard: ({ event }) => event.output !== null,
+            guard: 'checkAuthOutputIsNotNull', // Use named guard
             actions: assign({ user: ({ event }) => event.output, error: null }),
           },
           {
@@ -102,8 +135,11 @@ export const appMachine = setup({
         // onError here handles errors *from the act of invoking/communicating* with authMachine,
         // not business logic errors like "invalid password" which authMachine handles internally.
         onError: {
-          target: 'unauthenticated', // Stay here, maybe show a generic system error
-          actions: assign({ error: 'Failed to start authentication process.' }),
+          target: 'unauthenticated', // Stay here
+          // Removed error assignment here, as specific auth errors should come via AUTHENTICATION_FAILURE event
+          // or be the error from checkAuthStatusActor.
+          // If invoking authMachine itself fails, that's a system issue,
+          // and the existing error (e.g. from checkAuthStatusActor) should persist.
         },
       },
       // Listen for events sent from the invoked 'authActor'

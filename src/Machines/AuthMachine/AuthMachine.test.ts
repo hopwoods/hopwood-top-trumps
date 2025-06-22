@@ -1,7 +1,11 @@
-import { createActor, waitFor, fromPromise, type SnapshotFrom } from 'xstate'
+/// <reference types="vitest/globals" />
+import { createActor, waitFor, fromPromise, type SnapshotFrom, createMachine, sendTo, assign as assignParent } from 'xstate'
 import { authMachine } from './AuthMachine'
 import type { User } from 'firebase/auth'
-// Removed unused AuthContext, AuthEvent
+import type { AuthenticationSuccessEvent, AuthenticationFailureEvent } from './AuthMachine.types'
+
+// Union type for events sent by AuthMachine to its parent
+type AuthMachineSentEvent = AuthenticationSuccessEvent | AuthenticationFailureEvent
 
 // Mock the loginWithGoogleActor
 const mockLoginWithGoogleActorFn = vi.fn()
@@ -60,23 +64,64 @@ describe('authMachine', () => {
   })
 
   it('should transition to authenticated and send AUTHENTICATION_SUCCESS on successful Google login', async () => {
-    mockLoginWithGoogleActorFn.mockResolvedValue(testUser)
+    mockLoginWithGoogleActorFn.mockResolvedValue(testUser) // Ensure mock is set up before parent actor starts
 
-    const actor = createActor(mockAuthMachine).start()
-    actor.send({ type: 'SUBMIT_LOGIN_WITH_GOOGLE' })
+    // To properly test sendParent, we need a parent machine
+    const parentMachine = createMachine({
+      id: 'testParent',
+      initial: 'runningChild',
+      context: {
+        receivedEvent: undefined as AuthMachineSentEvent | undefined,
+      },
+      states: {
+        runningChild: {
+          invoke: {
+            id: 'authChild',
+            src: mockAuthMachine, // Use the machine with mocked actors
+          },
+          on: {
+            TRIGGER_CHILD_LOGIN: { // New event to trigger the child's login
+              actions: sendTo('authChild', { type: 'SUBMIT_LOGIN_WITH_GOOGLE' }),
+            },
+            AUTHENTICATION_SUCCESS: {
+              target: 'done',
+              actions: assignParent({
+                receivedEvent: ({ event }) => event as AuthenticationSuccessEvent,
+              }),
+            },
+            AUTHENTICATION_FAILURE: {
+              target: 'done',
+              actions: assignParent({
+                receivedEvent: ({ event }) => event as AuthenticationFailureEvent,
+              }),
+            },
+          },
+        },
+        done: {
+          type: 'final',
+        },
+      },
+    })
 
-    // Wait for the machine to reach the 'authenticated' state
-    await waitFor(actor, (state: SnapshotFrom<typeof authMachine>) => state.value === 'authenticated')
+    const parentActor = createActor(parentMachine).start()
 
-    expect(actor.getSnapshot().value).toBe('authenticated')
-    expect(actor.getSnapshot().context.error).toBeNull()
+    // Send an event to the parent machine, which will then forward to the child
+    parentActor.send({ type: 'TRIGGER_CHILD_LOGIN' })
 
-    // When the machine reaches its final state 'authenticated',
-    // the 'sendAuthSuccessToParent' entry action should have been triggered.
-    // The machine's status being 'done' indicates it reached a top-level final state.
-    expect(actor.getSnapshot().status).toBe('done')
+    // Wait for the parent machine to reach its 'done' state,
+    // which signifies it has received an event from the child.
+    await waitFor(parentActor, (state) => state.value === 'done')
 
-    actor.stop()
+    // Assertions on the event received by the parent
+    // Verifying the child's internal state here can be tricky if it stops immediately.
+    // The main goal is to ensure the parent received the correct event.
+    const receivedEvent = parentActor.getSnapshot().context.receivedEvent
+    expect(receivedEvent?.type).toBe('AUTHENTICATION_SUCCESS')
+    if (receivedEvent?.type === 'AUTHENTICATION_SUCCESS') {
+      expect(receivedEvent.user).toEqual(testUser)
+    }
+
+    parentActor.stop()
   })
 
   it('should transition to idle and set error on failed Google login', async () => {

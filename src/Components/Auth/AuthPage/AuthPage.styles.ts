@@ -26,22 +26,22 @@ export const useAuthPageStyles = makeStyles({
     boxSizing: 'border-box',
   },
   formContainer: {
+    display: 'flex', // Ensures child cardBorder can use height: 100%
+    flexDirection: 'column', // Ensures child cardBorder can use height: 100%
     position: 'relative', // For the ::before pseudo-element positioning
     overflow: 'hidden',   // To clip the ::before pseudo-element
     backgroundColor: 'rgba(38, 45, 53, 0.85)', // Dark semi-transparent background for the "card"
-    padding: '2em', // Use em units for padding (approx var(--fableforge-spacing-xl))
     borderRadius: 'var(--fableforge-border-radii-l)', // Card's border radius
     boxShadow: '0 0.5em 1.5em rgba(0, 0, 0, 0.6)', // More pronounced shadow for the card itself (em units)
-    width: 'auto', // Let content or max-width define width initially
+    width: 'auto', // Let content or max-width define width
     maxWidth: '31.25em', // Approx 500px (500/16)
     minHeight: '37.5em', // Approx 600px (600/16)
     border: '2px solid var(--fableforge-color-brand-secondary)', // Gold border for the card
     zIndex: 2,
     boxSizing: 'border-box',
-    display: 'flex', // To help center content within the card
-    flexDirection: 'column',
-    justifyContent: 'center', // Center content vertically
-    alignItems: 'center', // Center content horizontally
+    // height: '100%', // Removed, height is auto/minHeight based
+    // justifyContent: 'center', // Removed, as child (cardBorder) will fill this container
+    // alignItems: 'center', // Removed, as child (cardBorder) will fill this container
 
     // Glossy Sheen for the card
     '::before': {
@@ -49,8 +49,8 @@ export const useAuthPageStyles = makeStyles({
       position: 'absolute',
       top: '-50%', // Adjust to position the sheen
       left: '-50%',
-      width: '200%', // Make it large enough to cover with rotation
-      height: '200%',
+      width: '150%', // Make it large enough to cover with rotation
+      height: '150%',
       background:
         'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.0) 50%, rgba(255, 255, 255, 0.1) 100%)', // Ensured sheen gradient is active
       opacity: '0.6', // Adjust opacity of sheen
@@ -64,12 +64,27 @@ export const useAuthPageStyles = makeStyles({
       width: '95vw', // Use 95% of viewport width
       maxWidth: 'none', // Remove desktop max-width
       minHeight: 'auto', // Let content define height
-      padding: '1.5em', // Approx var(--fableforge-spacing-l)
+      // padding: '1.5em', // Removed, cardBorder will handle padding for the actual content
       borderTopWidth: '1px',
       borderRightWidth: '1px',
       borderBottomWidth: '1px',
       borderLeftWidth: '1px',
     },
+  },
+
+  cardBorder: {
+    width: '100%', // Fill parent formContainer
+    height: 'auto', // Height will be determined by content and flex-grow
+    flexGrow: 1,    // Allows cardBorder to take up available space in formContainer
+    boxSizing: 'border-box', // Crucial for width/height 100% with padding/border
+    border: '12px solid var(--fableforge-color-black)', // Black border for the card
+    borderRadius: 'var(--fableforge-border-radii-l)', // Consistent border radius with formContainer
+    // minHeight: '37.5em', // Removed, effective height comes from formContainer
+    padding: 'var(--fableforge-spacing-l)', // Padding for the actual content (logo, button)
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center', // Center content (logo, button) vertically
+    alignItems: 'center', // Center content (logo, button) horizontally
   },
   // Tertiary actions like toggle links should be styled as links, not buttons
   toggleLink: {
