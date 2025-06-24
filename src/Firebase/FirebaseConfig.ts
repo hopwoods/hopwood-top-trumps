@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
+import { getAnalytics } from "firebase/analytics";
 // import { getFunctions } from 'firebase/functions' // For functions emulator if needed (connectFunctionsEmulator removed)
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -25,8 +26,9 @@ const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const firestore = getFirestore(app)
 const storage = getStorage(app)
+const analytics = getAnalytics(app);
 // const functions = getFunctions(app) // Example for functions service
 
 // Emulator connection logic removed as per user request.
 
-export { app, auth, firestore, storage /*, functions */ }
+export { app, auth, firestore, storage, analytics /*, functions */ }

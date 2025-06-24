@@ -87,7 +87,8 @@ export const getUserDecks = async (userId: string): Promise<Deck[]> => {
     return decks
   } catch (error) {
     console.error('Error fetching user decks:', error)
-    throw error // Re-throw to be caught by the actor
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`Error fetching user decks: ${message}`)
   }
 }
 
@@ -151,7 +152,8 @@ export const updateDeck = async (
     })
   } catch (error) {
     console.error('Error updating deck:', error)
-    throw error
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`Error updating deck: ${message}`)
   }
 }
 
@@ -172,7 +174,8 @@ export const deleteDeck = async (deckId: string): Promise<void> => {
     // TODO: Implement deletion of cards subcollection, likely via a Firebase Function.
   } catch (error) {
     console.error('Error deleting deck:', error)
-    throw error
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`Error deleting deck: ${message}`)
   }
 }
 
@@ -267,6 +270,7 @@ export const createDeckWithCards = async (
     }
   } catch (error) {
     console.error('Error creating deck with cards:', error)
-    throw error
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`Error creating deck with cards: ${message}`)
   }
 }

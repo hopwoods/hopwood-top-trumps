@@ -7,13 +7,12 @@ export interface CheckAndProvisionDefaultDeckInput { // Added export
 }
 
 /**
- * XState actor to check if a user has any decks, and if not,
- * provisions the static default deck for them.
+ * Logic for the checkAndProvisionDefaultDeckActor.
+ * Exported for direct testing.
  */
-export const checkAndProvisionDefaultDeckActor = fromPromise(
-  async ({ input }: { input: CheckAndProvisionDefaultDeckInput }) => {
-    console.log('[CheckAndProvisionDefaultDeckActor] Actor invoked with input:', input) // Added log
-    const { userId } = input
+export const checkAndProvisionDefaultDeckLogic = async ({ input }: { input: CheckAndProvisionDefaultDeckInput }) => {
+  console.log('[CheckAndProvisionDefaultDeckActor] Actor invoked with input:', input) // Added log
+  const { userId } = input
 
     if (!userId) {
       console.error('CheckAndProvisionDefaultDeckActor: userId is required in input.')
@@ -42,5 +41,10 @@ export const checkAndProvisionDefaultDeckActor = fromPromise(
       // Re-throw the error so it can be caught by the invoking machine if needed
       throw error
     }
-  },
-)
+} // Removed extra parenthesis here
+
+/**
+ * XState actor to check if a user has any decks, and if not,
+ * provisions the static default deck for them.
+ */
+export const checkAndProvisionDefaultDeckActor = fromPromise(checkAndProvisionDefaultDeckLogic)

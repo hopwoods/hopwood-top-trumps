@@ -50,3 +50,28 @@ Debugging the client-side default deck provisioning revealed several key insight
 4.  **Iterative Refinement of Firestore Rules:** Security rules often require testing and iteration. When encountering permission issues, review rules specific to the failing operation (read, write, create, update, delete) and the exact path. Use the Firestore console's Rules Playground for testing if necessary.
 
 These steps and learnings were critical in diagnosing and resolving the issues related to default deck provisioning and ensuring the data flow from Firebase through the XState machines to the UI was correct.
+
+## Firebase Deck Service Unit Testing (June 24, 2025)
+
+Completed comprehensive unit testing for `src/Firebase/firebaseDeckService.ts` using Vitest.
+
+**Key Achievements & Learnings:**
+
+1.  **Full CRUD Coverage:** Implemented and verified tests for all primary service functions:
+    *   `getUserDecks`
+    *   `createDeckWithCards`
+    *   `updateDeck`
+    *   `deleteDeck`
+
+2.  **Mocking `firebase/firestore`:**
+    *   Successfully addressed an initial `TypeError` in `updateDeck` tests by ensuring `updateDoc` was correctly included and mocked as `vi.fn()` within the `vi.mock('firebase/firestore', ...)` factory. This highlighted the importance of explicitly mocking all Firestore functions used by the service within the mock factory.
+    *   Utilized `vi.hoisted` for `mockDbInstance` to ensure it was available for mocks that depended on it.
+
+3.  **Error Handling Consistency:**
+    *   Refined error handling within `firebaseDeckService.ts` for `getUserDecks`, `updateDeck`, `deleteDeck`, and `createDeckWithCards`. The service now throws new `Error` instances with more specific messages (e.g., "Error fetching user decks: Original error message") rather than re-throwing the raw Firestore error. This change ensured that test assertions for error messages passed consistently.
+
+4.  **ESLint & Test File Maintenance:**
+    *   Cleaned up unused variable imports (e.g., `Card` type, some `vi.mocked()` constants for Firestore functions that were sufficiently covered by the factory mock) in `firebaseDeckService.test.ts`.
+    *   Addressed numerous `@typescript-eslint/no-explicit-any` warnings, which arose from type casting in mock setups (e.g., `mockSnapshot as any`). A file-level disable comment (`/* eslint-disable @typescript-eslint/no-explicit-any */`) was added at the top of the test file. This aligns with the project's testing strategy (`.clinerules/02-testing-strategy.md`), which permits such disables for complex mock scenarios in test files when functionality is confirmed and type safety in application code is maintained.
+
+5.  **Outcome:** All unit tests for `firebaseDeckService.ts` are now passing, contributing to improved code reliability and maintainability. All other project tests also remain passing.
