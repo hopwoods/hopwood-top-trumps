@@ -1,7 +1,7 @@
-import { Button } from '../../Common/Button/Button' // Assuming Button component path
+import { Badge } from '../../Common/Badge/Badge'
+import { Button } from '../../Common/Button/Button'
 import { useDeckListItemStyles } from './DeckListItem.styles'
 import type { DeckListItemProps } from './DeckListItem.types'
-// useIcons is called within Button.tsx, not needed here directly if Button handles iconName
 
 /**
  * DeckListItem component.
@@ -9,21 +9,18 @@ import type { DeckListItemProps } from './DeckListItem.types'
  */
 export const DeckListItem = ({ deck, onEdit, onDelete }: DeckListItemProps) => {
   const styles = useDeckListItemStyles()
-  // Icons are handled by the Button component via iconName prop
 
-  const cardCountText = deck.cards ? `${deck.cards.length} card${deck.cards.length === 1 ? '' : 's'}` : '0 cards'
-  // Fallback for cardCount if not directly on deck object from Firestore yet
-  const displayCardCount = typeof deck.cardCount === 'number' ? `${deck.cardCount} card${deck.cardCount === 1 ? '' : 's'}` : cardCountText
-
+  // Determine the card count, preferring the direct `cardCount` property if available.
+  const cardCount = typeof deck.cardCount === 'number' ? deck.cardCount : deck.cards?.length ?? 0
 
   return (
     <li className={styles.root}>
       <div className={styles.deckInfo}>
         <h3 className={styles.deckName}>{deck.name}</h3>
-        <p className={styles.deckMeta}>
-          {displayCardCount}
-          {deck.description && ` - ${deck.description }`}
-        </p>
+        <div className={styles.deckMeta}>
+          <Badge variant="secondary">{`${cardCount} card${cardCount === 1 ? '' : 's'}`}</Badge>
+          {deck.description && <p className={styles.description}>{deck.description}</p>}
+        </div>
       </div>
       <div className={styles.actionsContainer}>
         <Button

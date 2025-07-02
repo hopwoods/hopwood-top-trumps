@@ -36,11 +36,17 @@ export const useDeckListItemStyles = makeStyles({
   },
   deckMeta: {
     display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--fableforge-spacing-s)',
     flexGrow: 1,
     fontSize: 'var(--fableforge-typography-font-size-small)',
     color: 'var(--fableforge-color-text-secondary)',
     margin: '0',
     width: 'max-content',
+  },
+  description: {
+    margin: '0',
+    color: 'var(--fableforge-color-text-secondary)',
   },
   actionsContainer: {
     display: 'flex',
