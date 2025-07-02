@@ -18,7 +18,7 @@ export const DeckListItem = ({ deck, onEdit, onDelete }: DeckListItemProps) => {
       <div className={styles.deckInfo}>
         <h3 className={styles.deckName}>{deck.name}</h3>
         <div className={styles.deckMeta}>
-          <Badge variant="secondary">{`${cardCount} card${cardCount === 1 ? '' : 's'}`}</Badge>
+          <Badge variant="primary">{`${cardCount} card${cardCount === 1 ? '' : 's'}`}</Badge>
           {deck.description && <p className={styles.description}>{deck.description}</p>}
         </div>
       </div>

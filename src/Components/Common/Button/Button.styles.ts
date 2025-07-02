@@ -108,7 +108,7 @@ export const useButtonStyles = makeStyles({
   },
   danger: {
     // TODO: Define danger color tokens in Theme/Tokens.ts and use them here
-    backgroundColor: 'var(--fableforge-color-danger-default, #dc3545)', // Fallback red
+    backgroundColor: 'var(--fableforge-color-danger-default,#d11427)', // Fallback red
     color: 'var(--fableforge-color-text-on-danger, white)', // Fallback white
     borderTopColor: 'var(--fableforge-color-danger-border, #dc3545)',
     borderRightColor: 'var(--fableforge-color-danger-border, #dc3545)',
