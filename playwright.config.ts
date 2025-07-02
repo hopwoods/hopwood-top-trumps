@@ -70,7 +70,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'cross-env E2E_TESTING=true pnpm dev --port 5176 --host', // Use cross-env
+    command: 'cross-env VITE_E2E_TESTING=true pnpm dev --port 5176 --host', // Use cross-env with VITE_ prefix
     url: baseURL, // Should match http://localhost:5176
     reuseExistingServer: false, // Playwright controls this server instance
     timeout: 120 * 1000, // 120 seconds

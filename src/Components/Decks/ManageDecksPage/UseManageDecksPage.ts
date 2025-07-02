@@ -33,10 +33,12 @@ export const useManageDecksPage = () => {
   }
 
   const handleDeleteDeck = (deckId: string) => {
-    // TODO: Dispatch DELETE_DECK event to DeckMachine (likely after confirmation)
-    console.log('Delete deck clicked:', deckId)
-    if (sendToDeckMachine) {
-      // sendToDeckMachine({ type: 'DELETE_DECK', deckId }) // Example for later
+    if (window.confirm('Are you sure you want to delete this deck? This action cannot be undone.')) {
+      if (sendToDeckMachine) {
+        sendToDeckMachine({ type: 'DELETE_DECK', deckId });
+      } else {
+        console.error('DeckMachine actor not available to send DELETE_DECK event');
+      }
     }
   }
 

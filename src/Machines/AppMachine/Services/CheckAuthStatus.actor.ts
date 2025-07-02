@@ -1,7 +1,7 @@
 import { fromPromise } from 'xstate'
 import type { User } from 'firebase/auth'
-// import { onAuthStateChanged } from 'firebase/auth'
-// import { auth } from '../../../Firebase/FirebaseConfig' // Adjusted path
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '../../../Firebase/FirebaseConfig' // Adjusted path
 
 // FOR DEVELOPMENT ONLY - Return a mock user for testing Homepage UI
 const mockUser: User = {
@@ -36,7 +36,7 @@ const mockUser: User = {
 } as User;
 
 export const checkAuthStatusActor = fromPromise<User | null, void>(() =>
-  new Promise<User | null>((resolve) => { // Prefixed reject with underscore
+  new Promise<User | null>((resolve, reject) => {
     // Check if in E2E testing mode
     // Vite exposes env variables via import.meta.env
     // If E2E_TESTING is set by the webServer command for Playwright,
@@ -45,31 +45,24 @@ export const checkAuthStatusActor = fromPromise<User | null, void>(() =>
     // The .clinerules mention process.env.E2E_TESTING for vite.config.ts
     // Let's assume it's available as process.env.E2E_TESTING here too,
     // or that Vite's define config makes it available.
-    // A safer way for client-side code is import.meta.env.VITE_E2E_TESTING
-    // but let's try the simpler one first based on existing patterns.
+    // A safer way for client-side code is import.meta.env.VITE_E2E_TESTING.
 
-    if (process.env.E2E_TESTING === 'true' || import.meta.env.VITE_E2E_TESTING === 'true') {
-      console.log('[CheckAuthStatusActor] E2E_TESTING mode: resolving with null user.');
-      resolve(null); // Simulate no user logged in for E2E auth tests
+    if (import.meta.env.VITE_E2E_TESTING === 'true') {
+      console.log('[CheckAuthStatusActor] E2E_TESTING mode: resolving with mock user.');
+      resolve(mockUser); // Simulate a logged-in user for E2E tests
     } else {
-      // TEMP: For testing the HomePage UI without requiring login (during normal dev)
-      console.log('[CheckAuthStatusActor] Non-E2E mode: resolving with mockUser.');
-      resolve(mockUser);
+      // Use real authentication for development and production
+      const unsubscribe = onAuthStateChanged(
+        auth,
+        (user) => {
+          unsubscribe();
+          resolve(user);
+        },
+        (error) => {
+          unsubscribe();
+          reject(error); // Use reject from the promise
+        },
+      );
     }
-
-    // ORIGINAL AUTHENTICATION CHECK - Uncomment for production use
-    /*
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      (user) => {
-        unsubscribe()
-        resolve(user)
-      },
-      (error) => {
-        unsubscribe()
-        _reject(error) // Use _reject here as well
-      },
-    )
-    */
   }),
 )

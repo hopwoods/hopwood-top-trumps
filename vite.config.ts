@@ -7,7 +7,7 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig(() => {
-  const isE2ETesting = process.env.E2E_TESTING === 'true'
+  const isE2ETesting = process.env.VITE_E2E_TESTING === 'true'
 
   const httpsConfig = isE2ETesting
     ? undefined // Use undefined to disable https
