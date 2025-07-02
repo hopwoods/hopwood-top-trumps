@@ -1,4 +1,4 @@
-import { makeStyles, shorthands } from '@griffel/react'
+import { makeStyles } from '@griffel/react'
 
 export const useDeckListItemStyles = makeStyles({
   root: {
@@ -11,15 +11,15 @@ export const useDeckListItemStyles = makeStyles({
     paddingRight: 'var(--fableforge-spacing-l)',
     marginBottom: 'var(--fableforge-spacing-m)',
     backgroundColor: 'var(--fableforge-color-background-surface)',
-    ...shorthands.borderRadius('var(--fableforge-shape-border-radius-medium)'),
-    ...shorthands.border('1px', 'solid', 'var(--fableforge-color-border-default)'),
+    borderRadius: 'var(--fableforge-shape-border-radius-medium)',
+    border: '1px solid var(--fableforge-color-border-default)',
     boxShadow: 'var(--fableforge-shadow-sm)',
     transitionProperty: 'box-shadow, transform',
     transitionDuration: '0.2s',
     transitionTimingFunction: 'ease-in-out',
     ':hover': {
+      backgroundColor: 'var(--fableforge-color-background-body)',
       boxShadow: 'var(--fableforge-shadow-md)',
-      transform: 'translateY(-2px)',
     },
   },
   deckInfo: {
@@ -28,15 +28,19 @@ export const useDeckListItemStyles = makeStyles({
     gap: 'var(--fableforge-spacing-xs)',
   },
   deckName: {
-    fontSize: 'var(--fableforge-typography-font-size-large)',
-    fontWeight: 'var(--fableforge-typography-font-weight-semibold)',
+    fontSize: 'var(--fableforge-typography-font-size2xl)',
     color: 'var(--fableforge-color-text-primary)',
     margin: '0',
+    justifyContent: 'start',
+    textAlign: 'left',
   },
   deckMeta: {
+    display: 'flex',
+    flexGrow: 1,
     fontSize: 'var(--fableforge-typography-font-size-small)',
     color: 'var(--fableforge-color-text-secondary)',
     margin: '0',
+    width: 'max-content',
   },
   actionsContainer: {
     display: 'flex',

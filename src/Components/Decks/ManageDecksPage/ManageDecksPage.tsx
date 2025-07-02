@@ -49,12 +49,11 @@ const ManageDecksPage = () => {
       </div>
 
       <div className={styles.deckListContainer}>
-        {decks.length === 0 ? (
-          <p className={styles.noDecksMessage}>
+        {decks.length === 0
+          ? <p className={styles.noDecksMessage}>
             You haven't created any decks yet. Get started by creating one!
           </p>
-        ) : (
-          <ul style={{ listStyle: 'none', padding: 0, width: '100%' }}>
+          : <ul style={{ listStyle: 'none', padding: 0, width: '100%' }}>
             {decks.map(deck => (
               <DeckListItem
                 key={deck.id}
@@ -64,7 +63,7 @@ const ManageDecksPage = () => {
               />
             ))}
           </ul>
-        )}
+        }
       </div>
       {/* TODO: [DECK_MGMT_UI_MODALS] Add Modals for deck creation/editing if not a separate page/view */}
     </div>

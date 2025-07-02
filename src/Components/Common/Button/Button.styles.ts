@@ -10,7 +10,7 @@ export const useButtonStyles = makeStyles({
     paddingBottom: 'var(--fableforge-spacing-s)',
     paddingLeft: 'var(--fableforge-spacing-m)',
     paddingRight: 'var(--fableforge-spacing-m)',
-    fontSize: 'var(--fableforge-typography-font-size-m)',
+    fontSize: 'var(--fableforge-typography-font-size-s)',
     fontFamily: 'var(--fableforge-typography-font-family-body)',
     fontWeight: 'var(--fableforge-typography-font-weight-medium)',
     borderRadius: 'var(--fableforge-border-m)',
@@ -21,6 +21,7 @@ export const useButtonStyles = makeStyles({
     transitionDuration: '0.2s',
     transitionTimingFunction: 'ease-in-out',
     transitionProperty: 'background-color, border-color, color, box-shadow',
+
 
     ':focus-visible': {
       outlineOffset: '2px',
@@ -33,7 +34,7 @@ export const useButtonStyles = makeStyles({
     gridTemplateColumns: '1.5em 1fr',
     gridTemplateRows: 'min-content',
     justifyContent: 'center',
-    lineHeight: 1
+    alignItems: 'center',
   },
   primary: {
     backgroundColor: 'var(--fableforge-color-brand-primary)',
@@ -100,8 +101,8 @@ export const useButtonStyles = makeStyles({
   },
   iconStyles: {
     display: 'flex',
-    // Basic icon styling if needed, e.g., display: 'flex'
-    marginRight: 'var(--fableforge-spacing-xs)',
+    margin: 0,
+    marginRight: 'var(--fableforge-spacing-s)',
     position: 'relative',
     top: '0.05em'
   },

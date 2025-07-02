@@ -19,7 +19,7 @@ export const useManageDecksPageStyles = makeStyles({
     width: '100%',
   },
   title: {
-    fontSize: 'var(--fableforge-typography-font-size-h2)',
+    fontSize: '2rem',
     fontWeight: 'var(--fableforge-typography-font-weight-bold)',
     color: 'var(--fableforge-color-text-emphasis)',
     justifySelf: 'start',

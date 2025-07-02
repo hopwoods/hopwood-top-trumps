@@ -22,7 +22,7 @@ export const DeckListItem = ({ deck, onEdit, onDelete }: DeckListItemProps) => {
         <h3 className={styles.deckName}>{deck.name}</h3>
         <p className={styles.deckMeta}>
           {displayCardCount}
-          {deck.description && ` - ${deck.description.substring(0, 50)}${deck.description.length > 50 ? '...' : ''}`}
+          {deck.description && ` - ${deck.description }`}
         </p>
       </div>
       <div className={styles.actionsContainer}>
