@@ -1,4 +1,4 @@
-import { faGamepad, faHouseChimney, faPlus, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faGamepad, faHouseChimney, faPlus, faEdit, faTrashAlt, faTimes, faSave } from '@fortawesome/free-solid-svg-icons'
 import { faInbox } from '@fortawesome/free-solid-svg-icons/faInbox'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons/faSignOutAlt'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -14,6 +14,8 @@ export const iconKeys = {
   add: 'add',
   edit: 'edit',
   delete: 'delete',
+  cancel: 'cancel',
+  save: 'save',
 } as const
 
 export type IconName = keyof typeof iconKeys
@@ -42,6 +44,8 @@ export const useIcons = (): UseIconsResult => {
     add: <span className={styles.icon}><FontAwesomeIcon icon={faPlus} /></span>,
     edit: <span className={styles.icon}><FontAwesomeIcon icon={faEdit} /></span>,
     delete: <span className={styles.icon}><FontAwesomeIcon icon={faTrashAlt} /></span>,
+    cancel: <span className={styles.icon}><FontAwesomeIcon icon={faTimes} /></span>,
+    save: <span className={styles.icon}><FontAwesomeIcon icon={faSave} /></span>,
   }
   return { icons }
 }

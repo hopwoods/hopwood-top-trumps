@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useModalStyles } from './Modal.styles';
 import type { ModalProps } from './Modal.types';
+import { mergeClasses } from '@griffel/react'
+import { Button } from '../Button/Button'
 
 export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
   const styles = useModalStyles();
@@ -27,13 +29,13 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
   }
 
   return createPortal(
-    <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true">
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>{title}</h2>
-          <button type="button" className={styles.closeButton} onClick={onClose} aria-label="Close modal">
+    <div className={mergeClasses('modal-overlay',styles.overlay)} onClick={onClose} role="dialog" aria-modal="true">
+      <div className={mergeClasses('modal-root', styles.modal)} onClick={(e) => e.stopPropagation()}>
+        <div className={mergeClasses('modal-header', styles.header)}>
+          <h2 className={mergeClasses('modal-title', styles.title)}>{title}</h2>
+          <Button type="button" className={mergeClasses('modal-close-button', styles.closeButton)} onClick={onClose} aria-label="Close modal">
             &times;
-          </button>
+          </Button>
         </div>
         {children}
       </div>

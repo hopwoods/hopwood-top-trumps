@@ -4,13 +4,7 @@ import { Button } from '../../Common/Button/Button';
 import { Input } from '../../Common/Input/Input';
 import { Spinner } from '../../Common/Spinner/Spinner';
 
-export const DeckForm = ({
-  formData,
-  onChange,
-  onSubmit,
-  onCancel,
-  isSubmitting = false,
-}: DeckFormProps) => {
+export const DeckForm = ({ formData, onChange, onSubmit, onCancel, isSubmitting = false}: DeckFormProps) => {
   const styles = useDeckFormStyles();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -44,10 +38,10 @@ export const DeckForm = ({
         />
       </div>
       <div className={styles.buttonContainer}>
-        <Button type="button" variant="secondary" onClick={onCancel} disabled={isSubmitting}>
+        <Button iconName='cancel' type="button" variant="secondary" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>
-        <Button type="submit" variant="primary" disabled={isSubmitting}>
+        <Button iconName='save' type="submit" variant="primary" disabled={isSubmitting}>
           {isSubmitting ? <Spinner /> : 'Save Deck'}
         </Button>
       </div>
