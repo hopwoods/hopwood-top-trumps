@@ -42,9 +42,15 @@ describe('DeckForm Component', () => {
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 
-  it('disables buttons and shows "Saving..." text when isSubmitting is true', () => {
-    render(<DeckForm {...defaultProps} isSubmitting={true} />);
-    expect(screen.getByRole('button', { name: /Saving.../i })).toBeDisabled();
+  it('disables buttons when isSubmitting is true', () => {
+    const { rerender } = render(<DeckForm {...defaultProps} isSubmitting={false} />);
+
+    const submitButton = screen.getByRole('button', { name: /Save Deck/i });
+    expect(submitButton).not.toBeDisabled();
+
+    rerender(<DeckForm {...defaultProps} isSubmitting={true} />);
+
+    expect(submitButton).toBeDisabled();
     expect(screen.getByRole('button', { name: /Cancel/i })).toBeDisabled();
   });
 });

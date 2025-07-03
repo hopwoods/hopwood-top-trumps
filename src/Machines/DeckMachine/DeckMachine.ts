@@ -39,6 +39,17 @@ export const deckMachine = setup({
         return null;
       },
     }),
+    assignDeckToDeleteToContext: assign({
+      deckToDelete: ({ event }) => {
+        if (event.type === 'DELETE_DECK') {
+          return { id: event.deckId, name: event.deckName };
+        }
+        return null;
+      },
+    }),
+    clearDeckToDelete: assign({
+      deckToDelete: null,
+    }),
     clearSelectedDeck: assign({
       selectedDeck: null,
     }),
@@ -70,6 +81,7 @@ export const deckMachine = setup({
     userId: input.userId,
     decks: [],
     selectedDeck: null,
+    deckToDelete: null,
     error: null,
   }) satisfies DeckMachineContext,
   states: {
@@ -104,7 +116,10 @@ export const deckMachine = setup({
           target: 'editingDeck',
           actions: 'assignSelectedDeckToContext', // Assign the deck to be edited to context
         },
-        DELETE_DECK: 'deletingDeck',
+        DELETE_DECK: {
+          target: 'confirmingDelete',
+          actions: 'assignDeckToDeleteToContext',
+        },
       },
     },
     creatingDeck: {
@@ -170,20 +185,29 @@ export const deckMachine = setup({
     deletingDeck: {
       invoke: {
         src: 'deleteDeckActor',
-        input: ({ event }) => {
-          if (event.type === 'DELETE_DECK') {
-            return { deckId: event.deckId };
+        input: ({ context }) => {
+          if (context.deckToDelete?.id) {
+            return { deckId: context.deckToDelete.id };
           }
           throw new Error('Invalid event for deleting deck');
         },
         onDone: {
           target: 'loadingDecks',
-          // TODO: [DECK_MGMT_DELETE_SUCCESS]
-          actions: ['clearSelectedDeck', 'clearError'],
+          actions: ['clearDeckToDelete', 'clearError'],
         },
         onError: {
           target: 'error',
           actions: 'assignErrorToContext',
+        },
+      },
+    },
+    confirmingDelete: {
+      tags: ['confirming-delete'],
+      on: {
+        CONFIRM_DELETE: 'deletingDeck',
+        CANCEL_DELETE: {
+          target: 'viewingDeckList',
+          actions: 'clearDeckToDelete',
         },
       },
     },

@@ -75,3 +75,23 @@ Completed comprehensive unit testing for `src/Firebase/firebaseDeckService.ts` u
     *   Addressed numerous `@typescript-eslint/no-explicit-any` warnings, which arose from type casting in mock setups (e.g., `mockSnapshot as any`). A file-level disable comment (`/* eslint-disable @typescript-eslint/no-explicit-any */`) was added at the top of the test file. This aligns with the project's testing strategy (`.clinerules/02-testing-strategy.md`), which permits such disables for complex mock scenarios in test files when functionality is confirmed and type safety in application code is maintained.
 
 5.  **Outcome:** All unit tests for `firebaseDeckService.ts` are now passing, contributing to improved code reliability and maintainability. All other project tests also remain passing.
+
+## Implemented Custom Delete Confirmation Modal (July 3, 2025)
+
+Successfully replaced the default browser `confirm()` dialog for deck deletion with a custom, integrated modal, improving user experience and application consistency.
+
+**Key Achievements & Learnings:**
+
+1.  **State-Driven UI with XState Tags:**
+    *   A new `confirmingDelete` state was added to the `DeckMachine`. This state is tagged with `confirming-delete`.
+    *   The UI (`ManageDecksPage.tsx`) uses the `snapshot.hasTag('confirming-delete')` selector to reactively control the visibility of the confirmation modal. This decouples the UI from specific state names, making the machine more refactor-friendly, in line with the project's architectural rules.
+
+2.  **Context for UI Data:**
+    *   The `DeckMachine`'s context was updated to include a `deckToDelete` object (`{ id: string, name: string }`).
+    *   When the user initiates a deletion, the `DELETE_DECK` event carries the deck's ID and name, which an action then assigns to `context.deckToDelete`.
+    *   The modal UI consumes this context to display a user-friendly message (e.g., "Are you sure you want to delete 'My Awesome Deck'?").
+
+3.  **Robust Testing and Regression Fixes:**
+    *   The implementation process revealed a minor regression in the `DeckForm` component's unit tests. The test for the "submitting" state was failing because it was incorrectly searching for a button by the text "Saving...", whereas the button actually displays a `<Spinner />` component.
+    *   **Solution:** The test was corrected to first find the submit button by its accessible name ("Save Deck") in the default state, and then re-render the component with `isSubmitting={true}`. The test then correctly asserts that the *same button reference* is now disabled. This ensures the test accurately reflects the component's behavior without making brittle assumptions about its content during the loading state.
+    *   After fixing the test, the full test suite (`pnpm test`) and the production build (`pnpm build`) were run successfully, confirming that no regressions were introduced and the application is stable.

@@ -105,6 +105,7 @@ export interface DeckMachineContext {
   userId: string | null; // Store the userId from input
   decks: Deck[]
   selectedDeck: Deck | null
+  deckToDelete: { id: string; name: string } | null
   error: Error | null
   // TODO: [DECK_MGMT_CARD_EDIT] Add context for current card being edited/created if needed
 }
@@ -119,7 +120,9 @@ export type DeckMachineEvents =
   | { type: 'SAVE_DECK'; deck: Partial<Deck> & { name: string } }
   | { type: 'SAVE_DECK_SUCCESS'; output: Deck }
   | { type: 'SAVE_DECK_FAILURE'; error: Error }
-  | { type: 'DELETE_DECK'; deckId: string }
+  | { type: 'DELETE_DECK'; deckId: string; deckName: string }
+  | { type: 'CONFIRM_DELETE' }
+  | { type: 'CANCEL_DELETE' }
   | { type: 'DELETE_DECK_SUCCESS'; output: { id: string } }
   | { type: 'DELETE_DECK_FAILURE'; error: Error }
   | { type: 'ADD_CARD_TO_DECK'; deckId: string; card: Card } // More granular events for card ops

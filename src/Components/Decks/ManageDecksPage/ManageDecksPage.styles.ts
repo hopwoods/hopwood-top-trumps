@@ -36,5 +36,15 @@ export const useManageDecksPageStyles = makeStyles({
     fontSize: 'var(--fableforge-typography-font-size-body)',
     color: 'var(--fableforge-color-text-secondary)',
   },
+  confirmDeleteContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--fableforge-spacing-l)',
+  },
+  confirmDeleteButtons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: 'var(--fableforge-spacing-m)',
+  },
   // TODO: [DECK_MGMT_UI_STYLING] Add styles for deck items when data is available
 })

@@ -55,6 +55,16 @@ This document outlines key architectural and system patterns adopted for the Top
     *   **React:** Functional components, custom hooks for logic encapsulation.
     *   **Reference:** `.clinerules/04-typescript-best-practices.md` and `.clinerules/01-coding-standards.md`.
 
+*   **Confirmation Flow for Destructive Actions:**
+    *   **Approach:** To prevent accidental data loss (e.g., deleting a deck), a dedicated confirmation flow is implemented using XState.
+    *   **Implementation:**
+        1.  A specific state (e.g., `confirmingDelete`) is added to the relevant state machine.
+        2.  This state is given a unique tag (e.g., `confirming-delete`).
+        3.  The UI uses a selector (`snapshot.hasTag('confirming-delete')`) to control the visibility of a custom `<Modal>` component.
+        4.  The machine's context is used to hold temporary information about the item being acted upon (e.g., `deckToDelete: { id, name }`), allowing the modal to display a specific confirmation message.
+        5.  The modal's buttons send distinct events (`CONFIRM_DELETE`, `CANCEL_DELETE`) back to the machine to resolve the flow.
+    *   **Benefit:** This pattern provides a robust, state-driven, and user-friendly way to handle destructive actions, fully integrated with the application's design system and avoiding disruptive browser-native dialogs like `window.confirm()`.
+
 ## 3. Component Relationships (Conceptual - High Level)
 *   **`App` (Root Component):** Manages the main XState `appMachine` instance. Renders different UI views based on the current state of `appMachine`.
 *   **View Components (e.g., `LoginPage`, `HomePage`, `DeckBuilderPage`, `GamePage`):** Render specific UI sections based on the active state in `appMachine` or child machines.

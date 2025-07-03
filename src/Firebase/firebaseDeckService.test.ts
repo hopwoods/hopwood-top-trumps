@@ -2,7 +2,7 @@
 /// <reference types="vitest/globals" />
 import { vi } from 'vitest'
 import { getUserDecks, createDeckWithCards, updateDeck, deleteDeck } from './firebaseDeckService' // Changed saveDeck to updateDeck
-import type { Deck } from '../Machines/DeckMachine/DeckMachine.types'
+import type { DeckUpdatePayload } from '../Machines/DeckMachine/DeckMachine.types'
 import type { DeckDataForCreation } from '../Data/DefaultDeckData' // Corrected import path
 
 // Use vi.hoisted to ensure mockDbInstance is initialized before mocks that use it.
@@ -311,7 +311,7 @@ describe('firebaseDeckService', () => {
 
   describe('updateDeck', () => {
     const deckId = 'existingDeck123'
-    const partialDeckData: Partial<Omit<Deck, 'id' | 'createdAt' | 'updatedAt' | 'cards' | 'userId'>> = {
+    const partialDeckData: DeckUpdatePayload = {
       name: 'Updated Deck Name',
       description: 'Updated description.',
     }

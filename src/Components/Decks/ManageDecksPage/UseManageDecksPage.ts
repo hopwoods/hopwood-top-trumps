@@ -32,9 +32,11 @@ export const useManageDecksPage = () => {
   const [formData, setFormData] = useState<DeckFormData>({ name: '', description: '' });
 
   const isModalOpen = snapshot?.hasTag('deck-form') ?? false;
+  const isConfirmingDelete = snapshot?.hasTag('confirming-delete') ?? false;
   const isSubmitting = snapshot?.hasTag('saving') ?? false;
   const isLoading = snapshot?.matches('loadingDecks') ?? false;
   const editingDeck = snapshot?.context.selectedDeck ?? null;
+  const deckToDelete = snapshot?.context.deckToDelete ?? null;
   const error = snapshot?.context.error ?? null;
   const decks = snapshot?.context.decks ?? [];
 
@@ -75,13 +77,23 @@ export const useManageDecksPage = () => {
     }
   };
 
-  const handleDeleteDeck = (deckId: string) => {
-    if (window.confirm('Are you sure you want to delete this deck? This action cannot be undone.')) {
-      if (deckMachineActorRef) {
-        deckMachineActorRef.send({ type: 'DELETE_DECK', deckId });
-      } else {
-        console.error('DeckMachine actor not available to send DELETE_DECK event');
-      }
+  const handleDeleteDeck = (deck: Deck) => {
+    if (deckMachineActorRef) {
+      deckMachineActorRef.send({ type: 'DELETE_DECK', deckId: deck.id, deckName: deck.name });
+    } else {
+      console.error('DeckMachine actor not available to send DELETE_DECK event');
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    if (deckMachineActorRef) {
+      deckMachineActorRef.send({ type: 'CONFIRM_DELETE' });
+    }
+  };
+
+  const handleCancelDelete = () => {
+    if (deckMachineActorRef) {
+      deckMachineActorRef.send({ type: 'CANCEL_DELETE' });
     }
   };
 
@@ -99,11 +111,15 @@ export const useManageDecksPage = () => {
     editingDeck,
     isSubmitting,
     formData,
+    isConfirmingDelete,
+    deckToDelete,
     handleFormChange,
     handleCreateNewDeck,
     handleEditDeck,
     handleDeleteDeck,
     handleSaveDeck,
     handleCloseModal,
+    handleConfirmDelete,
+    handleCancelDelete,
   };
 };

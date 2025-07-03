@@ -21,12 +21,16 @@ const ManageDecksPage = () => {
     editingDeck,
     isSubmitting,
     formData,
+    isConfirmingDelete,
+    deckToDelete,
     handleFormChange,
     handleCreateNewDeck,
     handleEditDeck,
     handleDeleteDeck,
     handleSaveDeck,
     handleCloseModal,
+    handleConfirmDelete,
+    handleCancelDelete,
   } = useManageDecksPage();
 
   if (isLoading && decks.length === 0) {
@@ -62,7 +66,7 @@ const ManageDecksPage = () => {
                 key={deck.id}
                 deck={deck}
                 onEdit={() => handleEditDeck(deck)}
-                onDelete={() => handleDeleteDeck(deck.id)}
+                onDelete={() => handleDeleteDeck(deck)}
               />
             ))}
           </ul>
@@ -81,6 +85,28 @@ const ManageDecksPage = () => {
           onCancel={handleCloseModal}
           isSubmitting={isSubmitting}
         />
+      </Modal>
+
+      <Modal
+        isOpen={isConfirmingDelete}
+        onClose={handleCancelDelete}
+        title="Confirm Deletion"
+      >
+        <div className={styles.confirmDeleteContainer}>
+          <p>
+            Are you sure you want to delete the deck{' '}
+            <strong>"{deckToDelete?.name}"</strong>? This action cannot be
+            undone.
+          </p>
+          <div className={styles.confirmDeleteButtons}>
+            <Button variant="secondary" onClick={handleCancelDelete}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleConfirmDelete}>
+              Delete
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
