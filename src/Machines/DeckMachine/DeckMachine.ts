@@ -29,11 +29,14 @@ export const deckMachine = setup({
       },
     }),
     assignSelectedDeckToContext: assign({
-      selectedDeck: ({ event, context }) => {
-        if (event.type === 'SAVE_DECK_SUCCESS') {
-          return event.output
+      selectedDeck: ({ event }) => {
+        if (event.type === 'EDIT_DECK') {
+          return event.deck;
         }
-        return context.selectedDeck
+        if (event.type === 'SAVE_DECK_SUCCESS') {
+          return event.output;
+        }
+        return null;
       },
     }),
     clearSelectedDeck: assign({
@@ -99,12 +102,13 @@ export const deckMachine = setup({
         CREATE_NEW_DECK: 'creatingDeck',
         EDIT_DECK: {
           target: 'editingDeck',
-          // actions: 'assignSelectedDeckToContext'
+          actions: 'assignSelectedDeckToContext', // Assign the deck to be edited to context
         },
         DELETE_DECK: 'deletingDeck',
       },
     },
     creatingDeck: {
+      tags: ['deck-form'],
       entry: ['clearSelectedDeck', 'clearError'],
       on: {
         SAVE_DECK: 'savingDeck',
@@ -114,6 +118,7 @@ export const deckMachine = setup({
       // TODO: [DECK_MGMT_CARD_CREATE_UI]
     },
     editingDeck: {
+      tags: ['deck-form'],
       entry: 'clearError',
       on: {
         SAVE_DECK: 'savingDeck',
@@ -137,6 +142,7 @@ export const deckMachine = setup({
       },
     },
     savingDeck: {
+      tags: ['saving'],
       invoke: {
         src: 'saveDeckActor',
         input: ({ context, event }) => {
@@ -152,13 +158,11 @@ export const deckMachine = setup({
         onDone: {
           target: 'loadingDecks',
           actions: [
-            'assignSelectedDeckToContext',
-            // TODO: [DECK_MGMT_SAVE_SUCCESS]
             'clearError',
           ],
         },
         onError: {
-          target: 'error',
+          target: 'editingDeck',
           actions: 'assignErrorToContext',
         },
       },

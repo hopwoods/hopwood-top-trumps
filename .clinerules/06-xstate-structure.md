@@ -57,3 +57,31 @@ To maintain clarity and modularity within individual XState machine definitions:
 3.  **Naming Conventions:**
     *   Guard files should be named descriptively, ending with `.guard.ts` (e.g., `isUserAuthenticated.guard.ts`).
     *   Actor files (for invoked logic) should be named descriptively, ending with `.actor.ts` (e.g., `fetchGameSettings.actor.ts`).
+
+### Driving UI State with Tags
+
+To decouple UI components from the specific state names of a machine, use `tags`. A tag can be applied to multiple states, and the UI can check for the presence of a tag rather than a specific state name.
+
+**Benefits:**
+*   **Decoupling:** The UI doesn't need to know the exact state name (e.g., `creatingDeck`, `editingDeck`). It only needs to know if the machine is in *any* state that requires a certain UI (e.g., showing a form).
+*   **Scalability:** If a new state is added that should also show the same UI, you only need to add the tag to the new state in the machine definition. No UI code changes are required.
+*   **Readability:** It makes the UI's logic more declarative (e.g., `if (snapshot.hasTag('show-deck-form'))`).
+
+**Example:**
+```typescript
+// In the machine definition
+states: {
+  creatingDeck: {
+    tags: ['deck-form'],
+    // ...
+  },
+  editingDeck: {
+    tags: ['deck-form'],
+    // ...
+  }
+}
+
+// In the UI component/hook
+const shouldShowForm = snapshot.hasTag('deck-form');
+```
+This approach is preferred for driving shared UI visibility from the state machine.

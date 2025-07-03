@@ -18,8 +18,7 @@ service cloud.firestore {
       // Allow update if the user is authenticated and the deck's userId matches their own UID
       // Prevent them from changing the userId and createdAt fields
       allow update: if request.auth != null && resource.data.userId == request.auth.uid
-                      && request.resource.data.userId == resource.data.userId
-                      && !('createdAt' in request.resource.data);
+                      && request.resource.data.createdAt == resource.data.createdAt;
 
 
       // Allow delete if the user is authenticated and the deck's userId matches their own UID

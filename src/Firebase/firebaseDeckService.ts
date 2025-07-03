@@ -3,7 +3,6 @@ import {
   addDoc,
   getDocs,
   doc,
-  updateDoc,
   deleteDoc,
   query,
   where,
@@ -12,9 +11,10 @@ import {
   type DocumentSnapshot, // Added top-level import for DocumentSnapshot
   writeBatch, // Import writeBatch for batch operations
   getDoc, // Import getDoc for fetching a single document
+  updateDoc, // Re-add updateDoc
 } from 'firebase/firestore'
 import { firestore as db } from './FirebaseConfig' // Import firestore and alias it as db
-import type { Deck, Card } from '../Machines/DeckMachine/DeckMachine.types' // Adjust path as needed
+import type { Deck, Card, DeckUpdatePayload } from '../Machines/DeckMachine/DeckMachine.types' // Adjust path as needed
 import type { DeckDataForCreation } from '../Data/DefaultDeckData' // Import creation types
 
 const DECKS_COLLECTION = 'decks'
@@ -132,26 +132,57 @@ export const createDeck = async (
 }
 
 /**
+ * Fetches a single deck by its ID.
+ * @param deckId The ID of the deck to fetch.
+ * @returns A promise that resolves to the Deck object or null if not found.
+ */
+export const getDeck = async (deckId: string): Promise<Deck | null> => {
+  if (!deckId) {
+    console.error('getDeck: deckId is required.');
+    return null;
+  }
+  try {
+    const deckRef = doc(db, DECKS_COLLECTION, deckId);
+    const docSnap = await getDoc(deckRef);
+    if (docSnap.exists()) {
+      return deckFromSnapshot(docSnap);
+    } else {
+      console.warn(`Deck with id ${deckId} not found.`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`Error fetching deck ${deckId}:`, error);
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Error fetching deck: ${message}`);
+  }
+};
+
+/**
  * Updates an existing deck in Firestore.
  * @param deckId The ID of the deck to update.
- * @param deckData Partial data to update the deck with.
+ * @param deckData A specific payload with only the fields allowed for update.
  * @returns A promise that resolves when the update is complete.
  */
 export const updateDeck = async (
   deckId: string,
-  deckData: Partial<Omit<Deck, 'id' | 'createdAt' | 'updatedAt' | 'cards' | 'userId'>>,
+  deckData: DeckUpdatePayload,
 ): Promise<void> => {
   if (!deckId) {
-    throw new Error('updateDeck: deckId is required.')
+    console.error('[firebaseDeckService] updateDeck failed: deckId is required.');
+    throw new Error('updateDeck: deckId is required.');
   }
   try {
-    const deckRef = doc(db, DECKS_COLLECTION, deckId)
-    await updateDoc(deckRef, {
+    console.log(`[firebaseDeckService] Attempting to update deck ${deckId}. Raw data received:`, deckData);
+    const deckRef = doc(db, DECKS_COLLECTION, deckId);
+    const finalUpdatePayload = {
       ...deckData,
       updatedAt: serverTimestamp(),
-    })
+    };
+    console.log('[firebaseDeckService] Final payload being sent to updateDoc:', finalUpdatePayload);
+    await updateDoc(deckRef, finalUpdatePayload);
+    console.log(`[firebaseDeckService] Successfully updated deck ${deckId}`);
   } catch (error) {
-    console.error('Error updating deck:', error)
+    console.error(`[firebaseDeckService] Raw error updating deck ${deckId}:`, error)
     const message = error instanceof Error ? error.message : String(error)
     throw new Error(`Error updating deck: ${message}`)
   }

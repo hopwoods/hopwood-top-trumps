@@ -1,53 +1,109 @@
-import { useDeckMachineState } from '../../../Hooks/UseDeckMachineState'
-
-// TODO: [DECK_MGMT_HOOK_IMPL] Further implement logic as DeckMachine evolves.
+import { useState, useEffect } from 'react';
+import { useSelector } from '@xstate/react';
+import { GlobalStateContext } from '../../../Hooks/UseAppState';
+import type { Deck } from '../../../Machines/DeckMachine/DeckMachine.types';
+import type { DeckFormData } from '../DeckForm/DeckForm.types';
+import { deckMachine } from '../../../Machines/DeckMachine/DeckMachine';
+import type { ActorRefFrom } from 'xstate';
 
 /**
  * Custom hook for the ManageDecksPage component.
- * This hook encapsulates the logic for fetching decks, handling deck creation,
- * navigation, and interaction with the DeckMachine by leveraging useDeckMachineState.
+ * This hook encapsulates all logic for the page, including interaction
+ * with the invoked deckMachine actor.
  */
 export const useManageDecksPage = () => {
-  const {
-    decks,
-    isLoading,
-    error,
-    send: sendToDeckMachine,
-    // snapshot, // if needed for more complex logic or direct state matching
-  } = useDeckMachineState()
+  const appActorRef = GlobalStateContext.useActorRef();
+
+  // Select the child actor reference from the parent machine
+  const deckMachineActorRef = useSelector(appActorRef, (state) => {
+    return state.children.deckMachineActor as ActorRefFrom<typeof deckMachine> | undefined;
+  });
+
+  // Subscribe to the child actor's state
+  const [snapshot, setSnapshot] = useState(() => deckMachineActorRef?.getSnapshot());
+  useEffect(() => {
+    if (deckMachineActorRef) {
+      const subscription = deckMachineActorRef.subscribe(setSnapshot);
+      return () => subscription.unsubscribe();
+    }
+  }, [deckMachineActorRef]);
+
+
+  const [formData, setFormData] = useState<DeckFormData>({ name: '', description: '' });
+
+  const isModalOpen = snapshot?.hasTag('deck-form') ?? false;
+  const isSubmitting = snapshot?.hasTag('saving') ?? false;
+  const isLoading = snapshot?.matches('loadingDecks') ?? false;
+  const editingDeck = snapshot?.context.selectedDeck ?? null;
+  const error = snapshot?.context.error ?? null;
+  const decks = snapshot?.context.decks ?? [];
+
+  useEffect(() => {
+    if (editingDeck) {
+      setFormData({ name: editingDeck.name, description: editingDeck.description || '' });
+    } else {
+      setFormData({ name: '', description: '' });
+    }
+  }, [editingDeck]);
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleCreateNewDeck = () => {
-    if (sendToDeckMachine) {
-      sendToDeckMachine({ type: 'CREATE_NEW_DECK' })
-    } else {
-      console.error('DeckMachine actor not available to send CREATE_NEW_DECK event')
+    if (deckMachineActorRef) {
+      deckMachineActorRef.send({ type: 'CREATE_NEW_DECK' });
     }
-  }
+  };
 
-  const handleEditDeck = (deckId: string) => {
-    // TODO: Dispatch EDIT_DECK event to DeckMachine
-    console.log('Edit deck clicked:', deckId)
-    if (sendToDeckMachine) {
-      // sendToDeckMachine({ type: 'EDIT_DECK', deckId }) // Example for later
+  const handleEditDeck = (deck: Deck) => {
+    if (deckMachineActorRef) {
+      deckMachineActorRef.send({ type: 'EDIT_DECK', deck });
     }
-  }
+  };
+
+  const handleSaveDeck = () => {
+    if (deckMachineActorRef) {
+      deckMachineActorRef.send({
+        type: 'SAVE_DECK',
+        deck: {
+          id: editingDeck?.id,
+          ...formData,
+        },
+      });
+    }
+  };
 
   const handleDeleteDeck = (deckId: string) => {
     if (window.confirm('Are you sure you want to delete this deck? This action cannot be undone.')) {
-      if (sendToDeckMachine) {
-        sendToDeckMachine({ type: 'DELETE_DECK', deckId });
+      if (deckMachineActorRef) {
+        deckMachineActorRef.send({ type: 'DELETE_DECK', deckId });
       } else {
         console.error('DeckMachine actor not available to send DELETE_DECK event');
       }
     }
-  }
+  };
+
+  const handleCloseModal = () => {
+    if (deckMachineActorRef) {
+      deckMachineActorRef.send({ type: 'CANCEL_DECK_EDIT' });
+    }
+  };
 
   return {
     decks,
-    isLoading,
+    isLoading: isLoading || isSubmitting,
     error,
+    isModalOpen,
+    editingDeck,
+    isSubmitting,
+    formData,
+    handleFormChange,
     handleCreateNewDeck,
     handleEditDeck,
     handleDeleteDeck,
-  }
-}
+    handleSaveDeck,
+    handleCloseModal,
+  };
+};

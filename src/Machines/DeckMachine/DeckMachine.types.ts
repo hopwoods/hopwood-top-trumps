@@ -91,6 +91,12 @@ export interface Deck {
   updatedAt: Date;
 }
 
+/**
+ * Defines the shape of the data payload for updating a deck.
+ * This ensures only specific, editable fields are sent in the update operation.
+ */
+export type DeckUpdatePayload = Pick<Deck, 'name' | 'description'>;
+
 export interface DeckMachineInput {
   userId: string;
 }
@@ -108,9 +114,9 @@ export type DeckMachineEvents =
   | { type: 'FETCH_DECKS_SUCCESS'; output: Deck[] }
   | { type: 'FETCH_DECKS_FAILURE'; error: Error }
   | { type: 'CREATE_NEW_DECK' } // Event to initiate new deck creation UI
-  | { type: 'EDIT_DECK'; deckId: string } // Event to select a deck for editing
+  | { type: 'EDIT_DECK'; deck: Deck } // Event to select a deck for editing
   | { type: 'VIEW_DECK_LIST' } // Event to go back to viewing the list of decks
-  | { type: 'SAVE_DECK'; deck: Deck }
+  | { type: 'SAVE_DECK'; deck: Partial<Deck> & { name: string } }
   | { type: 'SAVE_DECK_SUCCESS'; output: Deck }
   | { type: 'SAVE_DECK_FAILURE'; error: Error }
   | { type: 'DELETE_DECK'; deckId: string }

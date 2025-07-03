@@ -9,7 +9,9 @@ export const Input = (props: InputProps) => { // Reverted to Props
     const { label, error, iconLeft, className, ref, ...inputHtmlAttributes } = props // Added ref back
     const styles = useInputStyles()
 
-    console.log(`[InputComponent] Received error prop for input "${props.name || props.id}":`, error) // Added console log
+    if (error) {
+      console.error(`[InputComponent] Error for input "${props.name || props.id}":`, error);
+    }
 
     return (
       <div className={styles.root}>
