@@ -33,6 +33,9 @@ export const colorTokens = {
   // UI Elements
   borderOpaque: '#5F6368', // Medium grey for distinct borders
   borderSubtle: '#3C4043', // Darker grey for less prominent borders
+
+  inputBackground: '#353535', // Darker background for input fields
+  inputBorder: '#535353', // Medium grey for input borders
 } as const
 
 export const typographyTokens = {

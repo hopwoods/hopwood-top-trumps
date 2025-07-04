@@ -3,6 +3,7 @@ import type { DeckFormProps } from './DeckForm.types';
 import { Button } from '../../Common/Button/Button';
 import { Input } from '../../Common/Input/Input';
 import { Spinner } from '../../Common/Spinner/Spinner';
+import { TextArea } from '../../Common/TextArea/TextArea';
 
 export const DeckForm = ({ formData, onChange, onSubmit, onCancel, isSubmitting = false}: DeckFormProps) => {
   const styles = useDeckFormStyles();
@@ -15,10 +16,10 @@ export const DeckForm = ({ formData, onChange, onSubmit, onCancel, isSubmitting 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.field}>
-        <label htmlFor="name" className={styles.label}>Deck Name</label>
         <Input
           id="name"
           name="name"
+          label="Deck Name"
           value={formData.name}
           onChange={onChange}
           required
@@ -26,11 +27,10 @@ export const DeckForm = ({ formData, onChange, onSubmit, onCancel, isSubmitting 
         />
       </div>
       <div className={styles.field}>
-        <label htmlFor="description" className={styles.label}>Description</label>
-        <textarea
+        <TextArea
           id="description"
           name="description"
-          className={styles.input}
+          label="Description"
           value={formData.description}
           onChange={onChange}
           rows={4}

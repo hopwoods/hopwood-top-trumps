@@ -26,6 +26,7 @@ export const useModalStyles = makeStyles({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 'var(--fableforge-spacing-m)',
+        maxHeight: '25px',
     },
     title: {
         margin: 0,
@@ -38,5 +39,6 @@ export const useModalStyles = makeStyles({
         fontSize: '1.5rem',
         cursor: 'pointer',
         color: 'var(--fableforge-color-text-secondary)',
+        padding: 'var(--fableforge-spacing-xxs)',
     },
 })

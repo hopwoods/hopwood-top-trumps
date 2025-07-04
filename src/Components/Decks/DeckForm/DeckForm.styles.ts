@@ -15,9 +15,6 @@ export const useDeckFormStyles = makeStyles({
     fontWeight: 'bold',
     color: 'var(--fableforge-color-text-primary)',
   },
-  input: {
-
-  },
   buttonContainer: {
     display: 'flex',
     justifyContent: 'flex-end',

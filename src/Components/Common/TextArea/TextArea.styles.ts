@@ -1,6 +1,6 @@
 import { makeStyles } from '@griffel/react'
 
-export const useInputStyles = makeStyles({
+export const useTextAreaStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -14,7 +14,7 @@ export const useInputStyles = makeStyles({
     alignItems: 'center',
     gap: 'var(--fableforge-spacing-xs)',
   },
-  input: {
+  textarea: {
     fontFamily: 'var(--fableforge-typography-font-family-body)',
     fontSize: 'var(--fableforge-typography-font-size-m)',
 

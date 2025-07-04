@@ -73,11 +73,7 @@ const ManageDecksPage = () => {
         )}
       </div>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        title={editingDeck ? 'Edit Deck' : 'Create New Deck'}
-      >
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={editingDeck ? 'Edit Deck' : 'Create New Deck'}>
         <DeckForm
           formData={formData}
           onChange={handleFormChange}
@@ -87,22 +83,17 @@ const ManageDecksPage = () => {
         />
       </Modal>
 
-      <Modal
-        isOpen={isConfirmingDelete}
-        onClose={handleCancelDelete}
-        title="Confirm Deletion"
-      >
+      <Modal isOpen={isConfirmingDelete} onClose={handleCancelDelete} title="Confirm Deletion">
         <div className={styles.confirmDeleteContainer}>
           <p>
-            Are you sure you want to delete the deck{' '}
-            <strong>"{deckToDelete?.name}"</strong>? This action cannot be
-            undone.
+            Are you sure you want to delete the deck <strong>{deckToDelete?.name}</strong>? <br />
+            This action cannot be undone.
           </p>
           <div className={styles.confirmDeleteButtons}>
-            <Button variant="secondary" onClick={handleCancelDelete}>
+            <Button iconName='cancel' variant="secondary" onClick={handleCancelDelete}>
               Cancel
             </Button>
-            <Button variant="danger" onClick={handleConfirmDelete}>
+            <Button iconName='delete' variant="danger" onClick={handleConfirmDelete}>
               Delete
             </Button>
           </div>
