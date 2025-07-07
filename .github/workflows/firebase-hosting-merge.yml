@@ -31,9 +31,6 @@ jobs:
     - name: Install Function Dependencies
       run: cd fable-forge-functions && pnpm install --frozen-lockfile && cd ..
 
-    - name: Build Functions
-      run: cd fable-forge-functions && pnpm run build && cd .. # Assuming 'build' script compiles TS
-
     - name: Deploy Hosting
       if: github.event_name == 'push' # Only deploy hosting on push events (e.g., to main or other branches)
       uses: FirebaseExtended/action-hosting-deploy@v0
